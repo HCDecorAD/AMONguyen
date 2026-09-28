@@ -1,4 +1,4 @@
-[Reading 112 lines from start (total: 112 lines, 0 remaining)]
+[Reading 113 lines from start (total: 113 lines, 0 remaining)]
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -6,27 +6,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lookbook | AMO NGUYEN</title>
+  <meta name="description" content="Lookbook AMO NGUYEN - Nghệ thuật ăn mặc của quý ông đương đại.">
   <link rel="stylesheet" href="css/amo-style.css">
   <link rel="stylesheet" href="css/amo-responsive.css">
 </head>
 <body>
-  <header class="amo-header">
+  <header class="amo-header" role="banner">
     <div class="amo-header-inner">
       <a href="index.html" class="amo-logo" data-amo-logo>AMO NGUYEN</a>
-      <nav class="amo-nav-desktop">
+      <nav class="amo-nav-desktop" role="navigation">
         <a href="shop.html">Shop</a>
-        <a href="lookbook.html">Lookbook</a>
+        <a href="lookbook.html" class="is-active" aria-current="page">Lookbook</a>
         <a href="guide.html">Guide</a>
         <a href="story.html">Story</a>
         <a href="contact.html">Contact</a>
       </nav>
-      <button class="amo-menu-btn" aria-label="Menu" aria-expanded="false">
+      <button class="amo-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
   
-  <nav class="amo-nav-mobile">
+  <nav class="amo-nav-mobile" role="navigation">
     <a href="shop.html">Shop</a>
     <a href="lookbook.html">Lookbook</a>
     <a href="guide.html">Guide</a>
@@ -40,30 +41,30 @@
     </section>
 
     <!-- 01 THE MODERN GENTLEMAN -->
-    <section class="amo-container amo-reveal">
+    <section class="amo-container amo-reveal" aria-labelledby="lb-01">
       <div class="amo-lb-row">
         <div class="amo-lb-text">
           <span class="amo-lb-num">01</span>
-          <h2 class="amo-h2">THE MODERN GENTLEMAN</h2>
+          <h2 id="lb-01" class="amo-h2">THE MODERN GENTLEMAN</h2>
           <p class="amo-body" style="margin-top: 1.5rem;">A study in restraint. Sharp lines meet exceptional craftsmanship.</p>
         </div>
         <div class="amo-asset-box" style="aspect-ratio: 4/5;">
           <span class="amo-asset-label">[ ASSET READY ]</span>
-          <img data-amo-asset="lookbook-hero" alt="" class="amo-asset-img">
+          <img data-amo-asset="lookbook-hero" alt="The Modern Gentleman" class="amo-asset-img">
         </div>
       </div>
     </section>
 
     <!-- 02 BUSINESS REFINED -->
-    <section class="amo-container amo-reveal">
+    <section class="amo-container amo-reveal" aria-labelledby="lb-02">
       <div class="amo-lb-row reverse">
         <div class="amo-asset-box" style="aspect-ratio: 4/5;">
           <span class="amo-asset-label">[ ASSET READY ]</span>
-          <img data-amo-asset="lookbook-business" alt="" class="amo-asset-img">
+          <img data-amo-asset="lookbook-business" alt="Business Refined" class="amo-asset-img">
         </div>
         <div class="amo-lb-text">
           <span class="amo-lb-num">02</span>
-          <h2 class="amo-h2">BUSINESS REFINED</h2>
+          <h2 id="lb-02" class="amo-h2">BUSINESS REFINED</h2>
           <p class="amo-body" style="margin-top: 1.5rem;">Impeccable formal silhouettes engineered for absolute precision.</p>
         </div>
       </div>
@@ -75,9 +76,9 @@
         <div>
           <div class="amo-asset-box" style="aspect-ratio: 1/1;">
             <span class="amo-asset-label">[ ASSET READY ]</span>
-            <img data-amo-asset="lookbook-casual" alt="" class="amo-asset-img">
+            <img data-amo-asset="lookbook-casual" alt="Smart Casual Style" class="amo-asset-img">
           </div>
-          <div style="margin-top: 2rem;">
+          <div style="margin-top: 2rem; text-align: center;">
             <span class="amo-lb-num">03</span>
             <h3 class="amo-h3">SMART CASUAL</h3>
           </div>
@@ -85,9 +86,9 @@
         <div style="margin-top: var(--amo-space-lg);">
           <div class="amo-asset-box" style="aspect-ratio: 3/4;">
             <span class="amo-asset-label">[ ASSET READY ]</span>
-            <img data-amo-asset="lookbook-weekend" alt="" class="amo-asset-img">
+            <img data-amo-asset="lookbook-weekend" alt="Weekend Evening Style" class="amo-asset-img">
           </div>
-          <div style="margin-top: 2rem;">
+          <div style="margin-top: 2rem; text-align: center;">
             <span class="amo-lb-num">04</span>
             <h3 class="amo-h3">WEEKEND & EVENING</h3>
           </div>
@@ -96,7 +97,7 @@
     </section>
   </main>
 
-  <footer class="amo-footer">
+  <footer class="amo-footer" role="contentinfo">
     <div class="amo-footer-inner">
       <div class="amo-footer-brand">AMO NGUYEN<span class="amo-footer-tag">GIÀY SI HIỆU NAM</span></div>
       <div class="amo-footer-links">
