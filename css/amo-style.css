@@ -1,0 +1,232 @@
+[Reading 228 lines from start (total: 228 lines, 0 remaining)]
+
+/* ==========================================================================
+   AMO NGUYEN - QUIET LUXURY DESIGN SYSTEM (FULL SITE)
+   ========================================================================== */
+
+:root {
+  /* Brand Palette */
+  --amo-gold: #D4AF37;
+  --amo-gold-deep: #B8860B;
+  --amo-black: #1A1A1A;
+  --amo-charcoal: #444444;
+  --amo-off-white: #F5F5F5;
+  
+  /* Typography */
+  --amo-font-heading: 'Playfair Display', serif;
+  --amo-font-body: 'Inter', sans-serif;
+  
+  /* Fluid Spacing */
+  --amo-spacing-sm: clamp(1rem, 2vw, 2rem);
+  --amo-spacing-md: clamp(2rem, 4vw, 4rem);
+  --amo-spacing-lg: clamp(4rem, 8vw, 8rem);
+  --amo-spacing-xl: clamp(6rem, 12vw, 12rem);
+  
+  /* Layout constraints */
+  --amo-container: 1440px;
+  --amo-transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--amo-font-body);
+  background-color: var(--amo-off-white);
+  color: var(--amo-black);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; transition: var(--amo-transition); }
+img { max-width: 100%; height: auto; display: block; object-fit: cover; }
+button { font-family: var(--amo-font-body); }
+
+/* Typography */
+.amo-h1 { font-family: var(--amo-font-heading); font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; }
+.amo-h2 { font-family: var(--amo-font-heading); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 400; line-height: 1.2; }
+.amo-h3 { font-family: var(--amo-font-heading); font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 400; }
+.amo-body { font-size: clamp(0.9rem, 1vw + 0.2rem, 1.1rem); color: var(--amo-charcoal); }
+.amo-caption { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amo-charcoal); }
+.amo-text-center { text-align: center; }
+
+/* Layout Utilities */
+.amo-container { max-width: var(--amo-container); margin: 0 auto; padding: 0 5%; }
+.amo-section { padding: var(--amo-spacing-xl) 0; }
+.amo-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--amo-spacing-md); }
+.amo-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--amo-spacing-md); }
+.amo-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--amo-spacing-md); }
+
+/* Asset Placeholders (Hooks) */
+.amo-asset-wrapper { 
+  background: linear-gradient(135deg, #E8E8E8 0%, #DCDCDC 100%); 
+  display: flex; align-items: center; justify-content: center; 
+  overflow: hidden; position: relative; width: 100%; 
+}
+.amo-asset-label { font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(26,26,26,0.3); text-transform: uppercase; position: absolute; text-align: center; padding: 0 1rem; }
+.amo-asset-img { width: 100%; height: 100%; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.8s ease; }
+.amo-asset-img.is-loaded { opacity: 1; z-index: 2; }
+
+/* Buttons & Links */
+.amo-btn {
+  display: inline-block; padding: 1rem 3rem; font-size: 0.8rem;
+  letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--amo-black);
+  cursor: pointer; transition: var(--amo-transition);
+}
+.amo-btn-primary { background: var(--amo-black); color: var(--amo-off-white); }
+.amo-btn-primary:hover, .amo-btn-primary:focus { background: var(--amo-gold); border-color: var(--amo-gold); color: var(--amo-black); }
+.amo-btn-secondary { background: transparent; color: var(--amo-black); }
+.amo-btn-secondary:hover, .amo-btn-secondary:focus { background: var(--amo-black); color: var(--amo-off-white); }
+.amo-link-underline {
+  font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase;
+  border-bottom: 1px solid var(--amo-black); padding-bottom: 0.2rem;
+}
+.amo-link-underline:hover, .amo-link-underline:focus { color: var(--amo-gold); border-color: var(--amo-gold); }
+
+/* Animation Classes */
+.amo-reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.amo-reveal.is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) { .amo-reveal { transition: none; opacity: 1; transform: none; } }
+
+/* ==========================================================================
+   HEADER & NAVIGATION
+   ========================================================================== */
+.amo-header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+  background: rgba(245, 245, 245, 0.95); backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent; transition: var(--amo-transition);
+}
+.amo-header.is-scrolled { border-bottom: 1px solid rgba(26,26,26,0.1); }
+.amo-header-inner { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 80px; max-width: var(--amo-container); margin: 0 auto; }
+.amo-logo { font-family: var(--amo-font-heading); font-size: 1.5rem; letter-spacing: 0.15em; text-transform: uppercase; z-index: 102; }
+.amo-nav-desktop { display: flex; gap: 2.5rem; }
+.amo-nav-desktop a { font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.amo-nav-desktop a:hover, .amo-nav-desktop a.active { color: var(--amo-gold-deep); }
+
+.amo-menu-btn { display: none; background: none; border: none; cursor: pointer; width: 30px; height: 20px; position: relative; z-index: 102; padding: 0; }
+.amo-menu-btn span { position: absolute; width: 100%; height: 1px; background: var(--amo-black); left: 0; transition: var(--amo-transition); }
+.amo-menu-btn span:nth-child(1) { top: 0; }
+.amo-menu-btn span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+.amo-menu-btn span:nth-child(3) { bottom: 0; }
+.amo-menu-btn.is-active span:nth-child(1) { transform: translateY(9.5px) rotate(45deg); }
+.amo-menu-btn.is-active span:nth-child(2) { opacity: 0; }
+.amo-menu-btn.is-active span:nth-child(3) { transform: translateY(-9.5px) rotate(-45deg); }
+
+.amo-nav-mobile {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  background: var(--amo-off-white); z-index: 90;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2.5rem;
+  opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+}
+.amo-nav-mobile.is-open { opacity: 1; pointer-events: auto; }
+.amo-nav-mobile a { font-family: var(--amo-font-heading); font-size: 2rem; color: var(--amo-black); }
+
+/* ==========================================================================
+   PAGE-SPECIFIC STYLES
+   ========================================================================== */
+.amo-page-header { padding: calc(80px + var(--amo-spacing-xl)) 5% var(--amo-spacing-md); text-align: center; }
+
+/* 1. HOMEPAGE */
+.amo-home-hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; }
+.amo-home-hero .amo-asset-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+.amo-home-hero-content { position: relative; z-index: 10; background: rgba(245,245,245,0.85); padding: 3rem 4rem; backdrop-filter: blur(5px); }
+
+/* 2. SHOP */
+.amo-shop-filter {
+  display: flex; gap: 2rem; justify-content: center; margin-bottom: var(--amo-spacing-lg); padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(26,26,26,0.1); overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.amo-shop-filter::-webkit-scrollbar { display: none; }
+.amo-filter-btn {
+  background: none; border: none; padding: 0.5rem; cursor: pointer; font-family: var(--amo-font-body);
+  font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amo-charcoal); transition: var(--amo-transition);
+}
+.amo-filter-btn:hover, .amo-filter-btn.active { color: var(--amo-gold-deep); }
+.amo-product-card { display: flex; flex-direction: column; gap: 1.2rem; cursor: pointer; transition: transform 0.4s ease; text-decoration: none; }
+.amo-product-card:hover { transform: translateY(-5px); }
+.amo-product-img { aspect-ratio: 3/4; }
+.amo-product-info { text-align: center; }
+.amo-product-name { font-family: var(--amo-font-body); font-size: 1rem; font-weight: 400; margin: 0 0 0.5rem; }
+.amo-product-status { font-family: var(--amo-font-body); font-size: 0.85rem; color: var(--amo-charcoal); margin: 0; font-style: italic; }
+
+/* 3. LOOKBOOK */
+.amo-lb-section { margin-bottom: var(--amo-spacing-xl); }
+.amo-lb-number { display: block; font-family: var(--amo-font-body); font-size: 0.85rem; color: var(--amo-gold-deep); margin-bottom: 1rem; }
+.amo-lb-text { max-width: 400px; }
+.amo-lb-grid-left, .amo-lb-grid-right { display: grid; grid-template-columns: 4fr 6fr; gap: var(--amo-spacing-lg); align-items: center; }
+.amo-lb-grid-right { grid-template-columns: 6fr 4fr; }
+.amo-lb-grid-right .amo-lb-text { grid-column: 2; margin-left: auto; }
+.amo-lb-img-main { aspect-ratio: 4/5; width: 100%; }
+.amo-lb-img-full { aspect-ratio: 21/9; width: 100%; }
+.amo-lb-img-square { aspect-ratio: 1/1; width: 100%; }
+.amo-lb-img-tall { aspect-ratio: 3/4; width: 100%; }
+
+/* 4. SHOE GUIDE */
+.amo-guide-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--amo-spacing-md); align-items: center; margin-bottom: var(--amo-spacing-lg); border-bottom: 1px solid rgba(26,26,26,0.1); padding-bottom: var(--amo-spacing-lg); }
+.amo-guide-row:last-of-type { border-bottom: none; }
+.amo-guide-row:nth-child(even) .amo-guide-text { order: 2; }
+.amo-guide-row:nth-child(even) .amo-guide-img { order: 1; }
+.amo-guide-text { padding: 0 5%; }
+.amo-guide-img { aspect-ratio: 16/9; }
+.amo-occasion-card { padding: 3rem; border: 1px solid rgba(26,26,26,0.1); text-align: center; }
+.amo-occasion-card .amo-h3 { margin-bottom: 1rem; color: var(--amo-gold-deep); }
+
+/* 5. BRAND STORY */
+.amo-story-hero { aspect-ratio: 21/9; width: 100%; margin-bottom: var(--amo-spacing-xl); }
+.amo-story-detail { aspect-ratio: 4/5; width: 100%; }
+.amo-story-content { max-width: 800px; margin: 0 auto var(--amo-spacing-xl); text-align: center; }
+.amo-story-p { font-size: 1.125rem; line-height: 1.8; color: var(--amo-charcoal); }
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.amo-footer { background: var(--amo-black); color: var(--amo-off-white); padding: var(--amo-spacing-lg) 5% 2rem; margin-top: auto; }
+.amo-footer-inner { display: flex; justify-content: space-between; align-items: flex-start; max-width: var(--amo-container); margin: 0 auto var(--amo-spacing-md); }
+.amo-footer-brand { font-family: var(--amo-font-heading); font-size: 1.5rem; letter-spacing: 0.1em; line-height: 1.2; }
+.amo-footer-tag { font-family: var(--amo-font-body); font-size: 0.75rem; letter-spacing: 0.2em; color: var(--amo-gold); display: block; margin-top: 0.5rem; }
+.amo-footer-links { display: flex; gap: 2.5rem; }
+.amo-footer-links a { font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--amo-off-white); }
+.amo-footer-links a:hover, .amo-footer-links a:focus { color: var(--amo-gold); }
+.amo-footer-bottom { text-align: center; font-size: 0.75rem; color: var(--amo-charcoal); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN QA
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .amo-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .amo-grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .amo-nav-desktop { display: none; }
+  .amo-menu-btn { display: block; }
+  .amo-grid-2, .amo-grid-3, .amo-grid-4 { grid-template-columns: 1fr; }
+  
+  /* Shop */
+  .amo-shop-filter { justify-content: flex-start; padding: 0 0 1rem; gap: 1.5rem; margin: 0 5% var(--amo-spacing-lg); }
+  
+  /* Lookbook */
+  .amo-lb-grid-left, .amo-lb-grid-right { grid-template-columns: 1fr; gap: 2rem; }
+  .amo-lb-grid-right .amo-lb-text { grid-column: 1; margin-left: 0; }
+  .amo-lb-grid-left .amo-lb-text, .amo-lb-grid-right .amo-lb-text { order: 2; }
+  .amo-lb-img-main { order: 1; }
+  .amo-lb-img-full { aspect-ratio: 4/3; }
+
+  /* Guide */
+  .amo-guide-row { grid-template-columns: 1fr; gap: 2rem; padding-bottom: 3rem; }
+  .amo-guide-row:nth-child(even) .amo-guide-text { order: 2; }
+  .amo-guide-row:nth-child(even) .amo-guide-img { order: 1; }
+  .amo-guide-text { padding: 0; text-align: center; }
+  .amo-occasion-card { padding: 2rem 1rem; }
+
+  /* Story */
+  .amo-story-hero { aspect-ratio: 16/9; }
+  .amo-story-p { font-size: 1rem; }
+
+  /* Footer */
+  .amo-footer-inner { flex-direction: column; gap: var(--amo-spacing-md); text-align: center; align-items: center; }
+  .amo-footer-links { flex-direction: column; gap: 1.5rem; }
+}
+
+[executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
