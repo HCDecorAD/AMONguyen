@@ -1,8 +1,6 @@
-[Reading 23 lines from start (total: 23 lines, 0 remaining)]
-
 {
   "amo_asset_mapping": {
-    "home-hero": "",
+    "home-hero": "assets/images/amo-hero.jpg",
     "home-cat-loafer": "",
     "home-cat-oxford": "",
     "home-cat-sneaker": "",
@@ -12,16 +10,14 @@
     "shop-product-2": "",
     "shop-product-3": "",
     "shop-product-4": "",
-    "lookbook-hero": "",
+    "lookbook-hero": "assets/images/amo-hero.jpg",
     "lookbook-business": "",
     "lookbook-casual": "",
     "lookbook-weekend": "",
     "guide-loafer": "",
     "guide-oxford": "",
-    "story-hero": "",
+    "story-hero": "assets/images/amo-hero.jpg",
     "story-detail": ""
   },
-  "note": "Master Agent: Inject real asset CDN URLs. CSS/JS will handle fade-in gracefully via `.is-loaded`."
+  "note": "Real AMO brand assets mapped locally. Empty keys intentionally await real product/editorial photography."
 }
-
-[executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
