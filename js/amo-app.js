@@ -22,6 +22,7 @@ window.AMO.App = (function() {
     const header = document.querySelector('.amo-header');
     const menuBtn = document.querySelector('.amo-menu-btn');
     const mobileNav = document.querySelector('.amo-nav-mobile');
+    let focusTrapHandler = null;
     if (!header || !menuBtn || !mobileNav) return;
 
     window.addEventListener('scroll', debounce(() => {
@@ -34,8 +35,29 @@ window.AMO.App = (function() {
       menuBtn.classList.toggle('is-active', isOpen);
       menuBtn.setAttribute('aria-expanded', isOpen);
       document.body.style.overflow = isOpen ? 'hidden' : '';
-      if (isOpen) mobileNav.querySelector('a')?.focus();
-      else menuBtn.focus();
+      if (isOpen) {
+        const links = Array.from(mobileNav.querySelectorAll('a[href]'));
+        if (links.length) {
+          const first = links[0];
+          const last = links[links.length - 1];
+          focusTrapHandler = (e) => {
+            if (e.key !== 'Tab') return;
+            if (e.shiftKey && document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          };
+          document.addEventListener('keydown', focusTrapHandler);
+          first.focus();
+        }
+      } else {
+        if (focusTrapHandler) document.removeEventListener('keydown', focusTrapHandler);
+        focusTrapHandler = null;
+        menuBtn.focus();
+      }
     };
 
     menuBtn.addEventListener('click', () => toggleMenu());
