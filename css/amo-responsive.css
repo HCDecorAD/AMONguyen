@@ -48,3 +48,37 @@
 }
 
 [executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
+/* AMO Home V3 responsive */
+@media (max-width: 900px){
+  .amo-home-hero-content{margin-left:6%;width:88%;padding-bottom:5rem}
+  .amo-home-hero-shade{background:linear-gradient(0deg,rgba(8,8,7,.88) 0%,rgba(8,8,7,.46) 56%,rgba(8,8,7,.15) 100%)}
+  .amo-home-intro{grid-template-columns:1fr;gap:1.4rem}
+  .amo-home-style-grid{grid-template-columns:repeat(2,1fr);gap:2rem 1rem}
+  .amo-home-editorial{grid-template-columns:1fr}
+  .amo-home-editorial-image{min-height:62vw}
+  .amo-home-services{grid-template-columns:1fr}
+  .amo-home-services>div,.amo-home-services>div:first-child{padding:2rem 0;border-left:0;border-top:1px solid rgba(26,26,26,.12)}
+}
+@media (max-width: 600px){
+  .amo-home .amo-header-inner{height:72px;padding:0 6%}
+  .amo-home .amo-logo{font-size:1.25rem;letter-spacing:.18em}
+  .amo-home-hero{min-height:100svh}
+  .amo-home-hero-img{object-position:center 48%}
+  .amo-home-hero-content{margin:0 6%;width:88%;padding:8rem 0 4.2rem}
+  .amo-home-hero h1{font-size:clamp(3rem,14vw,4.5rem)}
+  .amo-home-lead{font-size:.92rem;line-height:1.65;margin:1.4rem 0 1.8rem}
+  .amo-home-actions{gap:1.2rem}
+  .amo-home-actions .amo-btn{width:auto;padding:.9rem 1.3rem}
+  .amo-home-scroll{display:none}
+  .amo-home-intro{padding-top:5rem;padding-bottom:5rem}
+  .amo-home-intro h2{font-size:2.6rem}
+  .amo-home-section-head{align-items:flex-start;gap:1rem}
+  .amo-home-section-head>.amo-home-text-link{display:none}
+  .amo-home-style-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2.2rem .75rem}
+  .amo-home-style-card>div{aspect-ratio:4/5;margin-bottom:.9rem}
+  .amo-home-style-card h3{font-size:1.05rem}
+  .amo-home-style-card p{font-size:.57rem}
+  .amo-home-editorial-image{min-height:115vw}
+  .amo-home-editorial-copy{padding:4rem 6%}
+  .amo-home-editorial-copy h2{font-size:2.75rem}
+}
