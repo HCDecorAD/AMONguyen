@@ -1,4 +1,4 @@
-[Reading 25 lines from start (total: 25 lines, 0 remaining)]
+[Reading 23 lines from start (total: 23 lines, 0 remaining)]
 
 {
   "amo_asset_mapping": {
@@ -16,14 +16,12 @@
     "lookbook-business": "",
     "lookbook-casual": "",
     "lookbook-weekend": "",
-    "lookbook-evening": "",
     "guide-loafer": "",
     "guide-oxford": "",
-    "guide-derby": "",
     "story-hero": "",
     "story-detail": ""
   },
-  "note": "Master Agent: Inject real asset URLs into these keys. The JS logic will detect the src and trigger the fade-in animation automatically."
+  "note": "Master Agent: Inject real asset CDN URLs. CSS/JS will handle fade-in gracefully via `.is-loaded`."
 }
 
 [executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
