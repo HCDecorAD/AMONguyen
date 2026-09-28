@@ -68,13 +68,25 @@ window.AMO.App = (function() {
   };
 
   const initAssets = () => {
-    document.querySelectorAll('img[data-amo-asset]').forEach(img => {
-      const src = img.getAttribute('src');
-      if (src && src.trim() !== '') {
-        img.addEventListener('load', () => img.classList.add('is-loaded'));
-        if (img.complete) img.classList.add('is-loaded');
-      }
-    });
+    const applyMap = (map = {}) => {
+      document.querySelectorAll('img[data-amo-asset]').forEach(img => {
+        const key = img.dataset.amoAsset;
+        if (!img.getAttribute('src') && map[key]) img.src = map[key];
+        const src = img.getAttribute('src');
+        if (src && src.trim() !== '') {
+          img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
+          img.addEventListener('error', () => img.classList.add('is-error'), { once: true });
+          if (img.complete && img.naturalWidth) img.classList.add('is-loaded');
+        }
+      });
+    };
+    applyMap();
+    if (window.location.protocol !== 'file:' && window.fetch) {
+      fetch('config/amo-assets.json', { credentials: 'same-origin' })
+        .then(r => r.ok ? r.json() : null)
+        .then(j => { if (j) applyMap(j.amo_asset_mapping || {}); })
+        .catch(() => {});
+    }
   };
 
   const setActiveNav = () => {
