@@ -1,64 +1,76 @@
-[Reading 72 lines from start (total: 72 lines, 0 remaining)]
+[Reading 84 lines from start (total: 84 lines, 0 remaining)]
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact | AMO NGUYEN</title>
+  <title>Contact | AMO NGUYEN - Giày Si Hiệu Nam</title>
+  <meta name="description" content="Liên hệ AMO NGUYEN để nhận tư vấn về các mẫu giày si hiệu nam chính hãng.">
+  <meta property="og:title" content="Contact | AMO NGUYEN">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="css/amo-style.css">
   <link rel="stylesheet" href="css/amo-responsive.css">
+  <style>
+    .amo-form-group { margin-bottom: 1.5rem; }
+    .amo-input { width: 100%; padding: 1rem; border: 1px solid rgba(26,26,26,0.2); background: transparent; font-family: var(--amo-font-body); font-size: 1rem; transition: border-color 0.3s ease; color: var(--amo-black); }
+    .amo-input:focus-visible { outline: none; border-color: var(--amo-gold-deep); box-shadow: 0 0 0 1px var(--amo-gold-deep); }
+    .amo-input::placeholder { color: rgba(26,26,26,0.5); }
+  </style>
 </head>
 <body>
-  <header class="amo-header">
+  <header class="amo-header" role="banner">
     <div class="amo-header-inner">
-      <a href="index.html" class="amo-logo" data-amo-logo>AMO NGUYEN</a>
-      <nav class="amo-nav-desktop">
+      <a href="index.html" class="amo-logo" data-amo-logo aria-label="Trang chủ AMO NGUYEN">AMO NGUYEN</a>
+      <nav class="amo-nav-desktop" role="navigation" aria-label="Menu chính">
         <a href="shop.html">Shop</a>
         <a href="lookbook.html">Lookbook</a>
         <a href="guide.html">Guide</a>
         <a href="story.html">Story</a>
-        <a href="contact.html" class="is-active">Contact</a>
+        <a href="contact.html" class="is-active" aria-current="page">Contact</a>
       </nav>
-      <button class="amo-menu-btn" aria-label="Menu" aria-expanded="false">
+      <button class="amo-menu-btn" aria-label="Mở menu di động" aria-expanded="false" aria-controls="mobile-nav">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
   
-  <nav class="amo-nav-mobile">
+  <nav id="mobile-nav" class="amo-nav-mobile" role="navigation" aria-label="Menu di động">
     <a href="shop.html">Shop</a>
     <a href="lookbook.html">Lookbook</a>
     <a href="guide.html">Guide</a>
     <a href="story.html">Story</a>
-    <a href="contact.html">Contact</a>
+    <a href="contact.html" aria-current="page">Contact</a>
   </nav>
 
-  <main>
-    <section class="amo-page-header amo-reveal">
-      <h1 class="amo-h1">PRIVATE INQUIRIES</h1>
-      <p class="amo-caption" style="margin-top: 1rem;">Connect with AMO NGUYEN</p>
+  <main role="main">
+    <section class="amo-page-header amo-reveal" aria-labelledby="contact-title">
+      <h1 id="contact-title" class="amo-h1">KẾT NỐI</h1>
+      <p class="amo-caption" style="margin-top: 1rem;">Hỗ trợ tư vấn thông tin sản phẩm</p>
     </section>
 
     <section class="amo-container amo-reveal" style="max-width: 600px; margin-bottom: var(--amo-space-xl);">
-      <form onsubmit="event.preventDefault();" style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <form id="amo-contact-form" onsubmit="event.preventDefault(); alert('Cảm ơn bạn đã liên hệ. Hệ thống đang ghi nhận thông tin.');" aria-label="Form liên hệ tư vấn">
         <div class="amo-form-group">
-          <input type="text" class="amo-input" placeholder="Full Name" aria-label="Full Name" required>
+          <label for="contact-name" class="amo-caption" style="display:block; margin-bottom:0.5rem;">Họ và Tên</label>
+          <input type="text" id="contact-name" class="amo-input" placeholder="Nhập họ và tên..." required>
         </div>
         <div class="amo-form-group">
-          <input type="email" class="amo-input" placeholder="Email Address" aria-label="Email Address" required>
+          <label for="contact-email" class="amo-caption" style="display:block; margin-bottom:0.5rem;">Email</label>
+          <input type="email" id="contact-email" class="amo-input" placeholder="Nhập địa chỉ email..." required>
         </div>
         <div class="amo-form-group">
-          <textarea class="amo-input" placeholder="Your Message" rows="5" aria-label="Your Message" required></textarea>
+          <label for="contact-message" class="amo-caption" style="display:block; margin-bottom:0.5rem;">Nội dung</label>
+          <textarea id="contact-message" class="amo-input" placeholder="Nhập nội dung cần hỗ trợ..." rows="5" required></textarea>
         </div>
-        <button type="submit" class="amo-btn amo-btn-primary">Send Inquiry</button>
+        <button type="submit" class="amo-btn amo-btn-primary" style="width: 100%;">Gửi Yêu Cầu</button>
       </form>
     </section>
   </main>
 
-  <footer class="amo-footer">
+  <footer class="amo-footer" role="contentinfo">
     <div class="amo-footer-inner">
-      <div class="amo-footer-brand">AMO NGUYEN<span class="amo-footer-tag">GIÀY SI HIỆU NAM</span></div>
+      <div class="amo-footer-brand">AMO NGUYEN<span class="amo-footer-tag">GIÀY SI HIỆU NAM • CHÍNH HÃNG</span></div>
       <div class="amo-footer-links">
         <a href="shop.html">Shop</a>
         <a href="lookbook.html">Lookbook</a>
@@ -66,7 +78,7 @@
         <a href="story.html">Story</a>
       </div>
     </div>
-    <div class="amo-footer-bottom">&copy; 2026 AMO NGUYEN. Crafted for Elegance.</div>
+    <div class="amo-footer-bottom">&copy; 2026 AMO NGUYEN. Tinh Tuyển Phong Cách.</div>
   </footer>
 
   <script src="js/amo-app.js"></script>
