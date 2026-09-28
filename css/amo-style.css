@@ -1,7 +1,7 @@
-[Reading 125 lines from start (total: 125 lines, 0 remaining)]
+[Reading 146 lines from start (total: 146 lines, 0 remaining)]
 
 /* ==========================================================================
-   AMO NGUYEN - PRODUCTION CORE STYLES (V2)
+   AMO NGUYEN - PRODUCTION CORE STYLES (FINAL)
    ========================================================================== */
 :root {
   --amo-gold: #D4AF37;
@@ -21,7 +21,7 @@
   
   --amo-container: 1440px;
   --amo-ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --amo-transition: all 0.6s var(--amo-ease);
+  --amo-transition: all 0.4s var(--amo-ease);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -34,9 +34,9 @@ body {
 }
 main { flex: 1; }
 a { color: inherit; text-decoration: none; transition: var(--amo-transition); outline: none; }
-a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--amo-gold-deep); outline-offset: 4px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--amo-gold-deep); outline-offset: 4px; }
 img { max-width: 100%; height: auto; display: block; object-fit: cover; }
-button { font-family: var(--amo-font-body); }
+button, input, select, textarea { font-family: var(--amo-font-body); margin: 0; }
 
 /* Typography */
 .amo-h1 { font-family: var(--amo-font-heading); font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; }
@@ -54,18 +54,18 @@ button { font-family: var(--amo-font-body); }
 
 /* Components: Buttons & Links */
 .amo-btn {
-  display: inline-block; padding: 1rem 3rem; font-size: 0.8rem;
+  display: inline-flex; justify-content: center; align-items: center; padding: 1rem 3rem; font-size: 0.8rem;
   letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--amo-black);
-  cursor: pointer; transition: var(--amo-transition);
+  cursor: pointer; transition: var(--amo-transition); text-align: center;
 }
 .amo-btn-primary { background: var(--amo-black); color: var(--amo-off-white); }
-.amo-btn-primary:hover { background: var(--amo-gold); border-color: var(--amo-gold); color: var(--amo-black); }
+.amo-btn-primary:hover { background: var(--amo-gold-deep); border-color: var(--amo-gold-deep); color: var(--amo-black); }
 .amo-btn-secondary { background: transparent; color: var(--amo-black); }
 .amo-btn-secondary:hover { background: var(--amo-black); color: var(--amo-off-white); }
-.amo-link-line { border-bottom: 1px solid var(--amo-black); padding-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; }
+.amo-link-line { border-bottom: 1px solid var(--amo-black); padding-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; display: inline-block; }
 .amo-link-line:hover { color: var(--amo-gold-deep); border-color: var(--amo-gold-deep); }
 
-/* Asset Skeleton Loader */
+/* Asset Skeleton Loader & Error Fallback */
 .amo-asset-box { 
   background: linear-gradient(90deg, #E8E8E8 25%, #F5F5F5 50%, #E8E8E8 75%);
   background-size: 200% 100%; animation: amo-shimmer 2s infinite linear;
@@ -76,24 +76,30 @@ button { font-family: var(--amo-font-body); }
 .amo-asset-label { font-size: 0.7rem; letter-spacing: 0.1em; color: rgba(26,26,26,0.4); text-transform: uppercase; position: absolute; text-align: center; padding: 1rem; z-index: 1; }
 .amo-asset-img { width: 100%; height: 100%; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.8s ease; z-index: 2; }
 .amo-asset-img.is-loaded { opacity: 1; }
+.amo-asset-img.is-broken { display: none !important; } /* Ẩn ảnh vỡ để giữ lại khung Shimmer sang trọng */
 
 /* Reveal Animations */
 .amo-reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s var(--amo-ease); }
 .amo-reveal.is-visible { opacity: 1; transform: translateY(0); }
-@media (prefers-reduced-motion: reduce) { .amo-reveal { transition: none; opacity: 1; transform: none; animation: none; } .amo-asset-box { animation: none; background: #E8E8E8; } }
+@media (prefers-reduced-motion: reduce) { 
+  .amo-reveal { transition: none; opacity: 1; transform: none; animation: none; } 
+  .amo-asset-box { animation: none; background: #E8E8E8; } 
+}
 
 /* Header & Nav */
 .amo-header {
   position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
   background: rgba(245, 245, 245, 0.95); backdrop-filter: blur(10px);
-  border-bottom: 1px solid transparent; transition: var(--amo-transition);
+  border-bottom: 1px solid transparent; transition: background-color var(--amo-transition), border-color var(--amo-transition);
 }
 .amo-header.is-scrolled { border-bottom: 1px solid rgba(26,26,26,0.08); }
 .amo-header-inner { display: flex; justify-content: space-between; align-items: center; padding: 0 5%; height: 80px; max-width: var(--amo-container); margin: 0 auto; }
-.amo-logo { font-family: var(--amo-font-heading); font-size: 1.5rem; letter-spacing: 0.15em; text-transform: uppercase; z-index: 102; font-weight: 600; }
+.amo-logo { font-family: var(--amo-font-heading); font-size: 1.5rem; letter-spacing: 0.15em; text-transform: uppercase; z-index: 102; font-weight: 600; display: block; }
 .amo-nav-desktop { display: flex; gap: 2.5rem; }
-.amo-nav-desktop a { font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; }
-.amo-nav-desktop a:hover, .amo-nav-desktop a.is-active { color: var(--amo-gold-deep); }
+.amo-nav-desktop a { font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; position: relative; padding: 0.5rem 0; }
+.amo-nav-desktop a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--amo-gold-deep); transform: scaleX(0); transition: transform 0.3s ease; transform-origin: right; }
+.amo-nav-desktop a:hover::after, .amo-nav-desktop a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.amo-nav-desktop a.is-active { color: var(--amo-gold-deep); }
 
 .amo-menu-btn { display: none; background: none; border: none; cursor: pointer; width: 30px; height: 20px; position: relative; z-index: 102; padding: 0; }
 .amo-menu-btn span { position: absolute; width: 100%; height: 1px; background: var(--amo-black); left: 0; transition: var(--amo-transition); }
@@ -108,22 +114,37 @@ button { font-family: var(--amo-font-body); }
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
   background: var(--amo-off-white); z-index: 90;
   display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2.5rem;
-  opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+  opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s;
 }
-.amo-nav-mobile.is-open { opacity: 1; pointer-events: auto; }
+.amo-nav-mobile.is-open { opacity: 1; visibility: visible; }
 .amo-nav-mobile a { font-family: var(--amo-font-heading); font-size: 2rem; color: var(--amo-black); }
+.amo-nav-mobile a.is-active { color: var(--amo-gold-deep); }
 
 /* Footer */
 .amo-footer { background: var(--amo-black); color: var(--amo-off-white); padding: var(--amo-space-lg) 5% 2rem; margin-top: auto; }
-.amo-footer-inner { display: flex; justify-content: space-between; align-items: flex-start; max-width: var(--amo-container); margin: 0 auto var(--amo-space-md); }
+.amo-footer-inner { display: flex; justify-content: space-between; align-items: flex-start; max-width: var(--amo-container); margin: 0 auto var(--amo-space-md); flex-wrap: wrap; gap: 2rem; }
 .amo-footer-brand { font-family: var(--amo-font-heading); font-size: 1.5rem; letter-spacing: 0.1em; line-height: 1.2; }
 .amo-footer-tag { font-family: var(--amo-font-body); font-size: 0.75rem; letter-spacing: 0.2em; color: var(--amo-gold); display: block; margin-top: 0.5rem; }
-.amo-footer-links { display: flex; gap: 2.5rem; }
+.amo-footer-links { display: flex; gap: 2.5rem; flex-wrap: wrap; }
 .amo-footer-links a { font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--amo-off-white); }
 .amo-footer-links a:hover { color: var(--amo-gold); }
 .amo-footer-bottom { text-align: center; font-size: 0.75rem; color: var(--amo-charcoal); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; }
 
 /* Global Utilities */
 .amo-page-header { padding: calc(80px + var(--amo-space-xl)) 5% var(--amo-space-md); text-align: center; }
+
+/* Shop Components */
+.amo-product-card { display: flex; flex-direction: column; gap: 1rem; cursor: pointer; transition: transform 0.4s ease; text-decoration: none; border: 1px solid transparent; }
+.amo-product-card:hover, .amo-product-card:focus-visible { transform: translateY(-5px); border-color: rgba(26,26,26,0.05); }
+.amo-product-img { aspect-ratio: 3/4; }
+.amo-product-info { padding: 0 1rem 1rem; text-align: center; }
+.amo-product-name { font-family: var(--amo-font-body); font-size: 1rem; font-weight: 400; margin: 0 0 0.5rem; color: var(--amo-black); }
+.amo-product-status { font-size: 0.85rem; color: var(--amo-charcoal); margin: 0; letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* Forms */
+.amo-form-group { margin-bottom: 1.5rem; }
+.amo-input { width: 100%; padding: 1rem; border: 1px solid rgba(26,26,26,0.2); background: transparent; font-family: var(--amo-font-body); font-size: 1rem; transition: border-color 0.3s ease; color: var(--amo-black); border-radius: 0; }
+.amo-input:focus { outline: none; border-color: var(--amo-gold-deep); box-shadow: inset 0 -1px 0 var(--amo-gold-deep); }
+.amo-input::placeholder { color: rgba(26,26,26,0.5); }
 
 [executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
