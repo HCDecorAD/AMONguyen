@@ -75,7 +75,7 @@ window.AMO.App = (function() {
         const src = img.getAttribute('src');
         if (src && src.trim() !== '') {
           img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
-          img.addEventListener('error', () => img.classList.add('is-error'), { once: true });
+          img.addEventListener('error', () => img.classList.add('is-broken'), { once: true });
           if (img.complete && img.naturalWidth) img.classList.add('is-loaded');
         }
       });
