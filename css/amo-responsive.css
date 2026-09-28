@@ -1,31 +1,30 @@
 [Reading 46 lines from start (total: 46 lines, 0 remaining)]
 
 /* ==========================================================================
-   AMO NGUYEN - RESPONSIVE SYSTEM
+   AMO NGUYEN - PRODUCTION RESPONSIVE STYLES (V2)
    ========================================================================== */
-
 @media (max-width: 1440px) {
   .amo-container { padding: 0 4%; }
 }
 
 @media (max-width: 1024px) {
   .amo-grid-4 { grid-template-columns: repeat(2, 1fr); gap: var(--amo-space-md); }
-  .amo-grid-3 { grid-template-columns: repeat(2, 1fr); }
   .amo-lb-row, .amo-lb-row.reverse { gap: var(--amo-space-md); }
 }
 
 @media (max-width: 768px) {
-  /* Navigation */
   .amo-nav-desktop { display: none; }
   .amo-menu-btn { display: block; }
+  .amo-grid-2, .amo-grid-4 { grid-template-columns: 1fr; }
   
-  /* Grids */
-  .amo-grid-2, .amo-grid-3, .amo-grid-4 { grid-template-columns: 1fr; }
+  /* Shop Empty & Filter Mobile Drawer (CSS implementation) */
+  .amo-shop-filter { justify-content: flex-start; padding: 0 0 1rem; gap: 1.5rem; overflow-x: auto; scrollbar-width: none; }
+  .amo-shop-filter::-webkit-scrollbar { display: none; }
   
   /* Lookbook */
   .amo-lb-row, .amo-lb-row.reverse { grid-template-columns: 1fr; gap: 2rem; }
   .amo-lb-row.reverse .amo-lb-text { grid-column: 1; margin-left: 0; }
-  .amo-lb-row .amo-lb-text, .amo-lb-row.reverse .amo-lb-text { order: 2; }
+  .amo-lb-row .amo-lb-text, .amo-lb-row.reverse .amo-lb-text { order: 2; text-align: center; }
   .amo-lb-row .amo-asset-box, .amo-lb-row.reverse .amo-asset-box { order: 1; }
   
   /* Guide */
@@ -36,15 +35,16 @@
   /* Footer */
   .amo-footer-inner { flex-direction: column; gap: var(--amo-space-md); text-align: center; align-items: center; }
   .amo-footer-links { flex-direction: column; gap: 1.5rem; }
-  
-  /* Shop Filter Mobile Drawer behavior handled via JS/CSS */
-  .amo-shop-filter { justify-content: flex-start; padding: 0 0 1rem; gap: 1.5rem; overflow-x: auto; scrollbar-width: none; }
-  .amo-shop-filter::-webkit-scrollbar { display: none; }
 }
 
+/* Mobile Landscape & Extreme Small */
+@media (max-width: 850px) and (orientation: landscape) {
+  .amo-nav-mobile { padding-top: 80px; justify-content: flex-start; overflow-y: auto; gap: 1rem; }
+  .amo-home-hero-content { padding: 2rem; }
+}
 @media (max-width: 390px) {
-  .amo-h1 { font-size: 2.5rem; }
   .amo-btn { width: 100%; text-align: center; }
+  .amo-product-img { aspect-ratio: 4/5; }
 }
 
 [executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
