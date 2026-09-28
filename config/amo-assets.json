@@ -1,23 +1,23 @@
 {
-  "amo_asset_mapping": {
-    "home-hero": "assets/images/amo-hero.jpg",
-    "home-cat-loafer": "",
-    "home-cat-oxford": "",
-    "home-cat-sneaker": "",
-    "home-cat-boots": "",
-    "home-editorial": "",
-    "shop-product-1": "",
-    "shop-product-2": "",
-    "shop-product-3": "",
-    "shop-product-4": "",
-    "lookbook-hero": "assets/images/amo-hero.jpg",
-    "lookbook-business": "",
-    "lookbook-casual": "",
-    "lookbook-weekend": "",
-    "guide-loafer": "",
-    "guide-oxford": "",
-    "story-hero": "assets/images/amo-hero.jpg",
-    "story-detail": ""
-  },
-  "note": "Real AMO brand assets mapped locally. Empty keys intentionally await real product/editorial photography."
+    "amo_asset_mapping":  {
+                              "home-hero":  "assets/images/amo-hero.jpg",
+                              "home-cat-loafer":  "assets/images/demo/shoe-demo-3.jpg",
+                              "home-cat-oxford":  "assets/images/demo/shoe-demo-1.jpg",
+                              "home-cat-sneaker":  "assets/images/demo/shoe-demo-4.jpg",
+                              "home-cat-boots":  "assets/images/demo/shoe-demo-6.jpg",
+                              "home-editorial":  "assets/images/demo/shoe-demo-2.jpg",
+                              "shop-product-1":  "assets/images/demo/shoe-demo-1.jpg",
+                              "shop-product-2":  "assets/images/demo/shoe-demo-2.jpg",
+                              "shop-product-3":  "assets/images/demo/shoe-demo-3.jpg",
+                              "shop-product-4":  "assets/images/demo/shoe-demo-4.jpg",
+                              "lookbook-hero":  "assets/images/amo-hero.jpg",
+                              "lookbook-business":  "assets/images/demo/shoe-demo-1.jpg",
+                              "lookbook-casual":  "assets/images/demo/shoe-demo-3.jpg",
+                              "lookbook-weekend":  "assets/images/demo/shoe-demo-2.jpg",
+                              "guide-loafer":  "assets/images/demo/shoe-demo-3.jpg",
+                              "guide-oxford":  "assets/images/demo/shoe-demo-1.jpg",
+                              "story-hero":  "assets/images/amo-hero.jpg",
+                              "story-detail":  "assets/images/demo/shoe-demo-5.jpg"
+                          },
+    "note":  "DEMO visual references: selected images from thegioida.vn with user permission. Product names, prices, stock and commercial claims are not imported."
 }
