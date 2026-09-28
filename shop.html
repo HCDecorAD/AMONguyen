@@ -1,24 +1,31 @@
-[Reading 139 lines from start (total: 139 lines, 0 remaining)]
+[Reading 135 lines from start (total: 135 lines, 0 remaining)]
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shop | AMO NGUYEN</title>
-  <meta name="description" content="Khám phá danh mục giày nam AMO NGUYEN theo phong cách Quiet Luxury.">
+  <title>Shop | AMO NGUYEN - Giày Si Hiệu Nam Chính Hãng</title>
+  <meta name="description" content="Danh mục sản phẩm giày si hiệu nam chính hãng từ AMO NGUYEN. Đang chuẩn bị ra mắt.">
+  <meta property="og:title" content="Shop | AMO NGUYEN">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="css/amo-style.css">
   <link rel="stylesheet" href="css/amo-responsive.css">
   <style>
-    .amo-shop-toolbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(26,26,26,0.1); margin-bottom: var(--amo-space-lg); padding-bottom: 1rem; }
-    .amo-shop-filter { display: flex; gap: 2rem; }
-    .amo-filter-btn { background: none; border: none; padding: 0.5rem 0; cursor: pointer; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amo-charcoal); transition: var(--amo-transition); border-bottom: 2px solid transparent; }
-    .amo-filter-btn:hover, .amo-filter-btn.is-active { color: var(--amo-gold-deep); border-bottom: 2px solid var(--amo-gold-deep); }
-    .amo-shop-search { font-family: var(--amo-font-body); padding: 0.5rem; border: none; background: transparent; font-size: 0.85rem; border-bottom: 1px solid var(--amo-black); outline: none; }
+    .amo-shop-toolbar { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(26,26,26,0.1); margin-bottom: var(--amo-space-lg); padding-bottom: 1rem; flex-wrap: wrap; gap: 1.5rem; }
+    .amo-shop-filter { display: flex; gap: 2rem; overflow-x: auto; scrollbar-width: none; }
+    .amo-shop-filter::-webkit-scrollbar { display: none; }
+    .amo-filter-btn { background: none; border: none; padding: 0.5rem 0; cursor: pointer; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amo-charcoal); transition: var(--amo-transition); border-bottom: 2px solid transparent; white-space: nowrap; }
+    .amo-filter-btn:hover, .amo-filter-btn.is-active, .amo-filter-btn:focus-visible { color: var(--amo-gold-deep); border-bottom: 2px solid var(--amo-gold-deep); outline: none; }
+    
+    .amo-shop-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .amo-shop-input { font-family: var(--amo-font-body); padding: 0.5rem; border: none; background: transparent; font-size: 0.85rem; border-bottom: 1px solid rgba(26,26,26,0.2); outline: none; color: var(--amo-black); transition: border-color 0.3s; }
+    .amo-shop-input:focus-visible { border-color: var(--amo-gold-deep); }
+    
     .amo-shop-empty-state { text-align: center; padding: var(--amo-space-xl) 5%; display: none; }
-    /* Product Card specific for shop */
+    
     .amo-product-card { display: flex; flex-direction: column; gap: 1rem; cursor: pointer; transition: transform 0.4s ease; text-decoration: none; border: 1px solid transparent; }
-    .amo-product-card:hover { transform: translateY(-5px); border-color: rgba(26,26,26,0.05); }
+    .amo-product-card:hover, .amo-product-card:focus-visible { transform: translateY(-5px); border-color: rgba(26,26,26,0.05); outline: none; }
     .amo-product-img { aspect-ratio: 3/4; }
     .amo-product-info { padding: 0 1rem 1rem; text-align: center; }
     .amo-product-name { font-family: var(--amo-font-body); font-size: 1rem; font-weight: 400; margin: 0 0 0.5rem; color: var(--amo-black); }
@@ -28,103 +35,92 @@
 <body>
   <header class="amo-header" role="banner">
     <div class="amo-header-inner">
-      <a href="index.html" class="amo-logo" data-amo-logo>AMO NGUYEN</a>
-      <nav class="amo-nav-desktop" role="navigation">
+      <a href="index.html" class="amo-logo" data-amo-logo aria-label="Trang chủ AMO NGUYEN">AMO NGUYEN</a>
+      <nav class="amo-nav-desktop" role="navigation" aria-label="Menu chính">
         <a href="shop.html" class="is-active" aria-current="page">Shop</a>
         <a href="lookbook.html">Lookbook</a>
         <a href="guide.html">Guide</a>
         <a href="story.html">Story</a>
         <a href="contact.html">Contact</a>
       </nav>
-      <button class="amo-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+      <button class="amo-menu-btn" aria-label="Mở menu di động" aria-expanded="false" aria-controls="mobile-nav">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
   
-  <nav class="amo-nav-mobile" role="navigation">
-    <a href="shop.html">Shop</a>
+  <nav id="mobile-nav" class="amo-nav-mobile" role="navigation" aria-label="Menu di động">
+    <a href="shop.html" aria-current="page">Shop</a>
     <a href="lookbook.html">Lookbook</a>
     <a href="guide.html">Guide</a>
     <a href="story.html">Story</a>
     <a href="contact.html">Contact</a>
   </nav>
 
-  <main class="amo-container" style="min-height: 80vh;">
-    <section class="amo-page-header amo-reveal">
-      <h1 class="amo-h1">Shop</h1>
-      <p class="amo-caption" style="margin-top: 1rem;">Curated Men's Footwear</p>
+  <main class="amo-container" style="min-height: 80vh;" role="main">
+    <section class="amo-page-header amo-reveal" aria-labelledby="shop-title">
+      <h1 id="shop-title" class="amo-h1">BỘ SƯU TẬP</h1>
+      <p class="amo-caption" style="margin-top: 1rem;">Đang chuẩn bị dữ liệu danh mục</p>
     </section>
 
-    <!-- Toolbar: Filter & Search Placeholder -->
     <div class="amo-shop-toolbar amo-reveal">
-      <div class="amo-shop-filter" role="tablist">
-        <button class="amo-filter-btn is-active" data-filter="all" role="tab">All</button>
-        <button class="amo-filter-btn" data-filter="loafers" role="tab">Loafers</button>
-        <button class="amo-filter-btn" data-filter="oxford" role="tab">Oxford & Derby</button>
-        <button class="amo-filter-btn" data-filter="sneakers" role="tab">Sneakers</button>
-        <button class="amo-filter-btn" data-filter="boots" role="tab">Boots</button>
+      <div class="amo-shop-filter" role="tablist" aria-label="Lọc danh mục sản phẩm">
+        <button class="amo-filter-btn is-active" data-filter="all" role="tab" aria-selected="true">Tất cả</button>
+        <button class="amo-filter-btn" data-filter="loafers" role="tab" aria-selected="false">Loafers</button>
+        <button class="amo-filter-btn" data-filter="oxford" role="tab" aria-selected="false">Oxford & Derby</button>
+        <button class="amo-filter-btn" data-filter="sneakers" role="tab" aria-selected="false">Sneakers</button>
+        <button class="amo-filter-btn" data-filter="boots" role="tab" aria-selected="false">Boots</button>
       </div>
-      <input type="text" class="amo-shop-search" placeholder="Search catalog..." aria-label="Search Catalog" readonly disabled>
-    </div>
-
-    <!-- Empty State -->
-    <div class="amo-shop-empty-state">
-      <h3 class="amo-h3" style="color: var(--amo-charcoal); margin-bottom: 1rem;">Collection Updates Pending</h3>
-      <p class="amo-body">Please check back later for our curated selection.</p>
-    </div>
-
-    <!-- Product Grid (Data Ready) -->
-    <div class="amo-grid-4 amo-reveal" style="margin-bottom: var(--amo-space-xl);">
-      <article class="amo-product-card" data-category="loafers" tabindex="0">
-        <div class="amo-asset-box amo-product-img">
-          <span class="amo-asset-label">[ READY FOR CATALOG DATA ]</span>
-          <img data-amo-asset="shop-product-1" alt="Product Image" class="amo-asset-img">
-        </div>
-        <div class="amo-product-info">
-          <h3 class="amo-product-name">[ PRODUCT NAME ]</h3>
-          <p class="amo-product-status">Ready for Data</p>
-        </div>
-      </article>
-
-      <article class="amo-product-card" data-category="oxford" tabindex="0">
-        <div class="amo-asset-box amo-product-img">
-          <span class="amo-asset-label">[ READY FOR CATALOG DATA ]</span>
-          <img data-amo-asset="shop-product-2" alt="Product Image" class="amo-asset-img">
-        </div>
-        <div class="amo-product-info">
-          <h3 class="amo-product-name">[ PRODUCT NAME ]</h3>
-          <p class="amo-product-status">Ready for Data</p>
-        </div>
-      </article>
-
-      <article class="amo-product-card" data-category="sneakers" tabindex="0">
-        <div class="amo-asset-box amo-product-img">
-          <span class="amo-asset-label">[ READY FOR CATALOG DATA ]</span>
-          <img data-amo-asset="shop-product-3" alt="Product Image" class="amo-asset-img">
-        </div>
-        <div class="amo-product-info">
-          <h3 class="amo-product-name">[ PRODUCT NAME ]</h3>
-          <p class="amo-product-status">Ready for Data</p>
-        </div>
-      </article>
       
-      <article class="amo-product-card" data-category="boots" tabindex="0">
-        <div class="amo-asset-box amo-product-img">
-          <span class="amo-asset-label">[ READY FOR CATALOG DATA ]</span>
-          <img data-amo-asset="shop-product-4" alt="Product Image" class="amo-asset-img">
+      <div class="amo-shop-actions">
+        <input type="text" id="amoSearch" class="amo-shop-input" placeholder="Tìm kiếm..." aria-label="Tìm kiếm sản phẩm">
+        <select id="amoSort" class="amo-shop-input" aria-label="Sắp xếp sản phẩm">
+          <option value="newest">Mới nhất</option>
+          <option value="price-asc">Giá: Thấp đến Cao</option>
+          <option value="price-desc">Giá: Cao đến Thấp</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Empty/Loading State Hook -->
+    <div id="amoEmptyState" class="amo-shop-empty-state" aria-live="polite">
+      <h3 class="amo-h3" style="color: var(--amo-charcoal); margin-bottom: 1rem;">Chưa có sản phẩm phù hợp</h3>
+      <p class="amo-body">Vui lòng thử lại với từ khóa hoặc danh mục khác.</p>
+    </div>
+
+    <!-- Catalog Hook (Ready for Data) -->
+    <div id="amoProductGrid" class="amo-grid-4 amo-reveal" style="margin-bottom: var(--amo-space-xl);" aria-live="polite">
+      
+      <!-- Component Placeholder 1 -->
+      <article class="amo-product-card" data-category="loafers" tabindex="0">
+        <div class="amo-asset-box amo-product-img" aria-hidden="true">
+          <span class="amo-asset-label">[ HÌNH ẢNH SẢN PHẨM ]</span>
+          <img data-amo-asset="shop-product-1" alt="" class="amo-asset-img" loading="lazy">
         </div>
         <div class="amo-product-info">
-          <h3 class="amo-product-name">[ PRODUCT NAME ]</h3>
-          <p class="amo-product-status">Ready for Data</p>
+          <h3 class="amo-product-name">[ TÊN SẢN PHẨM ]</h3>
+          <p class="amo-product-status">Đang cập nhật danh mục</p>
         </div>
       </article>
+
+      <!-- Component Placeholder 2 -->
+      <article class="amo-product-card" data-category="oxford" tabindex="0">
+        <div class="amo-asset-box amo-product-img" aria-hidden="true">
+          <span class="amo-asset-label">[ HÌNH ẢNH SẢN PHẨM ]</span>
+          <img data-amo-asset="shop-product-2" alt="" class="amo-asset-img" loading="lazy">
+        </div>
+        <div class="amo-product-info">
+          <h3 class="amo-product-name">[ TÊN SẢN PHẨM ]</h3>
+          <p class="amo-product-status">Đang cập nhật danh mục</p>
+        </div>
+      </article>
+
     </div>
   </main>
 
   <footer class="amo-footer" role="contentinfo">
     <div class="amo-footer-inner">
-      <div class="amo-footer-brand">AMO NGUYEN<span class="amo-footer-tag">GIÀY SI HIỆU NAM</span></div>
+      <div class="amo-footer-brand">AMO NGUYEN<span class="amo-footer-tag">GIÀY SI HIỆU NAM • CHÍNH HÃNG</span></div>
       <div class="amo-footer-links">
         <a href="shop.html">Shop</a>
         <a href="lookbook.html">Lookbook</a>
@@ -132,7 +128,7 @@
         <a href="story.html">Story</a>
       </div>
     </div>
-    <div class="amo-footer-bottom">&copy; 2026 AMO NGUYEN. Crafted for Elegance.</div>
+    <div class="amo-footer-bottom">&copy; 2026 AMO NGUYEN. Tinh Tuyển Phong Cách.</div>
   </footer>
 
   <script src="js/amo-app.js"></script>
