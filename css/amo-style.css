@@ -163,3 +163,8 @@ button, input, select, textarea { font-family: var(--amo-font-body); margin: 0; 
   .amo-product-info { padding: .9rem .7rem 1.1rem; }
   .amo-product-name { font-size: .88rem; }
 }
+/* Production visual visibility */
+.amo-asset-img[src] { opacity: 1; }
+main > section:first-child .amo-asset-img { object-fit: cover; filter: brightness(.76); }
+main > section:first-child > div[style*="z-index:2"] { color:#fff; text-shadow:0 2px 20px rgba(0,0,0,.35); }
+main > section:first-child > div[style*="z-index:2"] .amo-btn { text-shadow:none; }
