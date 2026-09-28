@@ -1,23 +1,32 @@
-[Reading 92 lines from start (total: 92 lines, 0 remaining)]
+[Reading 97 lines from start (total: 97 lines, 0 remaining)]
 
 /**
- * AMO NGUYEN - MASTER APP CORE
- * Namespace: window.AMO
+ * AMO NGUYEN - PRODUCTION APP LOGIC (V2)
+ * Namespace: window.AMO. Safely handles re-initialization and a11y.
  */
 window.AMO = window.AMO || {};
 
 window.AMO.App = (function() {
-  
+  if (window.AMO.isBooted) return window.AMO.App;
+
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => { clearTimeout(timeout); func(...args); };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
   const initNav = () => {
     const header = document.querySelector('.amo-header');
     const menuBtn = document.querySelector('.amo-menu-btn');
     const mobileNav = document.querySelector('.amo-nav-mobile');
-
     if (!header || !menuBtn || !mobileNav) return;
 
-    window.addEventListener('scroll', () => {
-      header.classList.toggle('is-scrolled', window.scrollY > 20);
-    }, { passive: true });
+    window.addEventListener('scroll', debounce(() => {
+      header.classList.toggle('is-scrolled', window.scrollY > 10);
+    }, 10), { passive: true });
 
     const toggleMenu = (forceClose = false) => {
       const isOpen = forceClose ? false : !mobileNav.classList.contains('is-open');
@@ -33,9 +42,9 @@ window.AMO.App = (function() {
       if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) toggleMenu(true);
     });
 
-    window.addEventListener('resize', () => {
+    window.addEventListener('resize', debounce(() => {
       if (window.innerWidth > 768 && mobileNav.classList.contains('is-open')) toggleMenu(true);
-    }, { passive: true });
+    }, 150), { passive: true });
   };
 
   const initReveal = () => {
@@ -47,21 +56,19 @@ window.AMO.App = (function() {
       return;
     }
     
-    const observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
+          obs.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-
+    }, { threshold: 0.05, rootMargin: "0px 0px -50px 0px" });
     elements.forEach(el => observer.observe(el));
   };
 
   const initAssets = () => {
-    const images = document.querySelectorAll('img[data-amo-asset]');
-    images.forEach(img => {
+    document.querySelectorAll('img[data-amo-asset]').forEach(img => {
       const src = img.getAttribute('src');
       if (src && src.trim() !== '') {
         img.addEventListener('load', () => img.classList.add('is-loaded'));
@@ -82,15 +89,13 @@ window.AMO.App = (function() {
     initReveal();
     initAssets();
     setActiveNav();
+    window.AMO.isBooted = true;
   };
 
   return { init };
 })();
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', window.AMO.App.init);
-} else {
-  window.AMO.App.init();
-}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.AMO.App.init);
+else window.AMO.App.init();
 
 [executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
