@@ -1,0 +1,13 @@
+{
+  "brand":"AMO NGUYEN",
+  "positioning":"Giày si hiệu Nam",
+  "tagline":"GIÀY SI HIỆU NAM • CHÍNH HÃNG",
+  "visual_direction":"quiet-luxury-gold-black",
+  "logo_system":{
+    "primary":"gold monogram + AMO NGUYEN",
+    "variants":["dark","light","square-icon","round-icon","horizontal","monochrome"]
+  },
+  "palette":{"gold_primary":"#D4AF37","gold_deep":"#B8860B","black":"#1A1A1A","charcoal":"#444444","off_white":"#F5F5F5"},
+  "commerce_rule":"Only verified authentic product/catalog data may be published. Never fabricate products, prices, inventory or brand authorization claims.",
+  "asset_pack":"AMO_Nguyen_Luxury_Brand_Kit.zip"
+}
