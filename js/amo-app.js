@@ -1,14 +1,13 @@
-[Reading 130 lines from start (total: 130 lines, 0 remaining)]
+[Reading 92 lines from start (total: 92 lines, 0 remaining)]
 
 /**
- * AMO NGUYEN - MASTER JS APPLICATION
- * Fully encapsulated namespace, no dependencies.
+ * AMO NGUYEN - MASTER APP CORE
+ * Namespace: window.AMO
  */
 window.AMO = window.AMO || {};
 
 window.AMO.App = (function() {
   
-  // 1. Header & Navigation Logic
   const initNav = () => {
     const header = document.querySelector('.amo-header');
     const menuBtn = document.querySelector('.amo-menu-btn');
@@ -16,12 +15,10 @@ window.AMO.App = (function() {
 
     if (!header || !menuBtn || !mobileNav) return;
 
-    // Scroll effect
     window.addEventListener('scroll', () => {
       header.classList.toggle('is-scrolled', window.scrollY > 20);
     }, { passive: true });
 
-    // Toggle Menu
     const toggleMenu = (forceClose = false) => {
       const isOpen = forceClose ? false : !mobileNav.classList.contains('is-open');
       mobileNav.classList.toggle('is-open', isOpen);
@@ -31,23 +28,16 @@ window.AMO.App = (function() {
     };
 
     menuBtn.addEventListener('click', () => toggleMenu());
-
-    // Close menu on Escape key
+    
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) {
-        toggleMenu(true);
-      }
+      if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) toggleMenu(true);
     });
 
-    // Close menu on window resize (prevent layout bugs)
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 768 && mobileNav.classList.contains('is-open')) {
-        toggleMenu(true);
-      }
+      if (window.innerWidth > 768 && mobileNav.classList.contains('is-open')) toggleMenu(true);
     }, { passive: true });
   };
 
-  // 2. Reveal Animations (Intersection Observer)
   const initReveal = () => {
     const elements = document.querySelectorAll('.amo-reveal');
     if (!elements.length) return;
@@ -69,7 +59,6 @@ window.AMO.App = (function() {
     elements.forEach(el => observer.observe(el));
   };
 
-  // 3. Fake Asset Loader (Listens to data-amo-asset)
   const initAssets = () => {
     const images = document.querySelectorAll('img[data-amo-asset]');
     images.forEach(img => {
@@ -81,50 +70,23 @@ window.AMO.App = (function() {
     });
   };
 
-  // 4. Shop Filter Logic
-  const initShopFilter = () => {
-    const filterContainer = document.querySelector('.amo-shop-filter');
-    const products = document.querySelectorAll('.amo-product-card');
-
-    if (!filterContainer || !products.length) return;
-
-    // Event delegation
-    filterContainer.addEventListener('click', (e) => {
-      if (!e.target.classList.contains('amo-filter-btn')) return;
-
-      // Active state
-      filterContainer.querySelectorAll('.amo-filter-btn').forEach(btn => btn.classList.remove('active'));
-      e.target.classList.add('active');
-
-      const category = e.target.getAttribute('data-filter');
-
-      // Filter products
-      products.forEach(product => {
-        if (category === 'all' || product.getAttribute('data-category') === category) {
-          product.style.display = 'flex';
-          // Small animation reset
-          product.style.animation = 'none';
-          product.offsetHeight; /* trigger reflow */
-          product.style.animation = null; 
-        } else {
-          product.style.display = 'none';
-        }
-      });
+  const setActiveNav = () => {
+    const path = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.amo-nav-desktop a').forEach(link => {
+      if (link.getAttribute('href') === path) link.classList.add('is-active');
     });
   };
 
-  // Run all Initializers
   const init = () => {
     initNav();
     initReveal();
     initAssets();
-    initShopFilter();
+    setActiveNav();
   };
 
   return { init };
 })();
 
-// Boot safely
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', window.AMO.App.init);
 } else {
