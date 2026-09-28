@@ -1,13 +1,15 @@
-[Reading 130 lines from start (total: 130 lines, 0 remaining)]
+[Reading 125 lines from start (total: 125 lines, 0 remaining)]
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AMO NGUYEN | Giày Si Hiệu Nam Chính Hãng</title>
-  <meta name="description" content="AMO NGUYEN - Quiet Luxury men's footwear. The art of uncompromising quality and refined elegance.">
+  <title>AMO NGUYEN | Giày Si Hiệu Nam</title>
+  <meta name="description" content="AMO NGUYEN - Quiet Luxury men's footwear. Đỉnh cao của sự tinh tế và chất lượng vượt thời gian.">
+  <link rel="canonical" href="https://amonguyen.vercel.app/">
   <link rel="stylesheet" href="css/amo-style.css">
+  <link rel="stylesheet" href="css/amo-responsive.css">
 </head>
 <body>
 
@@ -17,9 +19,10 @@
       <a href="index.html" class="amo-logo" data-amo-logo>AMO NGUYEN</a>
       <nav class="amo-nav-desktop">
         <a href="shop.html">Shop</a>
-        <a href="lookbook.html">Editorial</a>
-        <a href="guide.html">Shoe Guide</a>
+        <a href="lookbook.html">Lookbook</a>
+        <a href="guide.html">Guide</a>
         <a href="story.html">Story</a>
+        <a href="contact.html">Contact</a>
       </nav>
       <button class="amo-menu-btn" aria-label="Menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -27,57 +30,57 @@
     </div>
   </header>
 
-  <!-- MOBILE NAV -->
   <nav class="amo-nav-mobile">
     <a href="shop.html">Shop</a>
-    <a href="lookbook.html">Editorial</a>
-    <a href="guide.html">Shoe Guide</a>
+    <a href="lookbook.html">Lookbook</a>
+    <a href="guide.html">Guide</a>
     <a href="story.html">Story</a>
+    <a href="contact.html">Contact</a>
   </nav>
 
   <main>
     <!-- HERO -->
-    <section class="amo-home-hero amo-reveal">
-      <div class="amo-asset-wrapper">
+    <section class="amo-reveal" style="height: 100vh; display: flex; align-items: center; justify-content: center; position: relative;">
+      <div class="amo-asset-box" style="position: absolute; top:0; left:0; width:100%; height:100%; z-index:1;">
         <span class="amo-asset-label">[ HERO ASSET READY ]</span>
         <img data-amo-asset="home-hero" alt="" class="amo-asset-img">
       </div>
-      <div class="amo-home-hero-content">
-        <h1 class="amo-h1">Quiet Elegance</h1>
-        <p class="amo-caption" style="margin: 1rem 0 2rem;">The Art of Premium Footwear</p>
-        <a href="shop.html" class="amo-btn amo-btn-primary">Explore Collection</a>
+      <div style="position: relative; z-index: 10; background: rgba(245,245,245,0.85); padding: 3rem 4rem; text-align: center; backdrop-filter: blur(5px);">
+        <h1 class="amo-h1">AMO NGUYEN</h1>
+        <p class="amo-caption" style="margin: 1rem 0 2rem; font-size: 0.9rem;">GIÀY SI HIỆU NAM</p>
+        <a href="shop.html" class="amo-btn amo-btn-primary">Khám Phá</a>
       </div>
     </section>
 
     <!-- SHOP BY STYLE -->
     <section class="amo-section amo-container amo-reveal">
-      <div class="amo-text-center" style="margin-bottom: var(--amo-spacing-md);">
+      <div class="amo-text-center" style="margin-bottom: var(--amo-space-md);">
         <h2 class="amo-h2">Curated Styles</h2>
       </div>
       <div class="amo-grid-4">
         <a href="shop.html" class="amo-product-card">
-          <div class="amo-asset-wrapper amo-product-img">
+          <div class="amo-asset-box amo-product-img">
             <span class="amo-asset-label">[ LOAFERS ]</span>
             <img data-amo-asset="home-cat-loafer" alt="" class="amo-asset-img">
           </div>
           <div class="amo-product-info"><h3 class="amo-product-name">Loafers</h3></div>
         </a>
         <a href="shop.html" class="amo-product-card">
-          <div class="amo-asset-wrapper amo-product-img">
+          <div class="amo-asset-box amo-product-img">
             <span class="amo-asset-label">[ OXFORD & DERBY ]</span>
             <img data-amo-asset="home-cat-oxford" alt="" class="amo-asset-img">
           </div>
           <div class="amo-product-info"><h3 class="amo-product-name">Oxford & Derby</h3></div>
         </a>
         <a href="shop.html" class="amo-product-card">
-          <div class="amo-asset-wrapper amo-product-img">
+          <div class="amo-asset-box amo-product-img">
             <span class="amo-asset-label">[ SNEAKERS ]</span>
             <img data-amo-asset="home-cat-sneaker" alt="" class="amo-asset-img">
           </div>
           <div class="amo-product-info"><h3 class="amo-product-name">Sneakers</h3></div>
         </a>
         <a href="shop.html" class="amo-product-card">
-          <div class="amo-asset-wrapper amo-product-img">
+          <div class="amo-asset-box amo-product-img">
             <span class="amo-asset-label">[ BOOTS ]</span>
             <img data-amo-asset="home-cat-boots" alt="" class="amo-asset-img">
           </div>
@@ -86,26 +89,18 @@
       </div>
     </section>
 
-    <!-- EDITORIAL SNIPPET -->
+    <!-- EDITORIAL TEASER -->
     <section class="amo-section amo-container amo-reveal">
       <div class="amo-grid-2" style="align-items: center;">
         <div>
-          <h2 class="amo-h2">Editorial</h2>
-          <p class="amo-body" style="margin: 2rem 0;">A study in craftsmanship and refined aesthetics. Every detail serves a purpose, embracing the philosophy of less, but better.</p>
-          <a href="lookbook.html" class="amo-link-underline">View Lookbook</a>
+          <h2 class="amo-h2">Quiet Luxury</h2>
+          <p class="amo-body" style="margin: 2rem 0;">A study in craftsmanship and refined aesthetics. Sự cân bằng hoàn hảo giữa tính di sản và đường nét đương đại.</p>
+          <a href="lookbook.html" class="amo-link-line">Xem Lookbook</a>
         </div>
-        <div class="amo-asset-wrapper" style="aspect-ratio: 4/5;">
+        <div class="amo-asset-box" style="aspect-ratio: 4/5;">
           <span class="amo-asset-label">[ EDITORIAL ASSET ]</span>
           <img data-amo-asset="home-editorial" alt="" class="amo-asset-img">
         </div>
-      </div>
-    </section>
-
-    <!-- BRAND PHILOSOPHY -->
-    <section class="amo-section amo-container amo-text-center amo-reveal">
-      <h2 class="amo-h2" style="max-width: 800px; margin: 0 auto;">"True elegance does not demand attention; it commands respect."</h2>
-      <div style="margin-top: 3rem;">
-        <a href="story.html" class="amo-btn amo-btn-secondary">Discover Our Story</a>
       </div>
     </section>
   </main>
@@ -119,8 +114,8 @@
       </div>
       <div class="amo-footer-links">
         <a href="shop.html">Shop</a>
-        <a href="lookbook.html">Editorial</a>
-        <a href="guide.html">Shoe Guide</a>
+        <a href="lookbook.html">Lookbook</a>
+        <a href="guide.html">Guide</a>
         <a href="story.html">Story</a>
       </div>
     </div>
