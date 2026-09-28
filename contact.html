@@ -50,7 +50,7 @@
     </section>
 
     <section class="amo-container amo-reveal" style="max-width: 600px; margin-bottom: var(--amo-space-xl);">
-      <form id="amo-contact-form" onsubmit="event.preventDefault(); alert('Cảm ơn bạn đã liên hệ. Hệ thống đang ghi nhận thông tin.');" aria-label="Form liên hệ tư vấn">
+      <form id="amo-contact-form" onsubmit="event.preventDefault(); document.getElementById('amo-contact-status').textContent='Biểu mẫu hiện chưa kết nối hệ thống gửi. Vui lòng quay lại khi kênh liên hệ được cập nhật.';" aria-label="Form liên hệ tư vấn">
         <div class="amo-form-group">
           <label for="contact-name" class="amo-caption" style="display:block; margin-bottom:0.5rem;">Họ và Tên</label>
           <input type="text" id="contact-name" class="amo-input" placeholder="Nhập họ và tên..." required>
@@ -64,6 +64,7 @@
           <textarea id="contact-message" class="amo-input" placeholder="Nhập nội dung cần hỗ trợ..." rows="5" required></textarea>
         </div>
         <button type="submit" class="amo-btn amo-btn-primary" style="width: 100%;">Gửi Yêu Cầu</button>
+        <p id="amo-contact-status" role="status" aria-live="polite" class="amo-body" style="margin-top:1rem;"></p>
       </form>
     </section>
   </main>
