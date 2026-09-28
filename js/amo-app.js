@@ -34,6 +34,7 @@ window.AMO.App = (function() {
       menuBtn.classList.toggle('is-active', isOpen);
       menuBtn.setAttribute('aria-expanded', isOpen);
       document.body.style.overflow = isOpen ? 'hidden' : '';
+      if (isOpen) mobileNav.querySelector('a')?.focus();
     };
 
     menuBtn.addEventListener('click', () => toggleMenu());
@@ -77,6 +78,7 @@ window.AMO.App = (function() {
           img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
           img.addEventListener('error', () => img.classList.add('is-broken'), { once: true });
           if (img.complete && img.naturalWidth) img.classList.add('is-loaded');
+          else if (img.complete && !img.naturalWidth) img.classList.add('is-broken');
         }
       });
     };
