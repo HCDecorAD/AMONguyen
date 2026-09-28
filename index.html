@@ -1,36 +1,39 @@
-[Reading 125 lines from start (total: 125 lines, 0 remaining)]
+[Reading 127 lines from start (total: 127 lines, 0 remaining)]
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AMO NGUYEN | Giày Si Hiệu Nam</title>
-  <meta name="description" content="AMO NGUYEN - Quiet Luxury men's footwear. Đỉnh cao của sự tinh tế và chất lượng vượt thời gian.">
+  <title>AMO NGUYEN | Giày Si Hiệu Nam Chính Hãng - Quiet Luxury</title>
+  <meta name="description" content="AMO NGUYEN - Thương hiệu giày tây nam cao cấp. Theo đuổi phong cách Quiet Luxury với các dòng Loafers, Oxfords, và Derbies tinh tế.">
+  <meta property="og:title" content="AMO NGUYEN | Giày Si Hiệu Nam Chính Hãng">
+  <meta property="og:description" content="Đỉnh cao của sự tinh tế và chất lượng vượt thời gian trong nghệ thuật chế tác giày nam.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://amonguyen.vercel.app/">
   <link rel="canonical" href="https://amonguyen.vercel.app/">
   <link rel="stylesheet" href="css/amo-style.css">
   <link rel="stylesheet" href="css/amo-responsive.css">
 </head>
 <body>
-
   <!-- HEADER -->
-  <header class="amo-header">
+  <header class="amo-header" role="banner">
     <div class="amo-header-inner">
-      <a href="index.html" class="amo-logo" data-amo-logo>AMO NGUYEN</a>
-      <nav class="amo-nav-desktop">
+      <a href="index.html" class="amo-logo" data-amo-logo aria-label="AMO NGUYEN Homepage">AMO NGUYEN</a>
+      <nav class="amo-nav-desktop" role="navigation" aria-label="Main Navigation">
         <a href="shop.html">Shop</a>
         <a href="lookbook.html">Lookbook</a>
         <a href="guide.html">Guide</a>
         <a href="story.html">Story</a>
         <a href="contact.html">Contact</a>
       </nav>
-      <button class="amo-menu-btn" aria-label="Menu" aria-expanded="false">
+      <button class="amo-menu-btn" aria-label="Toggle Mobile Menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
 
-  <nav class="amo-nav-mobile">
+  <nav class="amo-nav-mobile" role="navigation" aria-label="Mobile Navigation">
     <a href="shop.html">Shop</a>
     <a href="lookbook.html">Lookbook</a>
     <a href="guide.html">Guide</a>
@@ -38,9 +41,8 @@
     <a href="contact.html">Contact</a>
   </nav>
 
-  <main>
-    <!-- HERO -->
-    <section class="amo-reveal" style="height: 100vh; display: flex; align-items: center; justify-content: center; position: relative;">
+  <main role="main">
+    <section class="amo-reveal" aria-label="Hero Section" style="height: 100vh; display: flex; align-items: center; justify-content: center; position: relative;">
       <div class="amo-asset-box" style="position: absolute; top:0; left:0; width:100%; height:100%; z-index:1;">
         <span class="amo-asset-label">[ HERO ASSET READY ]</span>
         <img data-amo-asset="home-hero" alt="" class="amo-asset-img">
@@ -53,44 +55,45 @@
     </section>
 
     <!-- SHOP BY STYLE -->
-    <section class="amo-section amo-container amo-reveal">
+    <section class="amo-section amo-container amo-reveal" aria-labelledby="curated-styles">
       <div class="amo-text-center" style="margin-bottom: var(--amo-space-md);">
-        <h2 class="amo-h2">Curated Styles</h2>
+        <h2 id="curated-styles" class="amo-h2">Curated Styles</h2>
       </div>
       <div class="amo-grid-4">
-        <a href="shop.html" class="amo-product-card">
+        <!-- Categories via JS hooks -->
+        <a href="shop.html?cat=loafers" class="amo-product-card" style="border: 1px solid rgba(26,26,26,0.05);">
           <div class="amo-asset-box amo-product-img">
             <span class="amo-asset-label">[ LOAFERS ]</span>
-            <img data-amo-asset="home-cat-loafer" alt="" class="amo-asset-img">
+            <img data-amo-asset="home-cat-loafer" alt="Loafers category" class="amo-asset-img">
           </div>
-          <div class="amo-product-info"><h3 class="amo-product-name">Loafers</h3></div>
+          <div class="amo-product-info" style="padding: 1.5rem 0;"><h3 class="amo-h3" style="font-size: 1.2rem;">Loafers</h3></div>
         </a>
-        <a href="shop.html" class="amo-product-card">
+        <a href="shop.html?cat=oxford" class="amo-product-card" style="border: 1px solid rgba(26,26,26,0.05);">
           <div class="amo-asset-box amo-product-img">
-            <span class="amo-asset-label">[ OXFORD & DERBY ]</span>
-            <img data-amo-asset="home-cat-oxford" alt="" class="amo-asset-img">
+            <span class="amo-asset-label">[ OXFORD ]</span>
+            <img data-amo-asset="home-cat-oxford" alt="Oxford category" class="amo-asset-img">
           </div>
-          <div class="amo-product-info"><h3 class="amo-product-name">Oxford & Derby</h3></div>
+          <div class="amo-product-info" style="padding: 1.5rem 0;"><h3 class="amo-h3" style="font-size: 1.2rem;">Oxford & Derby</h3></div>
         </a>
-        <a href="shop.html" class="amo-product-card">
+        <a href="shop.html?cat=sneakers" class="amo-product-card" style="border: 1px solid rgba(26,26,26,0.05);">
           <div class="amo-asset-box amo-product-img">
             <span class="amo-asset-label">[ SNEAKERS ]</span>
-            <img data-amo-asset="home-cat-sneaker" alt="" class="amo-asset-img">
+            <img data-amo-asset="home-cat-sneaker" alt="Sneakers category" class="amo-asset-img">
           </div>
-          <div class="amo-product-info"><h3 class="amo-product-name">Sneakers</h3></div>
+          <div class="amo-product-info" style="padding: 1.5rem 0;"><h3 class="amo-h3" style="font-size: 1.2rem;">Sneakers</h3></div>
         </a>
-        <a href="shop.html" class="amo-product-card">
+        <a href="shop.html?cat=boots" class="amo-product-card" style="border: 1px solid rgba(26,26,26,0.05);">
           <div class="amo-asset-box amo-product-img">
             <span class="amo-asset-label">[ BOOTS ]</span>
-            <img data-amo-asset="home-cat-boots" alt="" class="amo-asset-img">
+            <img data-amo-asset="home-cat-boots" alt="Boots category" class="amo-asset-img">
           </div>
-          <div class="amo-product-info"><h3 class="amo-product-name">Boots</h3></div>
+          <div class="amo-product-info" style="padding: 1.5rem 0;"><h3 class="amo-h3" style="font-size: 1.2rem;">Boots</h3></div>
         </a>
       </div>
     </section>
 
     <!-- EDITORIAL TEASER -->
-    <section class="amo-section amo-container amo-reveal">
+    <section class="amo-section amo-container amo-reveal" style="padding-bottom: var(--amo-space-xl);">
       <div class="amo-grid-2" style="align-items: center;">
         <div>
           <h2 class="amo-h2">Quiet Luxury</h2>
@@ -99,14 +102,13 @@
         </div>
         <div class="amo-asset-box" style="aspect-ratio: 4/5;">
           <span class="amo-asset-label">[ EDITORIAL ASSET ]</span>
-          <img data-amo-asset="home-editorial" alt="" class="amo-asset-img">
+          <img data-amo-asset="home-editorial" alt="Editorial fashion showcase" class="amo-asset-img">
         </div>
       </div>
     </section>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="amo-footer">
+  <footer class="amo-footer" role="contentinfo">
     <div class="amo-footer-inner">
       <div class="amo-footer-brand">
         AMO NGUYEN
