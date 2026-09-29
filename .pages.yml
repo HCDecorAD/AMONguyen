@@ -1,19 +1,11 @@
 settings:
-  content:
-    merge: true
-  commit:
-    identity: user
-    templates:
-      update: "CMS update: {path}"
-      create: "CMS create: {path}"
-      delete: "CMS delete: {path}"
-      rename: "CMS rename: {oldPath} -> {newPath}"
+  content: { merge: true }
+  commit: { identity: user }
 media:
   input: assets/images
   output: /assets/images
   rename: safe
   categories: [image]
-
 content:
   - name: home
     label: Trang chủ
@@ -42,18 +34,12 @@ content:
       - name: styles
         label: Danh mục nổi bật
         type: object
-        list:
-          min: 1
-          max: 8
-          collapsible:
-            collapsed: true
-            summary: "{title}"
+        list: { min: 1, max: 8, collapsible: { collapsed: true, summary: "{title}" } }
         fields:
           - { name: title, label: Tên, type: string }
           - { name: subtitle, label: Mô tả, type: string }
           - { name: image, label: Hình ảnh, type: image }
           - { name: url, label: Liên kết, type: string }
-
   - name: layout
     label: Bố cục trang chủ
     type: file
@@ -64,13 +50,9 @@ content:
       - name: sections
         label: Section
         type: object
-        list:
-          min: 1
-          max: 12
-          collapsible: { collapsed: true, summary: "{label}" }
+        list: { min: 1, max: 12, collapsible: { collapsed: false, summary: "{label}" } }
         fields:
           - { name: selector, label: Selector kỹ thuật, type: string, readonly: true }
           - { name: label, label: Tên section, type: string }
           - { name: enabled, label: Hiển thị, type: boolean }
           - { name: order, label: Thứ tự, type: number }
-
