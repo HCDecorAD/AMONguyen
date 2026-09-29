@@ -57,7 +57,7 @@
   .amo-home-editorial{grid-template-columns:1fr}
   .amo-home-editorial-image{min-height:62vw}
   .amo-home-services{grid-template-columns:1fr}
-  .amo-home-services>div,.amo-home-services>div:first-child{padding:2rem 0;border-left:0;border-top:1px solid rgba(26,26,26,.12)}
+  .amo-home-services>div,.amo-home-services>div:first-child{padding:2rem 0;border-left:0;border-top:1px solid rgba(26,26,26,.12);min-width:0}
 }
 @media (max-width: 600px){
   .amo-home .amo-header-inner{height:72px;padding:0 6%}
