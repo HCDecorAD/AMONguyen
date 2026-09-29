@@ -3,7 +3,7 @@
 Luxury men's footwear storefront foundation.
 
 ## Production target
-- https://amonguyen.vercel.app
+- https://amonguyen.hcdecorhub.com
 
 ## Source
 - GitHub: HCDecorAD/AMONguyen
