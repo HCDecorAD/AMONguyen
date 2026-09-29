@@ -43,3 +43,23 @@ content:
           - { name: subtitle, label: Mô tả, type: string }
           - { name: image, label: Hình ảnh, type: image }
           - { name: url, label: Liên kết, type: string }
+
+  - name: layout
+    label: Bố cục trang chủ
+    type: file
+    path: config/layout.json
+    format: json
+    operations: { delete: false }
+    fields:
+      - name: sections
+        label: Section
+        type: object
+        list:
+          min: 1
+          max: 12
+          collapsible: { collapsed: true, summary: "{label}" }
+        fields:
+          - { name: selector, label: Selector kỹ thuật, type: string, readonly: true }
+          - { name: label, label: Tên section, type: string }
+          - { name: enabled, label: Hiển thị, type: boolean }
+          - { name: order, label: Thứ tự, type: number }
