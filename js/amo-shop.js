@@ -1,88 +1,18 @@
-
-/**
- * AMO NGUYEN - MASTER SHOP MODULE (Idempotent & A11y Ready)
- */
-window.AMO = window.AMO || {};
-
-window.AMO.Shop = (function() {
-  if (window.AMO.isShopBooted) return window.AMO.Shop;
-
-  const initShopUI = () => {
-    const filterContainer = document.querySelector('.amo-shop-filter');
-    const searchInput = document.getElementById('amoSearch');
-    const sortSelect = document.getElementById('amoSort');
-    const productGrid = document.getElementById('amoProductGrid');
-    const emptyState = document.getElementById('amoEmptyState');
-    
-    if (!filterContainer || !productGrid) return;
-
-    const products = Array.from(productGrid.querySelectorAll('.amo-product-card'));
-
-    const updateGrid = (category, searchTerm) => {
-      let visibleCount = 0;
-      const term = (searchTerm || '').toLowerCase().trim();
-
-      products.forEach(product => {
-        const prodCat = product.getAttribute('data-category');
-        const prodName = product.querySelector('.amo-product-name').textContent.toLowerCase();
-        
-        const matchCat = (category === 'all' || prodCat === category);
-        const matchSearch = (term === '' || prodName.includes(term));
-
-        if (matchCat && matchSearch) {
-          product.style.display = 'flex';
-          visibleCount++;
-        } else {
-          product.style.display = 'none';
-        }
-      });
-
-      if (emptyState) {
-        emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-      }
-    };
-
-    // Filter Buttons logic
-    filterContainer.addEventListener('click', (e) => {
-      if (!e.target.classList.contains('amo-filter-btn')) return;
-
-      filterContainer.querySelectorAll('.amo-filter-btn').forEach(btn => {
-        btn.classList.remove('is-active');
-        btn.setAttribute('aria-selected', 'false');
-      });
-      
-      e.target.classList.add('is-active');
-      e.target.setAttribute('aria-selected', 'true');
-
-      const category = e.target.getAttribute('data-filter');
-      const searchTerm = searchInput ? searchInput.value : '';
-      updateGrid(category, searchTerm);
-    });
-
-    // Mock Search logic
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        const activeFilter = filterContainer.querySelector('.is-active');
-        const category = activeFilter ? activeFilter.getAttribute('data-filter') : 'all';
-        updateGrid(category, e.target.value);
-      });
-    }
-
-    // Mock Sort logic (Hooks ready for backend data mapping)
-    if (sortSelect) {
-      sortSelect.addEventListener('change', (e) => {
-        console.info(`[AMO INFO] Sắp xếp thay đổi thành: ${e.target.value}. Chờ hook API backend.`);
-      });
-    }
-  };
-
-  const init = () => {
-    initShopUI();
-    window.AMO.isShopBooted = true;
-  };
-
-  return { init };
+window.AMO=window.AMO||{};
+window.AMO.Shop=(function(){
+ const API="https://hc-shop-engine.huycuongonline.workers.dev",STORE="store_amo";let products=[];
+ const money=n=>new Intl.NumberFormat("vi-VN").format(Number(n||0))+" đ";
+ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ function render(){
+  const grid=document.getElementById("amoProductGrid"),empty=document.getElementById("amoEmptyState"),q=(document.getElementById("amoSearch")?.value||"").toLowerCase(),sort=document.getElementById("amoSort")?.value||"newest";
+  let a=products.filter(p=>p.status==="active"&&p.name.toLowerCase().includes(q));
+  if(sort==="price-asc")a.sort((x,y)=>(x.sale_price??x.price)-(y.sale_price??y.price));if(sort==="price-desc")a.sort((x,y)=>(y.sale_price??y.price)-(x.sale_price??x.price));
+  grid.innerHTML=a.map((p,i)=>'<article class="amo-product-card" tabindex="0"><div class="amo-asset-box amo-product-img"><img src="assets/images/demo/shoe-demo-'+((i%5)+1)+'.jpg" alt="'+esc(p.name)+'" class="amo-asset-img" loading="lazy"></div><div class="amo-product-info"><h3 class="amo-product-name">'+esc(p.name)+'</h3><p class="amo-product-status">'+money(p.sale_price??p.price)+'</p></div></article>').join("");
+  empty.style.display=a.length?"none":"block";
+ }
+ async function init(){const grid=document.getElementById("amoProductGrid");if(!grid)return;try{const r=await fetch(API+"/api/products",{headers:{"x-store-id":STORE}}),d=await r.json();products=d.items||[];render()}catch(e){console.warn("HC Shop API unavailable",e)}
+  document.getElementById("amoSearch")?.addEventListener("input",render);document.getElementById("amoSort")?.addEventListener("change",render);
+ }
+ return{init}
 })();
-
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.AMO.Shop.init);
-else window.AMO.Shop.init();
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",window.AMO.Shop.init);else window.AMO.Shop.init();
