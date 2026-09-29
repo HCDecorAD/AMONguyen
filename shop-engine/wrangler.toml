@@ -1,0 +1,12 @@
+name = "hc-shop-engine"
+main = "src/index.js"
+compatibility_date = "2026-09-30"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hc-shop"
+database_id = "LOCAL_OR_REPLACE_AFTER_CREATE"
+migrations_dir = "migrations"
+
+[vars]
+APP_NAME = "HC Shop Engine"
