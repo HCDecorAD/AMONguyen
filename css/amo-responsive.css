@@ -1,5 +1,3 @@
-[Reading 46 lines from start (total: 46 lines, 0 remaining)]
-
 /* ==========================================================================
    AMO NGUYEN - PRODUCTION RESPONSIVE STYLES (V2)
    ========================================================================== */
@@ -47,7 +45,6 @@
   .amo-product-img { aspect-ratio: 4/5; }
 }
 
-[executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
 /* AMO Home V3 responsive */
 @media (max-width: 900px){
   .amo-home-hero-content{margin-left:6%;width:88%;padding-bottom:5rem}
