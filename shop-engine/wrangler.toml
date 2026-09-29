@@ -1,6 +1,6 @@
-name = "hc-shop-engine"
+﻿name = "hc-shop-engine"
 main = "src/index.js"
-compatibility_date = "2026-09-30"
+compatibility_date = "2026-09-29"
 
 [[d1_databases]]
 binding = "DB"
