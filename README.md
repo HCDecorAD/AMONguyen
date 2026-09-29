@@ -19,4 +19,4 @@ Luxury men's footwear storefront foundation.
 No fabricated products, prices, brands, inventory, or availability. Product commerce modules are enabled only after real catalog data is connected.
 
 ## Deployment
-This repository is intended to be connected to the existing AMO Vercel project. Do not create a duplicate Vercel project.
+GitHub Pages is the production hosting authority for this repository, using the custom domain https://amonguyen.hcdecorhub.com.
