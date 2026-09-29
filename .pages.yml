@@ -8,51 +8,52 @@ media:
   categories: [image]
 content:
   - name: home
-    label: Trang chủ
+    label: "Trang chu"
     type: file
     path: config/home.json
     format: json
+    operations: { delete: false }
     fields:
       - name: hero
-        label: Hero
+        label: "Hero"
         type: object
         fields:
-          - { name: eyebrow, label: Dòng nhỏ, type: string }
-          - { name: title, label: Tiêu đề, type: string }
-          - { name: lead, label: Mô tả, type: text }
-          - { name: image, label: Ảnh nền, type: image }
-          - { name: primaryLabel, label: Nút chính, type: string }
-          - { name: secondaryLabel, label: Nút phụ, type: string }
+          - { name: eyebrow, label: "Dong nho", type: string }
+          - { name: title, label: "Tieu de", type: string }
+          - { name: lead, label: "Mo ta", type: text }
+          - { name: image, label: "Anh nen", type: image }
+          - { name: primaryLabel, label: "Nut chinh", type: string }
+          - { name: secondaryLabel, label: "Nut phu", type: string }
       - name: editorial
-        label: Editorial
+        label: "Editorial"
         type: object
         fields:
-          - { name: kicker, label: Dòng nhỏ, type: string }
-          - { name: title, label: Tiêu đề, type: string }
-          - { name: text, label: Nội dung, type: text }
-          - { name: image, label: Hình ảnh, type: image }
+          - { name: kicker, label: "Dong nho", type: string }
+          - { name: title, label: "Tieu de", type: string }
+          - { name: text, label: "Noi dung", type: text }
+          - { name: image, label: "Hinh anh", type: image }
       - name: styles
-        label: Danh mục nổi bật
+        label: "Danh muc noi bat"
         type: object
-        list: { min: 1, max: 8, collapsible: { collapsed: true, summary: "{title}" } }
+        list: { min: 1, max: 12, collapsible: { collapsed: true, summary: "{title}" } }
         fields:
-          - { name: title, label: Tên, type: string }
-          - { name: subtitle, label: Mô tả, type: string }
-          - { name: image, label: Hình ảnh, type: image }
-          - { name: url, label: Liên kết, type: string }
+          - { name: title, label: "Ten", type: string }
+          - { name: subtitle, label: "Mo ta", type: string }
+          - { name: image, label: "Hinh anh", type: image }
+          - { name: url, label: "Lien ket", type: string }
   - name: layout
-    label: Bố cục trang chủ
+    label: "Bo cuc trang chu"
     type: file
     path: config/layout.json
     format: json
     operations: { delete: false }
     fields:
       - name: sections
-        label: Section
+        label: "Section"
         type: object
         list: { min: 1, max: 12, collapsible: { collapsed: false, summary: "{label}" } }
         fields:
-          - { name: selector, label: Selector kỹ thuật, type: string, readonly: true }
-          - { name: label, label: Tên section, type: string }
-          - { name: enabled, label: Hiển thị, type: boolean }
-          - { name: order, label: Thứ tự, type: number }
+          - { name: selector, label: "Selector ky thuat", type: string, readonly: true }
+          - { name: label, label: "Ten section", type: string }
+          - { name: enabled, label: "Hien thi", type: boolean }
+          - { name: order, label: "Thu tu", type: number }
