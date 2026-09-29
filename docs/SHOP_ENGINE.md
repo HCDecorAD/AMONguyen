@@ -1,18 +1,15 @@
-# HC Shop Manager — Production Workflow
+# HC Shop Engine / AMO Commerce — Production v3
 
-## Architecture
-AMO storefront (GitHub Pages) reads public catalog data from HC Shop Engine on Cloudflare Workers. Transactional data lives in Cloudflare D1 database `hcs`. GitHub remains the storefront source and is not used as an inventory/order database.
+AMO Commerce is complete as a reusable multi-tenant commerce layer.
 
-## Admin
-Open `/shop-admin.html`. Admin actions require the HC Shop Manager access code and are not available anonymously. The code is kept only in the browser session; the repository stores only its SHA-256 verifier.
+Flow: Catalog → Product detail → Variant/Size → Cart → Checkout → Customer → Order → Admin order workflow → Inventory ledger.
 
-Available modules: Dashboard, Products, Variant/SKU, Inventory, Orders, Customers, Promotions and Reports.
+Storefront public API: store metadata, catalog, product detail and validated checkout. Admin API: stores, products, media, variants, inventory, orders, customers, promotions, dashboard and reports.
 
-## Inventory lifecycle
-New order does not reserve stock. Confirm reserves quantity. Cancel releases reserved quantity. Complete reduces on-hand and releases reserved quantity. Return replenishes on-hand. Every inventory action is recorded in `inventory_movements`.
+Each store owns its own products, media, variants, inventory, customers, orders and reports through store_id. HC Shop Manager includes a store switcher and Create Store flow; a new store automatically receives its own MAIN inventory location. This is the Store #002/#003 onboarding path without creating another backend.
 
-## Deployment
-Worker: `hc-shop-engine`; D1 binding: `DB`; database: `hcs`. Storefront and admin deploy from AMONguyen `main` through the existing GitHub Pages workflow.
+Inventory lifecycle: checkout=new; confirmed reserves; cancelled releases; completed decrements on-hand and reserved; returned replenishes. Inventory movements retain the audit trail.
 
-## Security
-Admin write/read-management endpoints require Bearer authentication. Public catalog GET and validated order creation remain public storefront endpoints. CORS is restricted to AMO production and local development origins. No plaintext admin credential is committed to Git.
+Media: product_images is now part of the storefront catalog/detail API. HC Shop Manager can attach ordered image URLs to products. Existing repository media can be used immediately; later media storage can be swapped without changing commerce entities.
+
+Production services: Cloudflare Worker hc-shop-engine; D1 database hcs; GitHub Pages storefront/admin from AMONguyen main.

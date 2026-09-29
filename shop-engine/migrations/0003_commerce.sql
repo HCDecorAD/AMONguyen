@@ -1,0 +1,15 @@
+ALTER TABLE stores ADD COLUMN slug TEXT;
+ALTER TABLE stores ADD COLUMN currency TEXT NOT NULL DEFAULT 'VND';
+ALTER TABLE stores ADD COLUMN locale TEXT NOT NULL DEFAULT 'vi-VN';
+ALTER TABLE stores ADD COLUMN order_prefix TEXT NOT NULL DEFAULT 'ORD';
+ALTER TABLE stores ADD COLUMN theme_json TEXT NOT NULL DEFAULT '{}';
+ALTER TABLE orders ADD COLUMN customer_name TEXT;
+ALTER TABLE orders ADD COLUMN customer_phone TEXT;
+ALTER TABLE orders ADD COLUMN customer_email TEXT;
+ALTER TABLE orders ADD COLUMN shipping_address TEXT;
+ALTER TABLE orders ADD COLUMN payment_method TEXT NOT NULL DEFAULT 'cod';
+ALTER TABLE orders ADD COLUMN shipping_fee INTEGER NOT NULL DEFAULT 0;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_stores_slug ON stores(slug);
+CREATE INDEX IF NOT EXISTS idx_images_product_sort ON product_images(store_id,product_id,sort_order);
+CREATE INDEX IF NOT EXISTS idx_customers_store_phone ON customers(store_id,phone);
+UPDATE stores SET slug='amo',order_prefix='AMO',currency='VND',locale='vi-VN' WHERE id='store_amo';
