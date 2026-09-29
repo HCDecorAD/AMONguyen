@@ -1,5 +1,3 @@
-[Reading 97 lines from start (total: 97 lines, 0 remaining)]
-
 /**
  * AMO NGUYEN - PRODUCTION APP LOGIC (V2)
  * Namespace: window.AMO. Safely handles re-initialization and a11y.
@@ -138,4 +136,3 @@ window.AMO.App = (function() {
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.AMO.App.init);
 else window.AMO.App.init();
 
-[executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
