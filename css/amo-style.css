@@ -1,4 +1,3 @@
-[Reading 146 lines from start (total: 146 lines, 0 remaining)]
 
 /* ==========================================================================
    AMO NGUYEN - PRODUCTION CORE STYLES (FINAL)
@@ -147,7 +146,6 @@ button, input, select, textarea { font-family: var(--amo-font-body); margin: 0; 
 .amo-input:focus { outline: none; border-color: var(--amo-gold-deep); box-shadow: inset 0 -1px 0 var(--amo-gold-deep); }
 .amo-input::placeholder { color: rgba(26,26,26,0.5); }
 
-[executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
 /* AMO Commerce Demo Polish */
 .amo-asset-img { object-fit: cover; }
 .amo-product-img .amo-asset-img { object-fit: contain; background: #f2f0eb; padding: 7%; }

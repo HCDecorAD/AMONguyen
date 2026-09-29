@@ -1,4 +1,3 @@
-[Reading 87 lines from start (total: 87 lines, 0 remaining)]
 
 /**
  * AMO NGUYEN - MASTER SHOP MODULE (Idempotent & A11y Ready)
@@ -87,5 +86,3 @@ window.AMO.Shop = (function() {
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.AMO.Shop.init);
 else window.AMO.Shop.init();
-
-[executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]
