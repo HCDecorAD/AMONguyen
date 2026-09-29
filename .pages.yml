@@ -1,0 +1,45 @@
+media:
+  input: assets/images
+  output: /assets/images
+  rename: safe
+  categories: [image]
+
+content:
+  - name: home
+    label: Trang chủ
+    type: file
+    path: config/home.json
+    format: json
+    fields:
+      - name: hero
+        label: Hero
+        type: object
+        fields:
+          - { name: eyebrow, label: Dòng nhỏ, type: string }
+          - { name: title, label: Tiêu đề, type: string }
+          - { name: lead, label: Mô tả, type: text }
+          - { name: image, label: Ảnh nền, type: image }
+          - { name: primaryLabel, label: Nút chính, type: string }
+          - { name: secondaryLabel, label: Nút phụ, type: string }
+      - name: editorial
+        label: Editorial
+        type: object
+        fields:
+          - { name: kicker, label: Dòng nhỏ, type: string }
+          - { name: title, label: Tiêu đề, type: string }
+          - { name: text, label: Nội dung, type: text }
+          - { name: image, label: Hình ảnh, type: image }
+      - name: styles
+        label: Danh mục nổi bật
+        type: object
+        list:
+          min: 1
+          max: 8
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - { name: title, label: Tên, type: string }
+          - { name: subtitle, label: Mô tả, type: string }
+          - { name: image, label: Hình ảnh, type: image }
+          - { name: url, label: Liên kết, type: string }

@@ -1,0 +1,10 @@
+{
+  "hero":{"eyebrow":"MEN'S FOOTWEAR · QUIET LUXURY","title":"Phong cách không cần phô trương.","lead":"AMO NGUYEN chọn một ngôn ngữ nam tính tinh tế — phom dáng cổ điển, sắc độ trầm và tinh thần hiện đại.","image":"/assets/images/demo/shoe-demo-2.jpg","primaryLabel":"Khám phá bộ sưu tập","secondaryLabel":"Xem Lookbook"},
+  "editorial":{"kicker":"THE AMO JOURNAL","title":"Quiet Luxury, theo cách của AMO.","text":"Ít chi tiết hơn. Tập trung nhiều hơn vào tỷ lệ, chất liệu và cách một đôi giày hoàn thiện tổng thể trang phục.","image":"/assets/images/demo/shoe-demo-5.jpg"},
+  "styles":[
+    {"title":"Loafers","subtitle":"Smart casual · Everyday","image":"/assets/images/demo/shoe-demo-3.jpg","url":"shop.html?cat=loafers"},
+    {"title":"Oxford & Derby","subtitle":"Business · Formal","image":"/assets/images/demo/shoe-demo-1.jpg","url":"shop.html?cat=oxford"},
+    {"title":"Smart Casual","subtitle":"Relaxed · Contemporary","image":"/assets/images/demo/shoe-demo-4.jpg","url":"shop.html?cat=sneakers"},
+    {"title":"Boots","subtitle":"Structured · Weekend","image":"/assets/images/demo/shoe-demo-6.jpg","url":"shop.html?cat=boots"}
+  ]
+}
