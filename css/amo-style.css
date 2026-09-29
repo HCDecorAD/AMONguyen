@@ -46,7 +46,7 @@ button, input, select, textarea { font-family: var(--amo-font-body); margin: 0; 
 .amo-text-center { text-align: center; }
 
 /* Layout Grid */
-.amo-container { max-width: var(--amo-container); margin: 0 auto; padding: 0 5%; }
+.amo-container { width: 100%; min-width: 0; max-width: var(--amo-container); margin: 0 auto; padding: 0 5%; }
 .amo-section { padding: var(--amo-space-xl) 0; }
 .amo-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--amo-space-md); }
 .amo-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--amo-space-md); }
