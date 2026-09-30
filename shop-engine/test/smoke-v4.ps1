@@ -8,7 +8,7 @@ function Check($name,$path,$expect,$auth=$false){
 }
 Check 'health' '/api/health' 200
 Check 'catalog' '/api/catalog' 200
-$paths=@('/api/v1/stores','/api/v1/products','/api/v1/variants','/api/v1/channels','/api/v1/listings','/api/v1/warehouses','/api/v1/locations','/api/v1/inventory','/api/v1/stock-movements','/api/v1/reservations','/api/v1/orders','/api/v1/import-jobs')
+$paths=@('/api/v1/stores','/api/v1/brands','/api/v1/categories','/api/v1/product-drafts','/api/v1/products','/api/v1/variants','/api/v1/channels','/api/v1/listings','/api/v1/warehouses','/api/v1/locations','/api/v1/inventory','/api/v1/stock-movements','/api/v1/reservations','/api/v1/orders','/api/v1/import-jobs')
 foreach($p in $paths){Check ('deny '+$p) $p 401}
 if($Token){foreach($p in $paths){Check ('read '+$p) $p 200 $true}}
 Write-Host 'SMOKE V4 PASS'
