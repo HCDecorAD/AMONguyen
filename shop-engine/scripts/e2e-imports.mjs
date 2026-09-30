@@ -1,0 +1,9 @@
+const base=process.env.E2E_BASE||'http://127.0.0.1:8793',token=process.env.TEST_ADMIN_TOKEN||'local-e2e';
+const H={'content-type':'application/json','authorization':'Bearer '+token,'x-store-id':'store_amo'};
+async function q(path,method='GET',body){const r=await fetch(base+path,{method,headers:H,body:body?JSON.stringify(body):undefined});const x=await r.json();if(!r.ok)throw Error(path+' '+r.status+' '+JSON.stringify(x));return x}
+async function job(kind,rows,mapping={}){let j=await q('/api/v1/import-jobs','POST',{kind,source_type:'e2e',filename:'e2e-'+kind,mapping});await q(`/api/v1/import-jobs/${j.id}/stage`,'POST',{rows});let d=await q(`/api/v1/import-jobs/${j.id}/dry-run`,'POST');if(!d.ok)throw Error(kind+' dry run invalid '+JSON.stringify(d));await q(`/api/v1/import-jobs/${j.id}/state`,'POST',{to:'review'});await q(`/api/v1/import-jobs/${j.id}/state`,'POST',{to:'approved'});await q(`/api/v1/import-jobs/${j.id}/commit`,'POST');return j.id}
+const u=Date.now(),sku='IMP-'+u,phone='09'+String(u).slice(-8),order='IMPO-'+u;
+const pj=await job('products',[{'Product Name':'Import E2E','SKU':sku,'Price':1200000,'On Hand':5}],{'Product Name':'name','SKU':'sku','Price':'selling_price','On Hand':'on_hand'});
+const ij=await job('inventory',[{sku,qty:7}]);const pr=await job('price',[{sku,price:1300000}]);const cj=await job('customers',[{name:'Import Customer',phone,email:'e2e@example.test',address:'HCM'}]);const oj=await job('orders',[{order_no:order,customer_name:'Import Customer',customer_phone:phone,shipping_address:'HCM',sku,qty:1,unit_price:1300000}]);
+await q(`/api/v1/import-jobs/${oj}/rollback`,'POST');await q(`/api/v1/import-jobs/${cj}/rollback`,'POST');await q(`/api/v1/import-jobs/${pr}/rollback`,'POST');await q(`/api/v1/import-jobs/${ij}/rollback`,'POST');await q(`/api/v1/import-jobs/${pj}/rollback`,'POST');
+console.log('IMPORT_E2E PASS',JSON.stringify({sku,order}));
