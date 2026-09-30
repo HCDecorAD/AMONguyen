@@ -1,22 +1,12 @@
-# AMO Nguyen
+﻿# AMO NGUYEN — GitHub Pages Package
 
-Luxury men's footwear storefront foundation.
+Static storefront package for AMO NGUYEN.
 
-## Production target
-- https://amonguyen.hcdecorhub.com
+## Deploy
+Publish the repository root with GitHub Pages. No Cloudflare frontend runtime is required.
 
-## Source
-- GitHub: HCDecorAD/AMONguyen
-- Branch: main
+## Commerce API
+Storefront commerce calls the existing HC Shop Engine API. Never commit admin tokens or secrets.
 
-## Current scope
-- Editorial homepage
-- Categories: Loafers, Oxford & Derby, Sneakers, Boots
-- Lookbook and Shoe Guide structure
-- Responsive desktop/tablet/mobile
-
-## Commerce data policy
-No fabricated products, prices, brands, inventory, or availability. Product commerce modules are enabled only after real catalog data is connected.
-
-## Deployment
-GitHub Pages is the production hosting authority for this repository, using the custom domain https://amonguyen.hcdecorhub.com.
+## Safety
+Reference/demo products must not be treated as real sellable inventory. Import verified catalog data through the authorized commerce admin/data workflow.
