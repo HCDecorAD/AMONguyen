@@ -1,0 +1,11 @@
+.git
+.github
+.wrangler
+docs
+shop-engine
+CNAME
+wrangler.jsonc
+.assetsignore
+.pages.yml
+README*
+.gitignore
