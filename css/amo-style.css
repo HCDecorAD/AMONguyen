@@ -3,14 +3,14 @@
    AMO NGUYEN - PRODUCTION CORE STYLES (FINAL)
    ========================================================================== */
 :root {
-  --amo-gold: #D4AF37;
-  --amo-gold-deep: #B8860B;
+  --amo-gold: #C9A96A;
+  --amo-gold-deep: #A87922;
   --amo-black: #1A1A1A;
   --amo-charcoal: #444444;
-  --amo-off-white: #F5F5F5;
+  --amo-off-white: #F9F7F0;
   
-  --amo-font-heading: 'Playfair Display', serif;
-  --amo-font-body: 'Inter', sans-serif;
+  --amo-font-heading: 'Be Vietnam Pro', Arial, sans-serif;
+  --amo-font-body: 'Be Vietnam Pro', Arial, sans-serif;
   
   --amo-space-xs: clamp(0.5rem, 1vw, 1rem);
   --amo-space-sm: clamp(1rem, 2vw, 2rem);
@@ -212,3 +212,13 @@ main > section:first-child > div[style*="z-index:2"] .amo-btn { text-shadow:none
 .amo-home-services span{font-size:.65rem;color:#a08754;letter-spacing:.16em}
 .amo-home-services h3{font-family:var(--amo-font-heading);font-weight:400;font-size:1.5rem;margin:.6rem 0}
 .amo-home-services p{color:#716d66;font-size:.9rem;line-height:1.65}
+
+/* ===== AMO ICON + UTILITY SYSTEM ===== */
+.amo-header-inner{gap:1.5rem}.amo-header-tools{display:flex;align-items:center;gap:.35rem;margin-left:auto}
+.amo-tool{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;color:var(--amo-black)}
+.amo-tool:hover{background:#efe7d6;color:var(--amo-gold-deep)}.amo-tool svg,.amo-mini-icon svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.amo-nav-desktop a{display:inline-flex;align-items:center;gap:.4rem}.amo-mini-icon{display:inline-grid;place-items:center;color:#9a742f}
+.amo-usp-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#e8e0d0;border:1px solid #e8e0d0;margin:2rem auto;max-width:var(--amo-container)}
+.amo-usp{background:#fff;padding:1.2rem;display:flex;align-items:center;gap:.8rem}.amo-usp svg{width:28px;height:28px;stroke:#a87922;fill:none;stroke-width:1.7}.amo-usp b{font-size:.78rem}.amo-usp span{display:block;color:#777;font-size:.68rem;margin-top:.15rem}
+@media(max-width:900px){.amo-header-tools{margin-left:auto}.amo-nav-desktop{display:none}.amo-menu-btn{display:block}.amo-usp-strip{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.amo-tool:nth-child(-n+2){display:none}.amo-usp-strip{grid-template-columns:1fr}.amo-logo{font-size:1.1rem;letter-spacing:.1em}}
