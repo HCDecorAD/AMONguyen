@@ -1,0 +1,3 @@
+
+INSERT OR IGNORE INTO import_templates(id,store_id,kind,name,mapping_json,required_json) VALUES('itpl_amo_customers','store_amo','customers','AMO Customers','{"Name":"name","Phone":"phone","Email":"email","Address":"address"}','["name","phone"]');
+INSERT OR IGNORE INTO import_templates(id,store_id,kind,name,mapping_json,required_json) VALUES('itpl_amo_orders','store_amo','orders','AMO Orders','{"Order No":"order_no","Customer Name":"customer_name","Customer Phone":"customer_phone","Customer Email":"customer_email","Shipping Address":"shipping_address","SKU":"sku","Quantity":"qty","Unit Price":"unit_price","Payment Method":"payment_method"}','["order_no","customer_name","customer_phone","shipping_address","sku","qty","unit_price"]');
