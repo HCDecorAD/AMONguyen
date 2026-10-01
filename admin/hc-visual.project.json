@@ -1,0 +1,18 @@
+{
+  "visualVersion": "7.1.0",
+  "site": "AMO",
+  "engine": "hc-visual-builder",
+  "compatibility": {
+    "preserveHtml": true,
+    "preserveScripts": true,
+    "pagesCms": true,
+    "publishBridge": "http://127.0.0.1:17321",
+    "rollback": true
+  },
+  "dataLayers": ["html", "cms-json", "media", "visual-draft"],
+  "editor": {
+    "projectManifest": "admin/pages.json",
+    "responsive": ["desktop", "tablet", "mobile"],
+    "futureAdapters": true
+  }
+}
