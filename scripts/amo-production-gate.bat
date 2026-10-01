@@ -10,5 +10,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0qa-production.ps1" > "
 set "RC=%ERRORLEVEL%"
 type "%QA%\production.log"
 if not "%RC%"=="0" exit /b %RC%
-echo [AMO] GITHUB PAGES PRODUCTION PASS
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0qa-theme.ps1" > "%QA%\theme.log" 2>&1
+set "TR=%ERRORLEVEL%"
+type "%QA%\theme.log"
+if not "%TR%"=="0" exit /b %TR%
+echo [AMO] GITHUB PAGES + THEME PRODUCTION PASS
 exit /b 0
