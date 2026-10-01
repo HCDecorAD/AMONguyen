@@ -222,3 +222,14 @@ main > section:first-child > div[style*="z-index:2"] .amo-btn { text-shadow:none
 .amo-usp{background:#fff;padding:1.2rem;display:flex;align-items:center;gap:.8rem}.amo-usp svg{width:28px;height:28px;stroke:#a87922;fill:none;stroke-width:1.7}.amo-usp b{font-size:.78rem}.amo-usp span{display:block;color:#777;font-size:.68rem;margin-top:.15rem}
 @media(max-width:900px){.amo-header-tools{margin-left:auto}.amo-nav-desktop{display:none}.amo-menu-btn{display:block}.amo-usp-strip{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.amo-tool:nth-child(-n+2){display:none}.amo-usp-strip{grid-template-columns:1fr}.amo-logo{font-size:1.1rem;letter-spacing:.1em}}
+
+/* AMO V4 light/dark appearance */
+:root{color-scheme:light;--amo-page:#fff;--amo-ink:#111;--amo-panel:#f4f2ee;--amo-line:#ded8ce}
+html[data-theme="dark"]{color-scheme:dark;--amo-page:#11110f;--amo-ink:#f4efe5;--amo-panel:#1b1a17;--amo-line:#39352e}
+html[data-theme="dark"] body{background:var(--amo-page);color:var(--amo-ink)}
+html[data-theme="dark"] .amo-header,html[data-theme="dark"] .amo-mobile-nav,html[data-theme="dark"] .amo-product-info{background:var(--amo-page);color:var(--amo-ink)}
+html[data-theme="dark"] a{color:inherit}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:var(--amo-panel);color:var(--amo-ink);border-color:var(--amo-line)}
+.amo-theme-toggle{position:fixed;right:18px;bottom:82px;z-index:9998;width:44px;height:44px;border-radius:50%;border:1px solid rgba(180,145,82,.55);background:#151410;color:#e3bd73;font-size:20px;line-height:1;box-shadow:0 8px 26px rgba(0,0,0,.2);cursor:pointer}
+html[data-theme="dark"] .amo-theme-toggle{background:#f3eee4;color:#191713}
+@media(min-width:900px){.amo-theme-toggle{bottom:24px}}
