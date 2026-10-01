@@ -1,0 +1,18 @@
+name: AMO Public V4 QA
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  qa:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Public V4 release gate
+        shell: cmd
+        run: tools\amo-rc-v4.bat
+      - name: Upload public package
+        uses: actions/upload-artifact@v4
+        with:
+          name: AMO-Public-V4
+          path: dist-public
