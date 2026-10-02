@@ -6,6 +6,8 @@ on:
 jobs:
   qa:
     runs-on: windows-latest
+    permissions:
+      contents: read
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
