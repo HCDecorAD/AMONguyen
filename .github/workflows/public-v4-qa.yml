@@ -6,6 +6,7 @@ on:
 jobs:
   qa:
     runs-on: windows-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Public V4 release gate
