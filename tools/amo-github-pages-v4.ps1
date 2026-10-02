@@ -7,7 +7,14 @@ $legacy=@(
   (-join @([char]0x0043,[char]0x0048,[char]0x00CD,[char]0x004E,[char]0x0048,[char]0x0020,[char]0x0048,[char]0x00C3,[char]0x004E,[char]0x0047))
 )
 $patterns=@('vercel.app','vercel.com','assets/images/demo/','assets/reference/')+$legacy
-foreach($p in $patterns){$m=$files|Select-String -SimpleMatch $p;if($m){Write-Host ('BLOCKER '+$p+' = '+$m.Count);$fail=1}}
+foreach($p in $patterns){
+  $m=$files|Select-String -SimpleMatch $p
+  if($m){
+    Write-Host ('BLOCKER '+$p+' = '+$m.Count)
+    $m|ForEach-Object{Write-Host ($_.Path+':'+$_.LineNumber)}
+    $fail=1
+  }
+}
 if(-not(Test-Path (Join-Path $r '404.html'))){Write-Host 'BLOCKER 404 missing';$fail=1}
 $pub=Get-ChildItem $r -Recurse -File -Filter *.html
 $missing=$pub|Where-Object{(Get-Content $_.FullName -Raw)-notmatch 'js/amo-theme\.js'}
