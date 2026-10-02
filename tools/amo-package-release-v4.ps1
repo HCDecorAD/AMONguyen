@@ -14,5 +14,8 @@ if($bytes -le 0){Write-Host 'BLOCKER release ZIP empty';exit 6}
 Write-Host ('ZIP='+$h.Path)
 Write-Host ('SHA256='+$h.Hash)
 Write-Host ('BYTES='+$bytes)
+$evidence=Join-Path $Root 'AMO-Nguyen-Public-V4.sha256.txt'
+@('SHA256='+$h.Hash,'BYTES='+$bytes,'FILE='+[IO.Path]::GetFileName($Zip))|Set-Content -Path $evidence -Encoding ascii
+Write-Host ('EVIDENCE='+$evidence)
 Write-Host 'PASS RELEASE PACKAGE'
 exit 0
