@@ -18,11 +18,10 @@ $evidence=Join-Path $Root 'AMO-Nguyen-Public-V4.sha256.txt'
 $commit=''
 try{$commit=(& git -C $Root rev-parse HEAD 2>$null).Trim()}catch{}
 $lines=@('SHA256='+$h.Hash,'BYTES='+$bytes,'FILE='+[IO.Path]::GetFileName($Zip))
-if($commit -match '^[0-9a-fA-F]{40}
-Write-Host ('EVIDENCE='+$evidence)
-Write-Host 'PASS RELEASE PACKAGE'
-exit 0
-){$lines+=('COMMIT='+$commit);Write-Host ('COMMIT='+$commit)}
+if($commit -match '^[0-9a-fA-F]{40}$'){
+  $lines+=('COMMIT='+$commit)
+  Write-Host ('COMMIT='+$commit)
+}
 $lines|Set-Content -Path $evidence -Encoding ascii
 Write-Host ('EVIDENCE='+$evidence)
 Write-Host 'PASS RELEASE PACKAGE'
