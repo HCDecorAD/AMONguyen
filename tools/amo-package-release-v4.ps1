@@ -15,7 +15,15 @@ Write-Host ('ZIP='+$h.Path)
 Write-Host ('SHA256='+$h.Hash)
 Write-Host ('BYTES='+$bytes)
 $evidence=Join-Path $Root 'AMO-Nguyen-Public-V4.sha256.txt'
-@('SHA256='+$h.Hash,'BYTES='+$bytes,'FILE='+[IO.Path]::GetFileName($Zip))|Set-Content -Path $evidence -Encoding ascii
+$commit=''
+try{$commit=(& git -C $Root rev-parse HEAD 2>$null).Trim()}catch{}
+$lines=@('SHA256='+$h.Hash,'BYTES='+$bytes,'FILE='+[IO.Path]::GetFileName($Zip))
+if($commit -match '^[0-9a-fA-F]{40}
+Write-Host ('EVIDENCE='+$evidence)
+Write-Host 'PASS RELEASE PACKAGE'
+exit 0
+){$lines+=('COMMIT='+$commit);Write-Host ('COMMIT='+$commit)}
+$lines|Set-Content -Path $evidence -Encoding ascii
 Write-Host ('EVIDENCE='+$evidence)
 Write-Host 'PASS RELEASE PACKAGE'
 exit 0
