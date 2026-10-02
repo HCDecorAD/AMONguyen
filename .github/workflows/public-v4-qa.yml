@@ -19,5 +19,6 @@ jobs:
           path: |
             dist-public
             AMO-Nguyen-Public-V4.zip
+            AMO-Nguyen-Public-V4.sha256.txt
           if-no-files-found: error
           retention-days: 14
