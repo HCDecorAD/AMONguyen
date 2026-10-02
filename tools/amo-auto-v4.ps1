@@ -13,7 +13,7 @@ if ($bad) { Write-Host ('BLOCKER legacy copy: ' + $bad.Count); $bad | ForEach-Ob
 Write-Host 'PASS legacy copy'
 $prices = @('16.000.000','14.500.000','11.000.000')
 $refs = $files | Select-String -SimpleMatch $prices
-if ($refs) { Write-Host ('BLOCKER demo prices: ' + $refs.Count); exit 3 }
+if ($refs) { Write-Host ('BLOCKER demo prices: ' + $refs.Count); $refs | ForEach-Object { Write-Host ($_.Path + ':' + $_.LineNumber) }; exit 3 }
 Write-Host 'PASS no demo prices'
 $forbidden=$files|Select-String -SimpleMatch 'vercel.app','vercel.com','assets/images/demo/','assets/reference/'
 if($forbidden){Write-Host ('BLOCKER forbidden production refs: '+$forbidden.Count);$forbidden|ForEach-Object{Write-Host ($_.Path+':'+$_.LineNumber)};exit 4}
