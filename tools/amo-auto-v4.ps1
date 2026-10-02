@@ -15,4 +15,7 @@ $prices = @('16.000.000','14.500.000','11.000.000')
 $refs = $files | Select-String -SimpleMatch $prices
 if ($refs) { Write-Host ('BLOCKER demo prices: ' + $refs.Count); exit 3 }
 Write-Host 'PASS no demo prices'
+$forbidden=$files|Select-String -SimpleMatch 'vercel.app','vercel.com','assets/images/demo/','assets/reference/'
+if($forbidden){Write-Host ('BLOCKER forbidden production refs: '+$forbidden.Count);$forbidden|ForEach-Object{Write-Host ($_.Path+':'+$_.LineNumber)};exit 4}
+Write-Host 'PASS no forbidden production refs'
 exit 0
