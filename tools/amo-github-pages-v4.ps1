@@ -2,7 +2,10 @@ param([Parameter(Mandatory=$true)][string]$Root)
 $r=(Resolve-Path $Root).Path
 $fail=0
 $files=Get-ChildItem $r -Recurse -File -Include *.html,*.js,*.json,*.yml,*.yaml,*.txt,*.xml
-$legacy=@([char]0x0053+[char]0x1EC8+' L'+[char]0x1EBA,'CH'+[char]0x00CD+'NH H'+[char]0x00C3+'NG')
+$legacy=@(
+  (-join @([char]0x0053,[char]0x1EC8,[char]0x0020,[char]0x004C,[char]0x1EBA)),
+  (-join @([char]0x0043,[char]0x0048,[char]0x00CD,[char]0x004E,[char]0x0048,[char]0x0020,[char]0x0048,[char]0x00C3,[char]0x004E,[char]0x0047))
+)
 $patterns=@('vercel.app','vercel.com','assets/images/demo/','assets/reference/')+$legacy
 foreach($p in $patterns){$m=$files|Select-String -SimpleMatch $p;if($m){Write-Host ('BLOCKER '+$p+' = '+$m.Count);$fail=1}}
 if(-not(Test-Path (Join-Path $r '404.html'))){Write-Host 'BLOCKER 404 missing';$fail=1}
