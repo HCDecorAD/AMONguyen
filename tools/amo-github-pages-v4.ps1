@@ -11,7 +11,7 @@ foreach($p in $patterns){$m=$files|Select-String -SimpleMatch $p;if($m){Write-Ho
 if(-not(Test-Path (Join-Path $r '404.html'))){Write-Host 'BLOCKER 404 missing';$fail=1}
 $pub=Get-ChildItem $r -Recurse -File -Filter *.html
 $missing=$pub|Where-Object{(Get-Content $_.FullName -Raw)-notmatch 'js/amo-theme\.js'}
-if($missing){$missing|ForEach-Object{Write-Host ('BLOCKER theme '+$_.Name)};$fail=1}
+if($missing){$missing|ForEach-Object{Write-Host ('BLOCKER theme '+$_.FullName.Substring($r.Length).TrimStart([char]92))};$fail=1}
 if($fail){exit 3}
 Write-Host 'PASS GITHUB PAGES V4 QA'
 exit 0
