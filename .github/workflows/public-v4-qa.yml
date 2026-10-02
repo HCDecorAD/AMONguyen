@@ -9,6 +9,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Public V4 release gate
         shell: cmd
         run: tools\amo-release-v4.bat
