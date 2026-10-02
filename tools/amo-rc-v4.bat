@@ -8,5 +8,6 @@ call "%~dp0amo-build-public-v4.bat" || exit /b 4
 call "%~dp0amo-public-qa.bat" "%ROOT%\dist-public" || exit /b 5
 call "%~dp0amo-link-seo-qa.bat" "%ROOT%\dist-public" || exit /b 6
 call "%~dp0amo-theme-v4.bat" "%ROOT%\dist-public" || exit /b 7
-powershell -NoProfile -Command "$d=Join-Path '%ROOT%' 'dist-public';$bad=Get-ChildItem $d -Recurse -File -Include *.html,*.js,*.css | Select-String -SimpleMatch 'assets/images/demo/','assets/reference/','shop-admin.html','editor.html','data-center.html';if($bad){$bad|%%{Write-Host ('BLOCKER '+$_.Path+':'+$_.LineNumber)};exit 8};Write-Host 'PASS AMO PUBLIC V4 RC GATE'"
-exit /b %errorlevel%
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0amo-package-v4.ps1" -Root "%ROOT%\dist-public" || exit /b 8
+echo PASS AMO PUBLIC V4 RC GATE
+exit /b 0
