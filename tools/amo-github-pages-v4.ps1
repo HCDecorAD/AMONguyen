@@ -10,7 +10,7 @@ $patterns=@('vercel.app','vercel.com','assets/images/demo/','assets/reference/')
 foreach($p in $patterns){$m=$files|Select-String -SimpleMatch $p;if($m){Write-Host ('BLOCKER '+$p+' = '+$m.Count);$fail=1}}
 if(-not(Test-Path (Join-Path $r '404.html'))){Write-Host 'BLOCKER 404 missing';$fail=1}
 $pub=Get-ChildItem $r -Recurse -File -Filter *.html
-$missing=$pub|Where-Object{(Get-Content $_.FullName -Raw)-notmatch 'js/amo-theme.js'}
+$missing=$pub|Where-Object{(Get-Content $_.FullName -Raw)-notmatch 'js/amo-theme\.js'}
 if($missing){$missing|ForEach-Object{Write-Host ('BLOCKER theme '+$_.Name)};$fail=1}
 if($fail){exit 3}
 Write-Host 'PASS GITHUB PAGES V4 QA'
