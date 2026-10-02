@@ -12,9 +12,12 @@ jobs:
         shell: cmd
         run: tools\amo-release-v4.bat
       - name: Upload public package
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: AMO-Public-V4
           path: |
             dist-public
             AMO-Nguyen-Public-V4.zip
+          if-no-files-found: error
+          retention-days: 14
