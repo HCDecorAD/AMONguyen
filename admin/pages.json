@@ -1,1 +1,79 @@
-{"site":"AMO","pages":[{"file":"index.html","label":"Home","editable":true},{"file":"shop.html","label":"Shop","editable":true},{"file":"lookbook.html","label":"Lookbook","editable":true},{"file":"story.html","label":"Story","editable":true},{"file":"guide.html","label":"Guide","editable":true},{"file":"contact.html","label":"Contact","editable":true}]}
+{
+  "site": "AMO",
+  "menu": [
+    "TRANG CHỦ",
+    "SẢN PHẨM",
+    "THƯƠNG HIỆU",
+    "GIỚI THIỆU",
+    "CHÍNH SÁCH",
+    "LIÊN HỆ"
+  ],
+  "pages": [
+    {
+      "file": "index.html",
+      "label": "TRANG CHỦ",
+      "editable": true
+    },
+    {
+      "file": "shop.html",
+      "label": "SẢN PHẨM",
+      "editable": true
+    },
+    {
+      "file": "shop.html#brands",
+      "label": "THƯƠNG HIỆU",
+      "editable": true
+    },
+    {
+      "file": "story.html",
+      "label": "GIỚI THIỆU",
+      "editable": true
+    },
+    {
+      "file": "policy.html",
+      "label": "CHÍNH SÁCH",
+      "editable": true
+    },
+    {
+      "file": "contact.html",
+      "label": "LIÊN HỆ",
+      "editable": true
+    },
+    {
+      "file": "size-guide.html",
+      "label": "SIZE SNEAKER",
+      "editable": true,
+      "menu": false
+    },
+    {
+      "file": "product.html",
+      "label": "CHI TIẾT SẢN PHẨM",
+      "editable": true,
+      "menu": false
+    },
+    {
+      "file": "cart.html",
+      "label": "GIỎ HÀNG",
+      "editable": true,
+      "menu": false
+    },
+    {
+      "file": "checkout.html",
+      "label": "THANH TOÁN",
+      "editable": true,
+      "menu": false
+    },
+    {
+      "file": "account.html",
+      "label": "TÀI KHOẢN",
+      "editable": true,
+      "menu": false
+    },
+    {
+      "file": "404.html",
+      "label": "404",
+      "editable": true,
+      "menu": false
+    }
+  ]
+}

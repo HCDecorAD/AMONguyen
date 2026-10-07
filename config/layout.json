@@ -1,34 +1,46 @@
 {
+  "brand": {
+    "logo": "assets/images/amo-logo-new.jpg",
+    "banner": "assets/images/amo-banner-new.png",
+    "phone": "093.268.0592",
+    "tagline": "Chọn giày có gu, bước đi có chất"
+  },
   "sections": [
     {
-      "selector": ".amo-home-hero",
-      "label": "Hero",
+      "selector": ".amo-new-hero",
+      "label": "LOGO / banner thương hiệu",
       "enabled": true,
       "order": 1
     },
     {
-      "selector": ".amo-home-intro",
-      "label": "Giới thiệu",
+      "selector": ".amo-new-intro",
+      "label": "Giới thiệu ngắn AMO Nguyễn",
       "enabled": true,
       "order": 2
     },
     {
-      "selector": ".amo-home-styles",
-      "label": "Danh mục nổi bật",
+      "selector": "#san-pham",
+      "label": "Sản phẩm",
       "enabled": true,
       "order": 3
     },
     {
-      "selector": ".amo-home-editorial",
-      "label": "Editorial",
+      "selector": "#thuong-hieu",
+      "label": "Thương hiệu",
       "enabled": true,
       "order": 4
     },
     {
-      "selector": ".amo-home-services",
-      "label": "Dịch vụ",
+      "selector": ".amo-new-policy",
+      "label": "Chính sách bán hàng",
       "enabled": true,
       "order": 5
+    },
+    {
+      "selector": ".amo-new-cta",
+      "label": "Liên hệ / Zalo / social",
+      "enabled": true,
+      "order": 6
     }
   ]
 }
