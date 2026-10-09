@@ -15,7 +15,10 @@ $prices = @('16.000.000','14.500.000','11.000.000')
 $refs = $files | Select-String -SimpleMatch $prices
 if ($refs) { Write-Host ('BLOCKER demo prices: ' + $refs.Count); $refs | ForEach-Object { Write-Host ($_.Path + ':' + $_.LineNumber) }; exit 3 }
 Write-Host 'PASS no demo prices'
-$forbidden=$files|Select-String -SimpleMatch 'vercel.app','vercel.com','assets/images/demo/','assets/reference/'
+$forbidden=$files|Select-String -SimpleMatch 'vercel.app','vercel.com','assets/reference/'
+# Owner-approved AMO sample cards are allowed only in amo-shop.js; all other demo image references remain blocked.
+$otherFiles=$files | Where-Object { $_.Name -ne 'amo-shop.js' }
+$forbidden += $otherFiles | Select-String -SimpleMatch 'assets/images/demo/'
 if($forbidden){Write-Host ('BLOCKER forbidden production refs: '+$forbidden.Count);$forbidden|ForEach-Object{Write-Host ($_.Path+':'+$_.LineNumber)};exit 4}
 Write-Host 'PASS no forbidden production refs'
 exit 0
