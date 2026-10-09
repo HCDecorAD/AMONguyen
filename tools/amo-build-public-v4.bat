@@ -8,7 +8,7 @@ robocopy "%ROOT%" "%OUT%" /E /XD .git tools admin dist-public reference demo /XF
 set "RC=%ERRORLEVEL%"
 if %RC% GEQ 8 exit /b %RC%
 if exist "%OUT%\assets\reference" rmdir /s /q "%OUT%\assets\reference"
-if exist "%OUT%\assets\images\demo" rmdir /s /q "%OUT%\assets\images\demo"
+rem Keep owner-approved labeled sample shoe images used by public shop cards
 echo Built public package: %OUT%
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0amo-public-qa.ps1" -Root "%OUT%"
 exit /b %errorlevel%
