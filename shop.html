@@ -32,7 +32,15 @@
     .amo-product-info { padding: 0 1rem 1rem; text-align: center; }
     .amo-product-name { font-family: var(--amo-font-body); font-size: 1rem; font-weight: 400; margin: 0 0 0.5rem; color: var(--amo-black); }
     .amo-product-status { font-size: 0.85rem; color: var(--amo-charcoal); margin: 0; letter-spacing: 0.05em; text-transform: uppercase; }
-  </style>
+  
+/* AMO sample collection: five items on wide screens, responsive below */
+#amoProductGrid:has(.amo-demo-card){display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;align-items:stretch}
+#amoProductGrid .amo-demo-card{min-width:0}
+#amoProductGrid .amo-demo-card .amo-product-img{aspect-ratio:4/5;overflow:hidden}
+#amoProductGrid .amo-demo-card .amo-product-img img{display:block}
+@media(max-width:1100px){#amoProductGrid:has(.amo-demo-card){grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){#amoProductGrid:has(.amo-demo-card){grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+</style>
 <style>
 :root{--amog:#d5a83f;--amob:#0d0c0a;--amoc:#f7f1e4}body{background:#0d0c0a;color:var(--amoc)}
 .amo-new-top{background:#050504;color:#d7b35f;text-align:center;padding:8px 4%;font-size:12px;letter-spacing:.12em}
