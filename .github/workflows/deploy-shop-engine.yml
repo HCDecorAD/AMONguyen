@@ -33,15 +33,15 @@ jobs:
         with:
           node-version: 22
       - name: Backup D1
-        run: npx --yes wrangler@4 d1 export hcs --remote --output "$RUNNER_TEMP/hcs-backup.sql"
+        run: npx --yes wrangler@4 d1 export hcs --remote --config wrangler.toml --output "$RUNNER_TEMP/hcs-backup.sql"
       - uses: actions/upload-artifact@v4
         with:
           name: hcs-backup
           path: ${{ runner.temp }}/hcs-backup.sql
           retention-days: 14
       - name: Apply migrations
-        run: npx wrangler@4 d1 migrations apply hcs --remote
+        run: npx wrangler@4 d1 migrations apply hcs --remote --config wrangler.toml
       - name: Deploy Worker
-        run: npx wrangler@4 deploy
+        run: npx wrangler@4 deploy --config wrangler.toml
       - name: Health check
         run: curl -fsS https://hc-shop-engine.huycuongonline.workers.dev/api/health

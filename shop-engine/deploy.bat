@@ -9,11 +9,11 @@ call npx --yes wrangler@4 whoami || (echo Chua dang nhap. Chay: npx wrangler log
 echo [2/6] Sao luu D1 truoc khi doi...
 if not exist backups mkdir backups
 for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"') do set TS=%%i
-call npx wrangler@4 d1 export hcs --remote --output "backups\hcs-%TS%.sql" || (echo Sao luu that bai, dung lai & exit /b 1)
+call npx wrangler@4 d1 export hcs --remote --config wrangler.toml --output "backups\hcs-%TS%.sql" || (echo Sao luu that bai, dung lai & exit /b 1)
 echo [3/6] Ap dung migration (them cot dang nhap theo shop)...
-call npx wrangler@4 d1 migrations apply hcs --remote || (echo Migration loi, dung lai & exit /b 1)
+call npx wrangler@4 d1 migrations apply hcs --remote --config wrangler.toml || (echo Migration loi, dung lai & exit /b 1)
 echo [4/6] Deploy Worker hc-shop-engine...
-call npx wrangler@4 deploy || (echo Deploy loi & exit /b 1)
+call npx wrangler@4 deploy --config wrangler.toml || (echo Deploy loi & exit /b 1)
 echo [5/6] Kiem tra suc khoe...
 powershell -NoProfile -Command "(Invoke-RestMethod https://hc-shop-engine.huycuongonline.workers.dev/api/health) | ConvertTo-Json -Compress" || exit /b 1
 echo [6/6] Xong. Backup: backups\hcs-%TS%.sql
