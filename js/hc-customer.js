@@ -84,16 +84,23 @@
       const c = document.createElement("div");
       c.style.cssText = "background:#fff;color:#111;max-width:400px;width:100%;padding:26px;position:relative";
       const el = (t, css, txt) => { const e = document.createElement(t); if (css) e.style.cssText = css; if (txt) e.textContent = txt; return e; };
-      const close = () => { ls.set("HCC_POP", "1"); w.remove(); };
-      const x = el("button", "position:absolute;right:10px;top:6px;border:0;background:none;font-size:24px;cursor:pointer", "×"); x.setAttribute("aria-label", "Đóng"); x.onclick = close;
-      const title = el("h3", "margin:0 0 6px;font-size:20px", cfg.welcome ? "Nhận ưu đãi -" + cfg.welcome.percent + "% đơn đầu tiên" : "Nhận tin ưu đãi và hàng mới");
-      const sub = el("p", "margin:0 0 12px;color:#555", "Để lại email hoặc số điện thoại, chúng tôi sẽ gửi ưu đãi và thông báo hàng mới về.");
-      const inp = el("input", "width:100%;padding:11px;border:1px solid #ccc;margin:4px 0;box-sizing:border-box"); inp.placeholder = "Email hoặc số điện thoại"; inp.autocomplete = "email";
+      const T = (n, f) => { try { return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || f; } catch { return f; } };
+      const C = { bg: T("--lw-panel", "#fff"), tx: T("--lw-text", "#111"), mute: T("--lw-mute", "#555"), gold: T("--lw-gold", "#111"), gold2: T("--lw-gold-2", "#111"), ink: T("--lw-gold-ink", "#fff"), field: T("--lw-field", "#fff"), line: T("--lw-line", "#ccc") };
+      c.style.cssText = "background:" + C.bg + ";color:" + C.tx + ";max-width:400px;width:100%;padding:28px 26px 24px;position:relative;border:1px solid " + C.gold + ";border-radius:4px;box-shadow:0 18px 60px rgba(0,0,0,.55)";
+      let timer = 0;
+      const close = () => { clearTimeout(timer); document.removeEventListener("keydown", esc); ls.set("HCC_POP", "1"); w.remove(); };
+      const esc = (e) => { if (e.key === "Escape") close(); };
+      document.addEventListener("keydown", esc);
+      w.addEventListener("click", (e) => { if (e.target === w) close(); });
+      const x = el("button", "position:absolute;right:10px;top:6px;border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:" + C.mute, "×"); x.setAttribute("aria-label", "Đóng"); x.onclick = close;
+      const title = el("h3", "margin:0 0 6px;font-size:20px;color:" + C.gold2, cfg.welcome ? "Nhận ưu đãi -" + cfg.welcome.percent + "% đơn đầu tiên" : "Nhận tin ưu đãi và hàng mới");
+      const sub = el("p", "margin:0 0 12px;color:" + C.mute, "Để lại email hoặc số điện thoại, chúng tôi sẽ gửi ưu đãi và thông báo hàng mới về.");
+      const inp = el("input", "width:100%;padding:11px;border:1px solid " + C.line + ";background:" + C.field + ";color:" + C.tx + ";margin:4px 0;box-sizing:border-box;border-radius:2px"); inp.placeholder = "Email hoặc số điện thoại"; inp.autocomplete = "email";
       const lab = el("label", "display:flex;gap:8px;font-size:13px;margin:8px 0;align-items:flex-start");
       const cb = el("input"); cb.type = "checkbox"; cb.style.marginTop = "3px";
       lab.append(cb, el("span", "", "Tôi đồng ý để lưu thông tin liên hệ này và nhận tin ưu đãi. Có thể hủy bất cứ lúc nào."));
-      const err = el("p", "color:#b00020;margin:4px 0;min-height:1em;font-size:13px");
-      const go = el("button", "width:100%;background:#111;color:#fff;border:0;padding:12px;cursor:pointer", "Nhận ưu đãi");
+      const err = el("p", "color:#ff8a80;margin:4px 0;min-height:1em;font-size:13px");
+      const go = el("button", "width:100%;background:" + C.gold + ";color:" + C.ink + ";border:0;padding:12px;cursor:pointer;font-weight:700", "Nhận ưu đãi");
       go.onclick = async () => {
         err.textContent = "";
         const v = inp.value.trim(), f = { consent: cb.checked };
@@ -102,7 +109,14 @@
         try {
           const r = await HCC.lead(f);
           ls.set("HCC_LEAD", "1"); ls.set("HCC_POP", "1");
-          c.replaceChildren(x, el("h3", "margin:0 0 8px", "Cảm ơn bạn!"), el("p", "", r.coupon ? "Mã ưu đãi của bạn: " + r.coupon.code + " (-" + r.coupon.percent + "%" + (r.coupon.min_order ? ", đơn từ " + new Intl.NumberFormat("vi-VN").format(r.coupon.min_order) + " đ" : "") + ")." : "Chúng tôi sẽ liên hệ với bạn sớm."));
+          const ok = el("div", "width:44px;height:44px;border-radius:50%;border:1px solid " + C.gold + ";color:" + C.gold2 + ";display:grid;place-items:center;font-size:22px;margin:0 0 12px", "✓");
+          const msg = r.coupon ? "Mã ưu đãi của bạn: " : "Chúng tôi sẽ liên hệ với bạn sớm.";
+          const body = el("p", "margin:0 0 6px;color:" + C.tx + ";line-height:1.6", msg);
+          if (r.coupon) { body.append(el("b", "color:" + C.gold2 + ";letter-spacing:.06em", r.coupon.code), document.createTextNode(" (-" + r.coupon.percent + "%" + (r.coupon.min_order ? ", đơn từ " + new Intl.NumberFormat("vi-VN").format(r.coupon.min_order) + " đ" : "") + ").")); }
+          const hint = el("p", "margin:0 0 14px;font-size:12.5px;color:" + C.mute, "Cửa sổ này sẽ tự đóng sau vài giây.");
+          const ok2 = el("button", "width:100%;background:transparent;color:" + C.tx + ";border:1px solid " + C.gold + ";padding:11px;cursor:pointer", "Đóng"); ok2.onclick = close;
+          c.replaceChildren(x, ok, el("h3", "margin:0 0 8px;font-size:20px;color:" + C.gold2, "Cảm ơn bạn!"), body, hint, ok2);
+          timer = setTimeout(close, 6000);
         } catch (e) { err.textContent = e.message; go.disabled = false; }
       };
       c.append(x, title, sub, inp, lab, err, go); w.appendChild(c); document.body.appendChild(w); inp.focus();
