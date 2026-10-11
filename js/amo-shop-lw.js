@@ -8,7 +8,7 @@ function render(){
   var q=($("amoSearch").value||"").trim().toLowerCase(),sort=$("amoSort").value,sz=checked("size"),br=checked("brand"),st=$("lwStock").checked;
   var a=all.filter(function(p){
     if(q&&((p.name||"")+" "+(p.brand||"")+" "+(p.cat||"")).toLowerCase().indexOf(q)<0)return false;
-    if(sz.length&&!(p.sizes||[]).some(function(s){return sz.indexOf(String(s).toLowerCase())>=0}))return false;
+    if(sz.length&&!(p.sizes||[]).some(function(s){return sz.some(function(l){return AMO_LW.inRange(l,s)})}))return false;
     if(br.length&&br.indexOf(String(p.brand||"khác").toLowerCase())<0)return false;
     if(st&&!p.available)return false;return true});
   if(sort==="price-asc")a.sort(function(x,y){return(x.price||1e15)-(y.price||1e15)});
