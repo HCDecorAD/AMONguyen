@@ -1,8 +1,8 @@
 import {handleContent} from "./content.js";
 import {handleMedia,serveMedia} from "./media.js";
 import {handleCustomers,customerFromReq,orderDiscount,lineAutoPercent,activePromos} from "./customers.js";
-const ORIGINS=["https://amonguyen.hcdecorhub.com","http://localhost","http://127.0.0.1"];
-const originOk=o=>ORIGINS.some(x=>o.startsWith(x))||/^https:\/\/([a-z0-9-]+\.)?hcdecorhub\.com$/.test(o);
+const ORIGINS=["https://amonguyen.com","https://www.amonguyen.com","https://amonguyen.hcdecorhub.com","http://localhost","http://127.0.0.1"];
+const originOk=o=>ORIGINS.some(x=>o.startsWith(x))||/^https:\/\/([a-z0-9-]+\.)?(hcdecorhub|amonguyen)\.com$/.test(o);
 const cors=req=>{const o=req.headers.get("origin")||"";return {"access-control-allow-origin":originOk(o)?o:ORIGINS[0],"vary":"Origin","access-control-allow-headers":"content-type,x-store-id,authorization","access-control-allow-methods":"GET,POST,PATCH,DELETE,OPTIONS"}};
 const json=(req,data,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json","cache-control":"no-store",...cors(req)}});
 const clean=s=>String(s??"").trim(),id=p=>p+"_"+crypto.randomUUID().replaceAll("-","").slice(0,20),slug=s=>clean(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
