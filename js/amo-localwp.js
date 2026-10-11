@@ -53,10 +53,30 @@ function floats(){
   var s=el("a","fb","f");s.href="https://www.facebook.com/nguyen.amo.2024/";s.target="_blank";s.rel="noopener";s.setAttribute("aria-label","Facebook AMO Nguyễn");
   f.appendChild(z);f.appendChild(s);document.body.appendChild(f);
 }
+var mo=null,moT=0;
+function translateTree(){
+  var M=window.AMO_I18N;if(!M)return;
+  document.querySelectorAll("main *, footer *, .lw-filter *").forEach(function(e){
+    var t=e.tagName;if(t==="SCRIPT"||t==="STYLE"||t==="INPUT"||t==="SELECT"||t==="TEXTAREA"||t==="IFRAME"||t==="SVG"||t==="svg"||t==="path")return;
+    if(e.hasAttribute("placeholder")){if(e._ph===undefined&&M[e.getAttribute("placeholder")])e._ph=e.getAttribute("placeholder");if(e._ph!==undefined)e.setAttribute("placeholder",lang==="en"?M[e._ph]:e._ph)}
+    if(e.children.length||e.dataset.vi)return;
+    var raw=e.textContent,m=raw.match(/^(\s*)([\s\S]*?)(\s*)$/);
+    if(e._vi===undefined){if(!m[2]||!Object.prototype.hasOwnProperty.call(M,m[2]))return;e._vi=m[2];e._ws=[m[1],m[3]]}
+    e.textContent=e._ws[0]+(lang==="en"?M[e._vi]:e._vi)+e._ws[1];
+  });
+}
 function apply(){
+  if(mo)mo.disconnect();
   document.documentElement.lang=lang;
   document.querySelectorAll("[data-vi][data-en]").forEach(function(e){e.textContent=lang==="en"?e.dataset.en:e.dataset.vi});
+  translateTree();
   if(langBtn)langBtn.textContent=lang==="en"?"VN":"EN";
+  watch();
+}
+function watch(){
+  if(!window.MutationObserver)return;
+  if(!mo)mo=new MutationObserver(function(){clearTimeout(moT);moT=setTimeout(function(){if(lang==="en")apply()},120)});
+  var m=document.querySelector("main");if(m)mo.observe(m,{childList:true,subtree:true});
 }
 function card(p){
   var a=el("a","lw-card");a.href=ROOT+"product.html?p="+encodeURIComponent(p.slug||p.id||"");
@@ -100,6 +120,7 @@ function init(){
   header();footer();floats();refreshCart();setInterval(refreshCart,1000);
   window.addEventListener("storage",refreshCart);
   home();listPage();apply();
+  var sc=document.createElement("script");sc.src=ROOT+"js/amo-i18n.js";sc.onload=apply;document.head.appendChild(sc);
   if(window.__amoTheme)window.__amoTheme();
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
