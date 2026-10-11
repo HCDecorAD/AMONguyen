@@ -1,0 +1,47 @@
+name: Deploy shop-engine (manual)
+
+# Chay tay: Actions -> Deploy shop-engine -> Run workflow.
+# Can 2 secret trong repo: CLOUDFLARE_API_TOKEN (quyen Workers Scripts:Edit, D1:Edit) va CLOUDFLARE_ACCOUNT_ID.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Go DEPLOY de xac nhan ghi len production'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-shop-engine
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event.inputs.confirm == 'DEPLOY' && github.actor == github.repository_owner }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: shop-engine
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Backup D1
+        run: npx --yes wrangler@4 d1 export hcs --remote --output "$RUNNER_TEMP/hcs-backup.sql"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hcs-backup
+          path: ${{ runner.temp }}/hcs-backup.sql
+          retention-days: 14
+      - name: Apply migrations
+        run: npx wrangler@4 d1 migrations apply hcs --remote
+      - name: Deploy Worker
+        run: npx wrangler@4 deploy
+      - name: Health check
+        run: curl -fsS https://hc-shop-engine.huycuongonline.workers.dev/api/health
