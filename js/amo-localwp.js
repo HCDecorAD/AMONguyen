@@ -29,8 +29,11 @@ function header(){
   var ca=el("a","lw-ico");ca.href=ROOT+"cart.html";ca.setAttribute("aria-label","Giỏ hàng");
   var cs=svg("M3 4h2.2l2.1 10.2a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.5L20.5 8H6.1M10 20.2h.01M17 20.2h.01");ca.appendChild(cs);
   badge=el("span","lw-badge","0");badge.hidden=true;ca.appendChild(badge);
-  t.appendChild(langBtn);t.appendChild(th);t.appendChild(ca);n.appendChild(t);
-  w.appendChild(b);w.appendChild(n);h.appendChild(w);
+  var ac=el("a","lw-ico");ac.href=ROOT+"account.html";ac.setAttribute("aria-label","Tài khoản");ac.title="Tài khoản";
+  ac.appendChild(svg("M12 12.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4zM4.5 20.2c.6-3.6 3.7-5.6 7.5-5.6s6.9 2 7.5 5.6"));
+  try{if(localStorage.getItem("HCC_TOKEN_store_amo")){ac.classList.add("on");ac.title="Tài khoản của tôi"}}catch(e){}
+  t.appendChild(langBtn);t.appendChild(th);t.appendChild(ac);t.appendChild(ca);
+  w.appendChild(b);w.appendChild(n);w.appendChild(t);h.appendChild(w);
   document.querySelectorAll(".amo-new-top,.amo-new-header,.amo-header,.amo-mobile-nav").forEach(function(x){x.remove()});
   document.body.insertBefore(h,document.body.firstChild);
 }

@@ -13,16 +13,16 @@ a{color:inherit}
 .lw-brand{display:flex;align-items:center;gap:14px;text-decoration:none;font-size:20px;font-weight:600;letter-spacing:.02em}
 .lw-brand img{width:54px;height:54px;border-radius:50%;object-fit:cover;border:1px solid var(--lw-gold)}
 .lw-nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
-.lw-nav a,.lw-nav button{color:var(--lw-text);text-decoration:none;font-size:14px;background:none;border:0;cursor:pointer;padding:6px 0;font-family:inherit}
-.lw-nav a:hover,.lw-nav button:hover{color:var(--lw-gold-2)}
+.lw-nav a,.lw-nav button,.lw-tools button{color:var(--lw-text);text-decoration:none;font-size:14px;background:none;border:0;cursor:pointer;padding:6px 0;font-family:inherit}
+.lw-nav a:hover,.lw-nav button:hover,.lw-tools button:hover{color:var(--lw-gold-2)}
 .lw-nav a[aria-current=page]{color:var(--lw-gold-2);font-weight:600}
 .lw-tools{display:flex;align-items:center;gap:8px;margin-left:6px}
-.lw-nav .lw-ico{position:relative;width:38px;height:38px;border:1px solid var(--lw-line);border-radius:50%;display:grid;place-items:center;padding:0;font-size:17px;line-height:1;color:var(--lw-text)}
-.lw-nav .lw-ico:hover{border-color:var(--lw-gold)}
+.lw-tools .lw-ico{position:relative;width:38px;height:38px;border:1px solid var(--lw-line);border-radius:50%;display:grid;place-items:center;padding:0;font-size:17px;line-height:1;color:var(--lw-text)}
+.lw-tools .lw-ico:hover{border-color:var(--lw-gold)}
 .lw-ico svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .lw-badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:var(--lw-gold);color:var(--lw-gold-ink);font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px}
 .lw-badge[hidden]{display:none}
-.lw-nav a:focus-visible,.lw-nav button:focus-visible{outline:2px solid var(--lw-gold);outline-offset:3px}
+.lw-nav a:focus-visible,.lw-tools button:focus-visible,.lw-tools a:focus-visible{outline:2px solid var(--lw-gold);outline-offset:3px}
 
 /* khung giữa + chữ rõ */
 .amo-new-hero,.amo-new-section{max-width:var(--lw-w)}
@@ -144,7 +144,7 @@ body .bar{background:var(--lw-line)}body .bar i{background:var(--lw-gold)}
 .amo-usp b{color:var(--lw-gold-2)!important}.amo-usp span{color:var(--lw-mute)!important}.amo-usp svg{stroke:var(--lw-gold)!important}
 
 @media(max-width:820px){.lw-shop,.lw-pd,.lw-foot{grid-template-columns:1fr}.lw-filter{border-right:0;border-bottom:1px solid var(--lw-line);padding:0 0 18px;margin-bottom:22px}.lw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lw-cat-grid{grid-template-columns:repeat(3,1fr)}.lw-nav{gap:14px}}
-@media(max-width:520px){.lw-brand{font-size:17px}.lw-brand img{width:42px;height:42px}.lw-cat-grid{grid-template-columns:repeat(2,1fr)}.lw-nav{gap:12px;width:100%}.lw-nav a,.lw-nav button{font-size:13px}.lw-tools{margin-left:auto}.lw-float{bottom:16px}}
+@media(max-width:520px){.lw-brand{font-size:17px}.lw-brand img{width:42px;height:42px}.lw-cat-grid{grid-template-columns:repeat(2,1fr)}.lw-nav{gap:12px;width:100%}.lw-nav a,.lw-nav button,.lw-tools button{font-size:13px}.lw-tools{margin-left:auto}.lw-float{bottom:16px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 .amo-page-header{padding:2.2rem 5% 1rem!important;min-height:0!important}
@@ -153,3 +153,10 @@ main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 .lw-foot{grid-template-columns:1fr;text-align:center;justify-items:center;gap:22px}
 .lw-foot .lw-social{justify-content:center}
 .lw-copy{text-align:center}
+
+.lw-head .lw-brand{order:1}.lw-head .lw-nav{order:2}.lw-head .lw-tools{order:3}
+@media(max-width:520px){.lw-head .lw-nav{order:3}.lw-head .lw-tools{order:2}}
+
+.lw-tools .lw-ico.on{border-color:var(--lw-gold);color:var(--lw-gold-2)}
+.lw-tools .lw-ico.on::after{content:"";position:absolute;right:1px;top:1px;width:9px;height:9px;border-radius:50%;background:#3ecf6e;border:2px solid var(--lw-hdr)}
+@media(max-width:380px){.lw-nav{gap:10px}.lw-nav a{font-size:12.5px}.lw-tools{gap:5px}.lw-tools .lw-ico{width:34px;height:34px}}
