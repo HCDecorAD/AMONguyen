@@ -148,3 +148,8 @@ body .bar{background:var(--lw-line)}body .bar i{background:var(--lw-gold)}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 .amo-page-header{padding:2.2rem 5% 1rem!important;min-height:0!important}
+
+/* footer Liên hệ canh giữa */
+.lw-foot{grid-template-columns:1fr;text-align:center;justify-items:center;gap:22px}
+.lw-foot .lw-social{justify-content:center}
+.lw-copy{text-align:center}
