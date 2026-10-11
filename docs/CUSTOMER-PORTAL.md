@@ -52,3 +52,8 @@ Mỗi website (store) có hệ thống khách riêng; dữ liệu tách theo `st
 - Nhân sang site khác (GSC…): thêm `<div data-hc-page="home">…</div>` + `<script src=".../hc-blocks.js" data-store="STORE_ID" defer>`.
 - Migration `0014_site_pages.sql`; test `scripts/e2e-site.mjs`.
 - Giai đoạn 2 (chưa làm): trình dựng tự do GrapesJS.
+
+## Ảnh tải lên + ẩn/hiện hàng loạt
+- Ảnh chủ shop tải lên được nén ở trình duyệt (≤ 1600px, ≤ ~600KB) rồi lưu trong D1 (bảng `media`, migration `0015_media.sql`, không cần R2). `POST /api/v1/media` (staff+), `GET /api/media/:id` công khai, `DELETE` (manager+), tối đa 400 ảnh/shop.
+- Danh sách sản phẩm có tick chọn → Ẩn/Hiện hàng loạt; `GET /api/products?archived=1` để xem cả sản phẩm đã ẩn.
+- Hướng dẫn cho chủ shop: `huong-dan-chu-shop.html` (menu "Hướng dẫn" trong shop-admin).

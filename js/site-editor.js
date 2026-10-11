@@ -23,6 +23,27 @@
   var ED = null, FORM = null, DRAG = null;
 
   function htable(rows, cols, action) { return '<div style="overflow:auto"><table><thead><tr>' + cols.map(function (c) { return '<th>' + c[0] + '</th>'; }).join("") + (action ? "<th></th>" : "") + '</tr></thead><tbody>' + rows.map(function (r) { return "<tr>" + cols.map(function (c) { return "<td>" + c[1](r) + "</td>"; }).join("") + (action ? "<td>" + action(r) + "</td>" : "") + "</tr>"; }).join("") + "</tbody></table></div>"; }
+  /* ---- image upload (compress in browser, store in Worker D1) ---- */
+  function compress(file) {
+    return new Promise(function (res, rej) {
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return rej(Error("Chỉ nhận ảnh JPG, PNG, WebP"));
+      var url = URL.createObjectURL(file), im = new Image();
+      im.onload = function () {
+        var sc = Math.min(1, 1600 / Math.max(im.width, im.height)), c = document.createElement("canvas"); c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
+        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        var q = 0.85, out; for (var i = 0; i < 6; i++) { out = c.toDataURL("image/webp", q); if (!/^data:image\/webp/.test(out)) out = c.toDataURL("image/jpeg", q); if (out.length * 0.75 < 600 * 1024) break; q -= 0.12; }
+        if (out.length * 0.75 > 690 * 1024) return rej(Error("Ảnh quá lớn, hãy chọn ảnh nhỏ hơn"));
+        res(out);
+      };
+      im.onerror = function () { rej(Error("Không đọc được ảnh")); }; im.src = url;
+    });
+  }
+  window.hcUpload = async function (file) { var d = await compress(file); var r = await api("/api/v1/media", { method: "POST", body: JSON.stringify({ name: file.name, data: d }) }); return r.url; };
+  window.siteUpload = function (input, key) {
+    var f = input.files && input.files[0]; if (!f) return;
+    act(async function () { var u = await hcUpload(f); FORM.props[key] = u; var b = ED.blocks.find(function (x) { return x.id === FORM.id; }); formDraw(b.type); });
+  };
+
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function nid() { return "b" + Math.random().toString(36).slice(2, 9); }
   function blank(type) {
@@ -140,6 +161,7 @@
       if (f[2] === "area") h += '<textarea rows="4" data-k="' + k + '" oninput="siteSet(this)"' + dis + '>' + esc(v) + '</textarea>';
       else if (f[2] === "align") h += '<select data-k="' + k + '" onchange="siteSet(this)"' + dis + '><option value="left"' + (v === "left" ? " selected" : "") + '>Trái</option><option value="center"' + (v === "center" ? " selected" : "") + '>Giữa</option></select>';
       else h += '<input data-k="' + k + '" value="' + esc(v) + '" oninput="siteSet(this)"' + dis + '>';
+      if (f[2] === "img" && w) h += '<input type="file" accept="image/jpeg,image/png,image/webp" onchange="siteUpload(this,\'' + k + '\')">';
     });
     if (it) {
       h += '<h4>' + esc(it.label) + ' (' + (p[it.key] || []).length + ')</h4>';
