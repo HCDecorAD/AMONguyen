@@ -28,6 +28,12 @@ function render(){
   $("pDesc").textContent=product.desc||"";
   $("pPrice").textContent=product.price>0?money(product.price):"Liên hệ AMO để được tư vấn";
   $("pZalo").setAttribute("aria-label","Hỏi shop về "+product.name);
+  $("pZalo").onclick=function(){
+    var sz=selected&&selected.size?" - size "+selected.size:"";
+    var msg="Chào shop, mình muốn hỏi về sản phẩm: "+product.name+sz+"\n"+location.href.split("#")[0];
+    try{if(navigator.clipboard)navigator.clipboard.writeText(msg)}catch(e){}
+    say("Đã sao chép link sản phẩm. Trong Zalo, dán (giữ ô chat > Dán) để gửi cho shop.");
+  };
   gallery(product.images||[]);
   var box=$("pOpts");box.replaceChildren();
   product.variants.forEach(function(v){

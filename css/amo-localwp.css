@@ -202,3 +202,29 @@ main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 .lw-hico{flex:0 0 auto;width:36px;height:36px;border:1px solid var(--lw-gold);border-radius:50%;display:grid;place-items:center;color:var(--lw-gold-2);background:color-mix(in srgb,var(--lw-gold) 9%,transparent)}
 .lw-hico svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 @media(max-width:520px){.lw-hico{width:30px;height:30px}.lw-hico svg{width:16px;height:16px}}
+
+/* khối chuyển khoản / QR */
+.lw-co .bankbox{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;border:1px dashed var(--lw-gold);padding:14px;margin:-2px 0 12px}
+.lw-co .bankbox[hidden]{display:none}
+.lw-co .bk-qr{background:#fff;padding:8px;border-radius:4px;line-height:0}.lw-co .bk-qr[hidden]{display:none}.lw-co .bk-qr img{width:190px;height:190px;max-width:100%}
+.lw-co .bk-info{margin:0}.lw-co .bk-info>div{display:flex;flex-wrap:wrap;gap:4px 10px;padding:5px 0;font-size:13.5px}.lw-co .bk-info dt{margin:0;color:var(--lw-mute);min-width:96px}.lw-co .bk-info dd{margin:0;color:var(--lw-text)}
+.lw-co .bk-info b{color:var(--lw-gold-2);letter-spacing:.02em}.lw-co .cp-btn{margin-left:6px;padding:3px 10px;font-size:12px;background:transparent;color:var(--lw-gold-2);border:1px solid var(--lw-gold);cursor:pointer;font-family:inherit}
+.lw-co .bankbox .hint{grid-column:1/-1;margin:0}
+.lw-co-done .bankbox{margin:16px 0;text-align:left}
+@media(max-width:560px){.lw-co .bankbox{grid-template-columns:1fr;justify-items:center}.lw-co .bk-info{width:100%}}
+/* Mobile: cột lọc bên trái, sản phẩm bên phải */
+@media(max-width:820px){
+ .lw-shop{grid-template-columns:116px minmax(0,1fr)!important;gap:0 12px!important;padding:18px 10px 40px!important}
+ .lw-filter{border-right:1px solid var(--lw-line)!important;border-bottom:0!important;padding:0 10px 0 0!important;margin:0!important}
+ .lw-filter h3{font-size:16px;margin-bottom:10px}.lw-filter h4{font-size:13.5px;margin:18px 0 8px}
+ .lw-filter label{font-size:11.5px;gap:7px;margin-bottom:9px;line-height:1.25}
+ .lw-filter input[type=checkbox]{width:14px;height:14px;flex:0 0 auto}
+ .lw-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ .lw-bar{flex-wrap:wrap;gap:8px}.lw-bar select{width:100%}
+}
+@media(max-width:560px){.lw-grid{grid-template-columns:1fr!important}}
+.lw-fsearch{margin:0 0 14px}.lw-fsearch input{width:100%;box-sizing:border-box;padding:9px 10px;background:var(--lw-bg);border:1px solid var(--lw-line);color:var(--lw-text);font:inherit;font-size:13px;border-radius:2px}
+.lw-fsearch input:focus{outline:2px solid var(--lw-gold);outline-offset:1px}
+/* chip size trang chủ: gọn, 5 cột trên mobile */
+.lw-sizes span{display:none}
+@media(max-width:600px){.lw-sizes{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.lw-sizes a{padding:6px 2px;font-size:11.5px;text-align:center;white-space:nowrap}}

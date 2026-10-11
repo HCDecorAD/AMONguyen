@@ -8,7 +8,11 @@
 <label>Địa chỉ giao hàng *<textarea id="address" rows="3" autocomplete="street-address" required></textarea></label>
 <label>Ghi chú cho shop<textarea id="note" rows="2" placeholder="Ví dụ: giao giờ hành chính, gọi trước khi giao"></textarea></label></section>
 <section class="lw-co-card"><h2><span class="n">2</span>Hình thức thanh toán</h2>
-<label class="opt"><input type="radio" name="pay" value="deposit" checked><span><b>Chuyển khoản cọc trước</b> <em>Ưu tiên</em><small>Shop giữ đôi giày cho anh/chị và lên đơn trước. Shop sẽ nhắn qua Zalo/điện thoại để gửi thông tin chuyển khoản. Phần cọc đã nhận sẽ được trừ vào tổng đơn.</small></span></label>
+<label class="opt"><input type="radio" name="pay" value="bank" checked><span><b>Chuyển khoản ngân hàng / quét mã QR</b> <em>Ưu tiên</em><small>Chuyển cọc hoặc toàn bộ đơn để shop giữ hàng và lên đơn trước. Phần đã chuyển được trừ vào tổng đơn.</small></span></label>
+<div class="bankbox" id="bankBox"><div class="bk-qr"><img id="bkQr" alt="Mã QR chuyển khoản VPBank" width="190" height="190"></div>
+<dl class="bk-info"><div><dt>Ngân hàng</dt><dd id="bkBank"></dd></div><div><dt>Chủ tài khoản</dt><dd id="bkHolder"></dd></div><div><dt>Số tài khoản</dt><dd><b id="bkAcc"></b> <button type="button" class="cp-btn" data-copy="acc">Sao chép</button></dd></div><div><dt>Nội dung CK</dt><dd><b id="bkInfo"></b> <button type="button" class="cp-btn" data-copy="info">Sao chép</button></dd></div></dl>
+<p class="hint">Mở app ngân hàng, quét mã QR hoặc nhập số tài khoản. Số tiền trong mã QR là tổng đơn, anh/chị có thể sửa thành tiền cọc. Sau khi chuyển, shop sẽ đối chiếu và cập nhật mục “Đã thanh toán trước”.</p></div>
+<label class="opt"><input type="radio" name="pay" value="card"><span><b>Thẻ Visa / Mastercard / Credit</b><small>Shop xác nhận đơn rồi gửi đường dẫn thanh toán thẻ an toàn qua Zalo/điện thoại. Không nhập số thẻ trên trang này.</small></span></label>
 <label class="opt"><input type="radio" name="pay" value="cod"><span><b>Thanh toán khi nhận hàng (COD)</b><small>Được kiểm tra và thử chân khi nhận hàng. Shop sẽ gọi xác nhận đơn trước khi giao.</small></span></label></section>
 <section class="lw-co-card"><h2><span class="n">3</span>Mã giảm giá</h2>
 <div class="cp"><input id="coupon" placeholder="Nhập mã nếu có" autocomplete="off"><button type="button" id="cpApply">Áp dụng</button></div><p id="cpMsg" class="cpm" role="status"></p></section>
@@ -18,6 +22,7 @@
 <p class="hint" id="paidHint">Khoản “đã thanh toán trước” sẽ được shop cập nhật sau khi nhận được tiền cọc của anh/chị.</p>
 <button class="go" id="place" type="submit" form="coForm">Đặt hàng</button><p id="msg" class="msg" role="alert"></p></aside>
 </main>
+<script src="js/amo-pay.js"></script>
 <script>
 (function(){
 var ENGINE="https://hc-shop-engine.huycuongonline.workers.dev",STORE="store_amo";
@@ -34,8 +39,18 @@ function drawItems(){var box=$("items");box.replaceChildren();c.forEach(function
  r.append(im,nm,el("div","pr",money(Number(x.price)*Number(x.qty))));box.appendChild(r)})}
 function draw(){var total=Math.max(0,sub-disc);
  $("tSub").textContent=money(sub);$("rDisc").hidden=!(disc>0);$("tDisc").textContent="- "+money(disc);$("tDiscL").textContent="Giảm giá"+(code?" ("+code+")":"");
- $("total").textContent=money(total);$("tPaid").textContent=money(paid);$("tDue").textContent=money(Math.max(0,total-paid))}
-drawItems();draw();
+ $("total").textContent=money(total);if(typeof drawBank==="function"&&!$("bankBox").hidden)drawBank();$("tPaid").textContent=money(paid);$("tDue").textContent=money(Math.max(0,total-paid))}
+var PAY=window.AMO_PAY||{bank:{}},BK=PAY.bank||{};
+function bankInfo(){return "AMO "+($("phone").value.replace(/\D/g,"").slice(-4)||"COC")}
+function drawBank(){var on=(document.querySelector("input[name=pay]:checked")||{}).value==="bank";$("bankBox").hidden=!on;
+ if(!on)return;$("bkBank").textContent=BK.name;$("bkHolder").textContent=BK.holder;$("bkAcc").textContent=BK.account;$("bkInfo").textContent=bankInfo();
+ var q=$("bkQr");q.hidden=false;q.onerror=function(){q.hidden=true};q.src=PAY.qr(Math.max(0,sub-disc),bankInfo())}
+document.querySelectorAll("input[name=pay]").forEach(function(r){r.addEventListener("change",drawBank)});
+$("phone").addEventListener("input",function(){if(!$("bankBox").hidden)drawBank()});
+document.addEventListener("click",function(ev){var b=ev.target.closest("[data-copy]");if(!b)return;var v=b.dataset.copy==="acc"?BK.account:bankInfo();
+ (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).catch(function(){var t=document.createElement("textarea");t.value=v;document.body.appendChild(t);t.select();try{document.execCommand("copy")}catch(e){}t.remove()});
+ var o=b.textContent;b.textContent="Đã chép";setTimeout(function(){b.textContent=o},1400)});
+drawItems();draw();drawBank();
 $("cpApply").onclick=function(){var v=$("coupon").value.trim(),m=$("cpMsg");
  if(!v){code="";disc=0;m.textContent="";m.className="cpm";draw();return}
  m.textContent="Đang kiểm tra...";m.className="cpm";
@@ -50,7 +65,7 @@ $("coForm").addEventListener("submit",function(ev){ev.preventDefault();
  var name=$("name").value.trim(),phone=$("phone").value.trim(),address=$("address").value.trim();
  if(!name||!phone||!address){fail("Vui lòng nhập họ tên, số điện thoại và địa chỉ giao hàng.");return}
  if(!/^[0-9+\s.()-]{8,15}$/.test(phone)){fail("Số điện thoại chưa đúng.");return}
- var pay=(document.querySelector('input[name=pay]:checked')||{}).value||"cod";
+ var pay=(document.querySelector('input[name=pay]:checked')||{}).value||"bank";
  busy=true;$("place").disabled=true;$("msg").textContent="Đang gửi đơn hàng...";$("msg").className="msg";
  var body={items:c.map(function(x){return{variant_id:x.variant_id,qty:Math.trunc(Number(x.qty))}}),customer:{name:name,phone:phone,email:$("email").value.trim(),address:address},note:$("note").value.trim(),payment_method:pay};
  if(code)body.coupon=code;
@@ -62,7 +77,9 @@ $("coForm").addEventListener("submit",function(ev){ev.preventDefault();
   var dl=el("dl","tot");
   [["Tạm tính",money(d.subtotal)],d.discount>0?["Giảm giá"+(d.discount_label?" ("+d.discount_label+")":""),"- "+money(d.discount)]:null,["Phí vận chuyển","Miễn phí"],["Tổng cộng",money(d.total),"grand"],["Đã thanh toán trước",money(d.deposit_paid||0)],["Còn phải thanh toán",money(Math.max(0,d.total-(d.deposit_paid||0))),"due"]].forEach(function(r){if(!r)return;var row=el("div",r[2]||"");row.append(el("dt",null,r[0]),el("dd",null,r[1]));dl.appendChild(row)});
   s.appendChild(dl);
-  s.appendChild(el("p","hint",pay==="deposit"?"AMO sẽ liên hệ qua số "+phone+" để gửi thông tin chuyển khoản cọc và giữ hàng cho anh/chị.":"AMO sẽ gọi số "+phone+" để xác nhận đơn và sắp xếp giao hàng."));
+  if(pay==="bank"){var bx=el("div","bankbox"),qw=el("div","bk-qr"),qi=el("img");qi.alt="Mã QR chuyển khoản";qi.width=200;qi.height=200;qi.src=PAY.qr(d.total,d.order_no);qi.onerror=function(){qw.hidden=true};qw.appendChild(qi);bx.appendChild(qw);
+  var bl=el("dl","bk-info");[["Ngân hàng",BK.name],["Chủ tài khoản",BK.holder],["Số tài khoản",BK.account],["Nội dung CK",d.order_no]].forEach(function(r){var row=el("div");row.append(el("dt",null,r[0]),el("dd",null,r[1]));bl.appendChild(row)});bx.appendChild(bl);s.appendChild(bx)}
+  s.appendChild(el("p","hint",pay==="bank"?"Anh/chị chuyển khoản theo mã QR ở trên (ghi đúng nội dung là mã đơn). Shop sẽ đối chiếu, cập nhật “Đã thanh toán trước” và liên hệ qua số "+phone+" để giữ hàng.":pay==="card"?"AMO sẽ liên hệ qua số "+phone+" để gửi đường dẫn thanh toán thẻ Visa/Mastercard.":"AMO sẽ gọi số "+phone+" để xác nhận đơn và sắp xếp giao hàng."));
   var a=el("a","go","Tiếp tục xem sản phẩm");a.href="shop.html";s.appendChild(a);w.appendChild(s);scrollTo(0,0);
  }).catch(function(e){busy=false;$("place").disabled=false;var m=String(e.message||"");fail(/stock/i.test(m)?"Một sản phẩm không đủ tồn kho. Vui lòng giảm số lượng hoặc chọn size khác.":/variant/i.test(m)?"Sản phẩm trong giỏ không còn bán. Vui lòng chọn lại.":"Chưa gửi được đơn: "+m)})
 });
