@@ -6,7 +6,7 @@ try{lang=localStorage.getItem(LS)==="en"?"en":"vi"}catch(e){}
 var ROOT=(function(){var s=document.currentScript||document.querySelector('script[src*="amo-localwp.js"]');var u=s?s.getAttribute("src"):"js/amo-localwp.js";return u.replace(/js\/amo-localwp\.js.*$/,"")})();
 var NAV=[["index.html","Trang chủ","Home"],["shop.html","Sản phẩm","Products"],["story.html","Giới thiệu","About"],["policy.html","Chính sách","Policy"],["contact.html","Liên hệ","Contact"]];
 var path=(location.pathname.split("/").pop()||"index.html");
-var API="https://hcdecorhub.com/wp-json/wc/store/v1";
+var ENGINE="https://hc-shop-engine.huycuongonline.workers.dev",STORE="store_amo";
 var SOC=[["https://www.facebook.com/profile.php?id=100083708970226", "Facebook Fanpage", "M13.5 22v-9h3l.5-3h-3.5V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7v3h3v9h3.5z"], ["https://www.facebook.com/nguyen.amo.2024/", "Facebook AMO", "M13.5 22v-9h3l.5-3h-3.5V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7v3h3v9h3.5z"], ["https://www.tiktok.com/@amo_3651", "TikTok AMO 3651", "M16 3c.4 2.2 1.7 3.6 4 4v3c-1.6 0-3-.5-4-1.3V15a6 6 0 1 1-5-5.9v3.1a3 3 0 1 0 2 2.8V3h3z"], ["https://www.tiktok.com/@cuoi.moi.ngay365", "TikTok C\u01b0\u1eddi M\u1ed7i Ng\u00e0y 365", "M16 3c.4 2.2 1.7 3.6 4 4v3c-1.6 0-3-.5-4-1.3V15a6 6 0 1 1-5-5.9v3.1a3 3 0 1 0 2 2.8V3h3z"], ["https://www.youtube.com/@AMO-NGUYEN", "YouTube AMO NGUY\u1ec4N", "M23 7.2s-.2-1.7-.9-2.4c-.8-.9-1.8-.9-2.2-1C16.8 3.5 12 3.5 12 3.5s-4.8 0-7.9.3c-.4.1-1.4.1-2.2 1C1.2 5.5 1 7.2 1 7.2S.8 9.2.8 11.1v1.8c0 2 .2 3.9.2 3.9s.2 1.7.9 2.4c.8.9 1.9.9 2.4 1 1.8.2 7.7.3 7.7.3s4.8 0 7.9-.3c.4-.1 1.4-.1 2.2-1 .7-.7.9-2.4.9-2.4s.2-2 .2-3.9v-1.8c0-2-.2-3.9-.2-3.9zM9.7 15.3V8.5l6.2 3.4-6.2 3.4z"], ["https://zaloapp.com/qr/p/1s3r599zmwd4m?src=qr", "Zalo AMO NGUY\u1ec4N", "M12 2C6.5 2 2 5.8 2 10.5c0 2.7 1.5 5.1 3.8 6.7L5 22l4.3-2.4c.9.2 1.8.4 2.7.4 5.5 0 10-3.8 10-8.5S17.5 2 12 2zm-5 7h5v2l-2.5 3H12v2H7v-2l2.5-3H7V9zm6 0h2v7h-2V9zm3 0h2v5h3v2h-5V9z"]];
 var DESC="Giày da nam tuyển chọn kỹ, form đẹp, dễ phối đồ. Đây là sản phẩm mẫu để xem giao diện, thông tin thật sẽ được cập nhật khi shop đăng hàng.";
 var DEMO=[1,2,3,4,5,6,7,8].map(function(n){var im=(((n-1)%6)+1);return{id:"demo-0"+n,slug:"demo-0"+n,demo:true,name:"Giày mẫu 0"+n+" (demo)",cat:n<5?"Giày Sneaker":"Giày công sở",price:3000000,image:ROOT+"assets/images/demo/shoe-demo-"+im+".jpg",images:[ROOT+"assets/images/demo/shoe-demo-"+im+".jpg",ROOT+"assets/images/demo/shoe-demo-"+(im%6+1)+".jpg"],desc:DESC,sizes:["40","41","42","43","44"],available:5,brand:n%2?"Gucci":"Khác"}});
@@ -90,14 +90,12 @@ function attr(p,re){var o=[];(p.attributes||[]).forEach(function(a){if(re.test(a
 function load(cb){
   var done=false;function fin(l){if(done)return;done=true;cb(l)}
   setTimeout(function(){fin(DEMO)},6000);
-  fetch(API+"/products?per_page=100").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){
-    var out=(Array.isArray(d)?d:[]).filter(function(p){return String(p.sku||"").indexOf("AMO-")===0}).map(function(p){
-      var mu=Math.pow(10,Number(p.prices&&p.prices.currency_minor_unit||0));
-      return{id:p.id,slug:p.slug,name:p.name,cat:(p.categories&&p.categories[0]&&p.categories[0].name)||"",price:Number(p.prices&&p.prices.price||0)/mu,image:p.images&&p.images[0]&&p.images[0].src||"",available:p.is_in_stock?1:0,brand:attr(p,/th.{0,3}ng hi|brand/i)[0]||"",sizes:attr(p,/size/i)}});
+  fetch(ENGINE+"/api/public/products?store="+STORE).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){
+    var out=(d&&d.items||[]).map(function(p){return{id:p.id,slug:p.slug,name:p.name,cat:p.cat||"",price:Number(p.price||0),image:p.image||"",available:p.available?1:0,brand:p.brand||"",sizes:p.sizes||[]}});
     fin(out.length?out:DEMO);
   }).catch(function(){fin(DEMO)});
 }
-window.AMO_LW={inRange:inRange,card:card,demo:DEMO,money:money,apply:apply,api:API,load:load,root:ROOT,el:el,refreshCart:refreshCart,lang:function(){return lang}};
+window.AMO_LW={inRange:inRange,card:card,demo:DEMO,money:money,apply:apply,engine:ENGINE,store:STORE,load:load,root:ROOT,el:el,refreshCart:refreshCart,lang:function(){return lang}};
 
 function home(){
   var g=document.getElementById("lwHomeGrid");if(!g)return;
