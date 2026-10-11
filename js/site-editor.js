@@ -1,0 +1,220 @@
+/* "Nội dung website" — owner-facing block editor for shop-admin.html.
+   Relies on shop-admin globals: api, act, esc, content, setnav, openBox, closeBox, canW, canMgr, STORE, ME, table. */
+(function () {
+  "use strict";
+  var TYPE_NAME = { hero: "Banner đầu trang", text: "Văn bản", image: "Một ảnh", gallery: "Thư viện ảnh", video: "Video", cards: "Thẻ / danh mục", links: "Dãy liên kết", list: "Danh sách ý", cta: "Kêu gọi hành động" };
+  var FIELDS = {
+    hero: [["eyebrow", "Dòng nhỏ phía trên"], ["title", "Tiêu đề lớn"], ["lead", "Mô tả ngắn", "area"], ["image", "Ảnh banner (link hoặc đường dẫn)", "img"], ["alt", "Mô tả ảnh"], ["primaryLabel", "Nút chính - chữ"], ["primaryUrl", "Nút chính - link"], ["secondaryLabel", "Nút phụ - chữ"], ["secondaryUrl", "Nút phụ - link"]],
+    text: [["kicker", "Dòng nhỏ phía trên"], ["title", "Tiêu đề"], ["body", "Nội dung", "area"], ["align", "Căn lề", "align"]],
+    image: [["url", "Ảnh (link hoặc đường dẫn)", "img"], ["alt", "Mô tả ảnh"], ["caption", "Chú thích"], ["link", "Bấm vào ảnh mở link (tuỳ chọn)"]],
+    gallery: [["title", "Tiêu đề (tuỳ chọn)"]],
+    video: [["title", "Tiêu đề (tuỳ chọn)"], ["url", "Link video: YouTube, Vimeo, Google Drive hoặc file .mp4"]],
+    cards: [["title", "Tiêu đề khu vực"], ["linkLabel", "Chữ link góc phải"], ["linkUrl", "Link góc phải"]],
+    links: [["title", "Tiêu đề"], ["note", "Ghi chú nhỏ"]],
+    list: [["title", "Tiêu đề"], ["linkLabel", "Chữ link góc phải"], ["linkUrl", "Link góc phải"]],
+    cta: [["title", "Tiêu đề"], ["text", "Nội dung", "area"], ["buttonLabel", "Chữ nút"], ["buttonUrl", "Link nút"]]
+  };
+  var ITEMS = {
+    gallery: { key: "images", label: "Ảnh", fields: [["url", "Link ảnh"], ["alt", "Mô tả"]] },
+    cards: { key: "items", label: "Thẻ", fields: [["title", "Tên thẻ"], ["subtitle", "Mô tả ngắn"], ["image", "Ảnh (tuỳ chọn)"], ["url", "Link"]] },
+    links: { key: "items", label: "Liên kết", fields: [["label", "Chữ hiển thị"], ["url", "Link"]] },
+    list: { key: "items", label: "Ý", fields: null }
+  };
+  var ED = null, FORM = null, DRAG = null;
+
+  function htable(rows, cols, action) { return '<div style="overflow:auto"><table><thead><tr>' + cols.map(function (c) { return '<th>' + c[0] + '</th>'; }).join("") + (action ? "<th></th>" : "") + '</tr></thead><tbody>' + rows.map(function (r) { return "<tr>" + cols.map(function (c) { return "<td>" + c[1](r) + "</td>"; }).join("") + (action ? "<td>" + action(r) + "</td>" : "") + "</tr>"; }).join("") + "</tbody></table></div>"; }
+  /* ---- image upload (compress in browser, store in Worker D1) ---- */
+  function compress(file) {
+    return new Promise(function (res, rej) {
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return rej(Error("Chỉ nhận ảnh JPG, PNG, WebP"));
+      var url = URL.createObjectURL(file), im = new Image();
+      im.onload = function () {
+        var sc = Math.min(1, 1600 / Math.max(im.width, im.height)), c = document.createElement("canvas"); c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
+        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        var q = 0.85, out; for (var i = 0; i < 6; i++) { out = c.toDataURL("image/webp", q); if (!/^data:image\/webp/.test(out)) out = c.toDataURL("image/jpeg", q); if (out.length * 0.75 < 600 * 1024) break; q -= 0.12; }
+        if (out.length * 0.75 > 690 * 1024) return rej(Error("Ảnh quá lớn, hãy chọn ảnh nhỏ hơn"));
+        res(out);
+      };
+      im.onerror = function () { rej(Error("Không đọc được ảnh")); }; im.src = url;
+    });
+  }
+  window.hcUpload = async function (file) { var d = await compress(file); var r = await api("/api/v1/media", { method: "POST", body: JSON.stringify({ name: file.name, data: d }) }); return r.url; };
+  window.siteUpload = function (input, key) {
+    var f = input.files && input.files[0]; if (!f) return;
+    act(async function () { var u = await hcUpload(f); FORM.props[key] = u; var b = ED.blocks.find(function (x) { return x.id === FORM.id; }); formDraw(b.type); });
+  };
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function nid() { return "b" + Math.random().toString(36).slice(2, 9); }
+  function blank(type) {
+    var p = {}; (FIELDS[type] || []).forEach(function (f) { p[f[0]] = f[2] === "align" ? "left" : ""; });
+    if (ITEMS[type]) p[ITEMS[type].key] = []; return { id: nid(), type: type, enabled: true, props: p };
+  }
+  function summary(b) {
+    var p = b.props || {}; var s = p.title || p.eyebrow || p.kicker || p.caption || p.alt || p.url || p.image || p.buttonLabel || "";
+    var n = ITEMS[b.type] && (p[ITEMS[b.type].key] || []).length; return String(s).slice(0, 70) + (n ? " · " + n + " mục" : "");
+  }
+
+  /* AMO home as blocks, so the owner can start from what the site shows today */
+  function seedHome() {
+    var cat = function (t, s, u) { return { title: t, subtitle: s, image: "", url: u }; };
+    return [
+      { id: nid(), type: "hero", enabled: true, props: { eyebrow: "", title: "", lead: "", image: "assets/images/amo-banner-new.png", alt: "Shop Giày Si AMO Nguyễn", primaryLabel: "", primaryUrl: "", secondaryLabel: "", secondaryUrl: "" } },
+      { id: nid(), type: "text", enabled: true, props: { kicker: "AMO NGUYỄN", title: "Chọn giày có gu, bước đi có chất.", body: "Không gian dành cho giày nam và phong cách nam. Danh mục, thương hiệu, size và tình trạng hàng chỉ hiển thị theo dữ liệu thực tế được xác nhận.", align: "center" } },
+      { id: nid(), type: "cards", enabled: true, props: { title: "Sản phẩm", linkLabel: "Xem tất cả →", linkUrl: "shop.html", items: [
+        cat("GIÀY SNEAKER", "Hiện tất cả · lọc theo size", "shop.html?cat=sneakers"), cat("GIÀY CÔNG SỞ", "Danh mục sản phẩm", "shop.html?cat=cong-so"), cat("DÉP", "Danh mục sản phẩm", "shop.html?cat=dep"),
+        cat("ÁO + ÁO KHOÁC", "Danh mục sản phẩm", "shop.html?cat=ao"), cat("TÚI XÁCH", "Danh mục sản phẩm", "shop.html?cat=tui-xach"), cat("QUẦN", "Danh mục sản phẩm", "shop.html?cat=quan"),
+        cat("THẮT LƯNG + PHỤ KIỆN KHÁC", "Danh mục sản phẩm", "shop.html?cat=phu-kien"), cat("SIZE SNEAKER", "37 đến 45.5", "size-guide.html")] } },
+      { id: nid(), type: "links", enabled: true, props: { title: "Thương hiệu", note: "Chọn để xem sản phẩm đã được gắn đúng thương hiệu", items: [
+        { label: "LV", url: "shop.html?brand=LV" }, { label: "GUCCI", url: "shop.html?brand=GUCCI" }, { label: "SALVATORE FERRAGAMO", url: "shop.html?brand=Salvatore%20Ferragamo" }, { label: "BALLY", url: "shop.html?brand=BALLY" }, { label: "KHÁC", url: "shop.html?brand=KHAC" }] } },
+      { id: nid(), type: "cta", enabled: true, props: { title: "ĐT / ZALO: 093.268.0592", text: "Facebook · TikTok · YouTube · Zalo", buttonLabel: "LIÊN HỆ / SOCIAL", buttonUrl: "contact.html" } }
+    ];
+  }
+
+  function siteBase() {
+    var s = (window.__SITE_STORES || []).find(function (x) { return x.id === STORE; });
+    var d = s && s.domain ? String(s.domain).replace(/^https?:\/\//, "").replace(/\/.*$/, "") : ""; return d ? "https://" + d + "/" : "";
+  }
+  function viewUrl(slug) { var b = siteBase(); if (!b) return ""; return slug === "home" ? b : b + "p.html?slug=" + encodeURIComponent(slug); }
+
+  window.siteView = function () {
+    setnav("site", "Nội dung website");
+    act(async function () {
+      var r = await Promise.all([api("/api/v1/site/pages"), api("/api/stores").catch(function () { return { items: [] }; })]);
+      window.__SITE_STORES = r[1].items || [];
+      var rows = r[0].items || [], have = {}; rows.forEach(function (x) { have[x.slug] = x; });
+      if (!have.home) rows.unshift({ slug: "home", title: "Trang chủ", published: false, version: 0, empty: true });
+      content.innerHTML = '<div class="panel"><div class="actions"><h3>Trang & nội dung website</h3>' + (canW() ? '<button class="primary" onclick="sitePageNew()">+ Trang mới</button>' : "") + '</div>' +
+        '<p class="muted sm">Mỗi trang gồm các khối xếp chồng. Kéo thả hoặc dùng nút ↑ ↓ để đổi thứ tự. Chỉnh sửa lưu ở dạng <b>nháp</b>; khách chỉ thấy khi bấm <b>Xuất bản</b>. Trang chưa xuất bản sẽ hiện nội dung cũ của website.</p>' +
+        htable(rows, [["Trang", function (x) { return esc(x.title || x.slug); }], ["Địa chỉ", function (x) { return esc(x.slug === "home" ? "Trang chủ" : "p.html?slug=" + x.slug); }],
+          ["Trạng thái", function (x) { return x.published ? '<span class="pill g">Đã xuất bản v' + x.version + '</span>' + (x.unpublished_changes ? ' <span class="pill y">Có thay đổi chưa xuất bản</span>' : "") : (x.empty ? '<span class="pill">Đang dùng nội dung cũ</span>' : '<span class="pill y">Nháp</span>'); }],
+          ["Cập nhật", function (x) { return esc((x.updated_at || "").slice(0, 16) || "—"); }]], function (x) { return '<button onclick="siteEdit(\'' + esc(x.slug) + '\')">' + (canW() ? "Sửa" : "Xem") + '</button>'; }) + '</div>';
+    });
+  };
+  window.sitePageNew = function () {
+    var s = (prompt("Địa chỉ trang (chữ thường, số, gạch ngang). Ví dụ: khuyen-mai, gioi-thieu") || "").trim().toLowerCase();
+    if (!s) return; if (!/^[a-z0-9-]{1,40}$/.test(s)) return alert("Chỉ dùng chữ thường không dấu, số và dấu gạch ngang (tối đa 40 ký tự)");
+    siteEdit(s);
+  };
+
+  window.siteEdit = function (slug) {
+    act(async function () {
+      var d = await api("/api/v1/site/pages/" + encodeURIComponent(slug));
+      ED = { slug: slug, title: d.title || (slug === "home" ? "Trang chủ" : slug), blocks: d.exists ? d.draft : [], version: d.version || 0, published: !!d.published, dirty: false };
+      setnav("site", "Nội dung website"); siteDraw();
+    });
+  };
+  function mark() { ED.dirty = true; var s = document.getElementById("sdirty"); if (s) s.hidden = false; drawPreview(); }
+
+  function siteDraw() {
+    var w = canW(), u = viewUrl(ED.slug);
+    content.innerHTML = '<div class="panel"><div class="actions"><h3>' + esc(ED.title) + ' <span class="muted sm">(' + esc(ED.slug) + ')</span></h3><span class="w"><button onclick="siteView()">← Danh sách trang</button></span></div>' +
+      '<div class="actions" style="flex-wrap:wrap;gap:8px"><span id="sdirty" class="pill y" ' + (ED.dirty ? "" : "hidden") + '>Chưa lưu nháp</span>' +
+      (w ? '<input id="stitle" value="' + esc(ED.title) + '" placeholder="Tên trang" style="max-width:220px" oninput="ED_title(this.value)"> <button class="primary" onclick="siteSave()">Lưu nháp</button>' : "") +
+      (canMgr() ? ' <button onclick="sitePublish()">Xuất bản</button>' : "") + (canMgr() && ED.published ? ' <button onclick="siteUnpublish()">Gỡ xuất bản</button>' : "") +
+      ' <button onclick="siteVersions()">Lịch sử</button>' + (u ? ' <a href="' + esc(u) + '" target="_blank" rel="noopener"><button>Mở trang ↗</button></a>' : "") + '</div>' +
+      (canMgr() ? "" : '<p class="muted sm">Bạn có thể soạn nháp. Cần quyền quản lý (manager) trở lên để xuất bản.</p>') + '</div>' +
+      '<div class="siteGrid"><div class="panel"><div class="actions"><h3>Các khối</h3>' + (w ? '<span><select id="sadd"><option value="">+ Thêm khối…</option>' + Object.keys(TYPE_NAME).map(function (t) { return '<option value="' + t + '">' + esc(TYPE_NAME[t]) + '</option>'; }).join("") + '</select></span>' : "") + '</div>' +
+      '<div id="sblocks"></div>' + (w && ED.slug === "home" && !ED.blocks.length ? '<button onclick="siteSeed()">Nạp mẫu từ trang chủ hiện tại</button>' : "") + '</div>' +
+      '<div class="panel"><div class="actions"><h3>Xem trước</h3><span class="muted sm">Đúng như khách sẽ thấy</span></div><div id="sprev" class="sprev"></div></div></div>';
+    if (!document.getElementById("sitecss")) { var st = document.createElement("style"); st.id = "sitecss"; st.textContent =
+      "[hidden]{display:none!important}.siteGrid{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:14px;align-items:start}@media(max-width:1000px){.siteGrid{grid-template-columns:1fr}}" +
+      ".sb{display:flex;align-items:center;gap:8px;border:1px solid #27303a;border-radius:10px;padding:8px 10px;margin:8px 0;background:#0f141a}.sb.off{opacity:.5}.sb.over{border-color:#246bfe}.sb .dg{cursor:grab;font-size:18px;color:#7f8c9b;padding:0 4px;user-select:none;touch-action:none}.sb .tx{flex:1;min-width:0}.sb .tx b{display:block}.sb .tx span{display:block;color:#8d9aa8;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sb button{padding:5px 8px}" +
+      ".sprev{background:#0d0c0a;color:#f7f1e4;border:1px solid #27303a;border-radius:10px;max-height:78vh;overflow:auto;--amog:#d5a83f}.sit{border:1px dashed #34404d;border-radius:8px;padding:8px;margin:6px 0}"; document.head.appendChild(st); }
+    var add = document.getElementById("sadd"); if (add) add.onchange = function () { if (!add.value) return; var b = blank(add.value); ED.blocks.push(b); add.value = ""; mark(); drawBlocks(); siteBlock(b.id); };
+    drawBlocks(); drawPreview();
+  }
+  window.ED_title = function (v) { ED.title = v; ED.dirty = true; var s = document.getElementById("sdirty"); if (s) s.hidden = false; };
+  function drawPreview() { var p = document.getElementById("sprev"); if (p && window.HCBlocks) { HCBlocks.render(ED.blocks, p); if (!ED.blocks.some(function (b) { return b.enabled; })) p.innerHTML = '<p class="muted" style="padding:20px">Chưa có khối nào đang bật.</p>'; } }
+  function drawBlocks() {
+    var host = document.getElementById("sblocks"), w = canW(); if (!host) return;
+    if (!ED.blocks.length) { host.innerHTML = '<p class="muted">Trang trống. Thêm khối từ danh sách phía trên.</p>'; return; }
+    host.innerHTML = ED.blocks.map(function (b, i) {
+      return '<div class="sb ' + (b.enabled ? "" : "off") + '" data-i="' + i + '"><span class="dg" ' + (w ? 'draggable="true"' : "") + ' title="Kéo để đổi vị trí">⠿</span><div class="tx"><b>' + esc(TYPE_NAME[b.type] || b.type) + '</b><span>' + esc(summary(b) || "(trống)") + '</span></div>' +
+        (w ? '<button onclick="siteMove(' + i + ',-1)" title="Lên">↑</button><button onclick="siteMove(' + i + ',1)" title="Xuống">↓</button><button onclick="siteToggle(' + i + ')" title="Bật/tắt">' + (b.enabled ? "👁" : "🚫") + '</button><button onclick="siteBlock(\'' + esc(b.id) + '\')">Sửa</button><button onclick="siteDel(' + i + ')" title="Xoá">✕</button>' : '<button onclick="siteBlock(\'' + esc(b.id) + '\')">Xem</button>') + '</div>';
+    }).join("");
+    if (!w) return;
+    host.querySelectorAll(".sb").forEach(function (row) {
+      var h = row.querySelector(".dg");
+      h.addEventListener("dragstart", function (e) { DRAG = +row.dataset.i; e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", String(DRAG)); e.dataTransfer.setDragImage(row, 10, 10); } catch (x) {} });
+      row.addEventListener("dragover", function (e) { if (DRAG == null) return; e.preventDefault(); row.classList.add("over"); });
+      row.addEventListener("dragleave", function () { row.classList.remove("over"); });
+      row.addEventListener("drop", function (e) { e.preventDefault(); row.classList.remove("over"); var to = +row.dataset.i; if (DRAG == null || DRAG === to) return; var m = ED.blocks.splice(DRAG, 1)[0]; ED.blocks.splice(to, 0, m); DRAG = null; mark(); drawBlocks(); });
+      h.addEventListener("dragend", function () { DRAG = null; host.querySelectorAll(".over").forEach(function (x) { x.classList.remove("over"); }); });
+    });
+  }
+  window.siteMove = function (i, d) { var j = i + d; if (j < 0 || j >= ED.blocks.length) return; var m = ED.blocks.splice(i, 1)[0]; ED.blocks.splice(j, 0, m); mark(); drawBlocks(); };
+  window.siteToggle = function (i) { ED.blocks[i].enabled = !ED.blocks[i].enabled; mark(); drawBlocks(); };
+  window.siteDel = function (i) { if (confirm("Xoá khối này khỏi bản nháp?")) { ED.blocks.splice(i, 1); mark(); drawBlocks(); } };
+  window.siteSeed = function () { ED.blocks = seedHome(); mark(); drawBlocks(); };
+
+  /* ---- block form ---- */
+  window.siteBlock = function (bid) {
+    var b = ED.blocks.find(function (x) { return x.id === bid; }); if (!b) return;
+    FORM = { id: bid, props: clone(b.props) }; formDraw(b.type);
+  };
+  function formDraw(type) {
+    var w = canW(), it = ITEMS[type], p = FORM.props, dis = w ? "" : " disabled";
+    var h = '<h3>' + esc(TYPE_NAME[type]) + '</h3>';
+    (FIELDS[type] || []).forEach(function (f) {
+      var k = f[0], v = p[k] == null ? "" : p[k]; h += '<label>' + esc(f[1]) + '</label>';
+      if (f[2] === "area") h += '<textarea rows="4" data-k="' + k + '" oninput="siteSet(this)"' + dis + '>' + esc(v) + '</textarea>';
+      else if (f[2] === "align") h += '<select data-k="' + k + '" onchange="siteSet(this)"' + dis + '><option value="left"' + (v === "left" ? " selected" : "") + '>Trái</option><option value="center"' + (v === "center" ? " selected" : "") + '>Giữa</option></select>';
+      else h += '<input data-k="' + k + '" value="' + esc(v) + '" oninput="siteSet(this)"' + dis + '>';
+      if (f[2] === "img" && w) h += '<input type="file" accept="image/jpeg,image/png,image/webp" onchange="siteUpload(this,\'' + k + '\')">';
+    });
+    if (it) {
+      h += '<h4>' + esc(it.label) + ' (' + (p[it.key] || []).length + ')</h4>';
+      (p[it.key] || []).forEach(function (row, i) {
+        h += '<div class="sit">';
+        if (it.fields) it.fields.forEach(function (f) { h += '<input placeholder="' + esc(f[1]) + '" data-k="' + it.key + '.' + i + '.' + f[0] + '" value="' + esc(row[f[0]] || "") + '" oninput="siteSet(this)"' + dis + '>'; });
+        else h += '<input placeholder="Nội dung" data-k="' + it.key + '.' + i + '" value="' + esc(row) + '" oninput="siteSet(this)"' + dis + '>';
+        if (w) h += '<button onclick="siteItem(\'' + type + '\',' + i + ',-1)">↑</button> <button onclick="siteItem(\'' + type + '\',' + i + ',1)">↓</button> <button onclick="siteItem(\'' + type + '\',' + i + ',0)">Xoá</button>';
+        h += '</div>';
+      });
+      if (w) h += '<button onclick="siteItem(\'' + type + '\',-1,2)">+ Thêm ' + esc(it.label.toLowerCase()) + '</button>';
+    }
+    h += '<div class="actions" style="margin-top:14px"><button onclick="closeBox()">Đóng</button>' + (w ? '<button class="primary" onclick="siteApply(\'' + type + '\')">Xong</button>' : "") + '</div>';
+    openBox(h);
+  }
+  window.siteSet = function (el) {
+    var path = el.dataset.k.split("."), o = FORM.props; for (var i = 0; i < path.length - 1; i++) o = o[path[i]]; o[path[path.length - 1]] = el.value;
+  };
+  window.siteItem = function (type, i, op) {
+    var it = ITEMS[type], a = FORM.props[it.key] = FORM.props[it.key] || [];
+    if (op === 2) { if (a.length >= 24) return alert("Tối đa 24 mục"); a.push(it.fields ? Object.fromEntries(it.fields.map(function (f) { return [f[0], ""]; })) : ""); }
+    else if (op === 0) a.splice(i, 1); else { var j = i + op; if (j < 0 || j >= a.length) return; var m = a.splice(i, 1)[0]; a.splice(j, 0, m); }
+    formDraw(type);
+  };
+  window.siteApply = function (type) {
+    var b = ED.blocks.find(function (x) { return x.id === FORM.id; }); if (!b) return closeBox();
+    b.props = clone(FORM.props); closeBox(); mark(); drawBlocks();
+  };
+
+  /* ---- server actions ---- */
+  async function save() {
+    var r = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug), { method: "POST", body: JSON.stringify({ title: ED.title, blocks: ED.blocks }) });
+    ED.blocks = r.blocks; ED.dirty = false; return r;
+  }
+  window.siteSave = function () { act(async function () { await save(); siteDraw(); }); };
+  window.sitePublish = function () {
+    if (!confirm("Xuất bản trang này? Khách truy cập sẽ thấy ngay nội dung mới.")) return;
+    act(async function () { await save(); var r = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug) + "/publish", { method: "POST" }); ED.published = true; ED.version = r.version; siteDraw(); alert("Đã xuất bản phiên bản " + r.version); });
+  };
+  window.siteUnpublish = function () {
+    if (!confirm("Gỡ xuất bản? Website sẽ quay về nội dung mặc định cũ (bản nháp vẫn được giữ).")) return;
+    act(async function () { await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug) + "/unpublish", { method: "POST" }); ED.published = false; siteDraw(); });
+  };
+  window.siteVersions = function () {
+    act(async function () {
+      var d = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug) + "/versions");
+      openBox('<h3>Lịch sử xuất bản</h3>' + ((d.items || []).length ? htable(d.items, [["Bản", function (r) { return "v" + r.version; }], ["Ghi chú", function (r) { return esc(r.note || ""); }], ["Người", function (r) { return esc(r.created_by || "—"); }], ["Lúc", function (r) { return esc((r.created_at || "").slice(0, 16)); }]],
+        canMgr() ? function (r) { return '<button onclick="siteRollback(' + r.version + ')">Khôi phục</button>'; } : null) : '<p class="muted">Chưa có phiên bản nào.</p>') + '<div class="actions" style="margin-top:12px"><button onclick="closeBox()">Đóng</button></div>');
+    });
+  };
+  window.siteRollback = function (v) {
+    if (!confirm("Khôi phục phiên bản " + v + " và xuất bản ngay?")) return;
+    act(async function () { var r = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug) + "/rollback", { method: "POST", body: JSON.stringify({ version: v }) }); closeBox(); siteEdit(ED.slug); alert("Đã khôi phục (phiên bản mới v" + r.version + ")"); });
+  };
+  window.addEventListener("beforeunload", function (e) { if (ED && ED.dirty) { e.preventDefault(); e.returnValue = ""; } });
+})();

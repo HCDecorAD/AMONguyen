@@ -1,5 +1,5 @@
 /* HC Customer Hub widget - dùng chung cho mọi website trong hệ thống HC.
-   Nhúng:  <script src="https://amonguyen.hcdecorhub.com/js/hc-customer.js" data-store="store_amo" defer></script>
+   Nhúng:  <script src="https://amonguyen.com/js/hc-customer.js" data-store="store_amo" defer></script>
    Tuỳ chọn: data-api="https://...workers.dev"  data-banner="off"
               data-popup="on"  (popup nhận email/SĐT + mã WELCOME)   data-cart-key="AMO_CART" (tự ghi add_cart) */
 (() => {

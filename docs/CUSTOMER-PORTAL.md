@@ -42,3 +42,18 @@ Mỗi website (store) có hệ thống khách riêng; dữ liệu tách theo `st
 - Popup nhận email/SĐT (có ô đồng ý riêng, hiện sau 15 giây hoặc khi rê chuột ra khỏi trang, 1 lần/thiết bị). Lưu vào `customers` với `source`; lịch sử ẩn danh của thiết bị đó được gắn vào hồ sơ.
 - Mã quà tặng: tạo coupon có mã đúng `WELCOME` ở tab Khuyến mãi — popup sẽ hiện mã này cho khách vừa để lại liên hệ.
 - Giới hạn 3 lượt/giờ/thiết bị; email đã có tài khoản vẫn trả phản hồi giống hệt (không lộ tài khoản tồn tại).
+
+## Trang "Nội dung website" (chủ shop tự chỉnh, kéo thả khối)
+
+- Admin: `shop-admin.html` → **Nội dung website**. Mỗi trang = danh sách khối (banner, văn bản, ảnh, thư viện, video, thẻ, dãy liên kết, danh sách ý, nút kêu gọi). Kéo thả hoặc ↑↓, bật/tắt, sửa, xem trước trực tiếp.
+- Quyền: staff+ lưu **nháp**; manager+ **xuất bản / gỡ / khôi phục** (giữ 25 phiên bản).
+- Public: `GET /api/site/page?slug=` → chỉ trả bản đã xuất bản. Renderer dùng chung `js/hc-blocks.js` (chỉ textContent, URL/video whitelist, Worker còn lọc thẻ HTML).
+- AMO: `index.html` có `<div data-hc-page="home">` giữ nội dung tĩnh làm dự phòng; chỉ bị thay khi đã xuất bản. Trang tự tạo: `p.html?slug=...`.
+- Nhân sang site khác (GSC…): thêm `<div data-hc-page="home">…</div>` + `<script src=".../hc-blocks.js" data-store="STORE_ID" defer>`.
+- Migration `0014_site_pages.sql`; test `scripts/e2e-site.mjs`.
+- Giai đoạn 2 (chưa làm): trình dựng tự do GrapesJS.
+
+## Ảnh tải lên + ẩn/hiện hàng loạt
+- Ảnh chủ shop tải lên được nén ở trình duyệt (≤ 1600px, ≤ ~600KB) rồi lưu trong D1 (bảng `media`, migration `0015_media.sql`, không cần R2). `POST /api/v1/media` (staff+), `GET /api/media/:id` công khai, `DELETE` (manager+), tối đa 400 ảnh/shop.
+- Danh sách sản phẩm có tick chọn → Ẩn/Hiện hàng loạt; `GET /api/products?archived=1` để xem cả sản phẩm đã ẩn.
+- Hướng dẫn cho chủ shop: `huong-dan-chu-shop.html` (menu "Hướng dẫn" trong shop-admin).
