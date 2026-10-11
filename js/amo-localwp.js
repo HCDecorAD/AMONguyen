@@ -9,7 +9,8 @@ var path=(location.pathname.split("/").pop()||"index.html");
 var ENGINE="https://hc-shop-engine.huycuongonline.workers.dev",STORE="store_amo";
 var SOC=[["https://www.facebook.com/profile.php?id=100083708970226", "Facebook Fanpage", "M13.5 22v-9h3l.5-3h-3.5V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7v3h3v9h3.5z"], ["https://www.facebook.com/nguyen.amo.2024/", "Facebook AMO", "M13.5 22v-9h3l.5-3h-3.5V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7v3h3v9h3.5z"], ["https://www.tiktok.com/@amo_3651", "TikTok AMO 3651", "M16 3c.4 2.2 1.7 3.6 4 4v3c-1.6 0-3-.5-4-1.3V15a6 6 0 1 1-5-5.9v3.1a3 3 0 1 0 2 2.8V3h3z"], ["https://www.tiktok.com/@cuoi.moi.ngay365", "TikTok C\u01b0\u1eddi M\u1ed7i Ng\u00e0y 365", "M16 3c.4 2.2 1.7 3.6 4 4v3c-1.6 0-3-.5-4-1.3V15a6 6 0 1 1-5-5.9v3.1a3 3 0 1 0 2 2.8V3h3z"], ["https://www.youtube.com/@AMO-NGUYEN", "YouTube AMO NGUY\u1ec4N", "M23 7.2s-.2-1.7-.9-2.4c-.8-.9-1.8-.9-2.2-1C16.8 3.5 12 3.5 12 3.5s-4.8 0-7.9.3c-.4.1-1.4.1-2.2 1C1.2 5.5 1 7.2 1 7.2S.8 9.2.8 11.1v1.8c0 2 .2 3.9.2 3.9s.2 1.7.9 2.4c.8.9 1.9.9 2.4 1 1.8.2 7.7.3 7.7.3s4.8 0 7.9-.3c.4-.1 1.4-.1 2.2-1 .7-.7.9-2.4.9-2.4s.2-2 .2-3.9v-1.8c0-2-.2-3.9-.2-3.9zM9.7 15.3V8.5l6.2 3.4-6.2 3.4z"], ["https://zalo.me/84932680592", "Zalo AMO NGUY\u1ec4N", "M12 2C6.5 2 2 5.8 2 10.5c0 2.7 1.5 5.1 3.8 6.7L5 22l4.3-2.4c.9.2 1.8.4 2.7.4 5.5 0 10-3.8 10-8.5S17.5 2 12 2zm-5 7h5v2l-2.5 3H12v2H7v-2l2.5-3H7V9zm6 0h2v7h-2V9zm3 0h2v5h3v2h-5V9z"]];
 var DESC="Giày da nam tuyển chọn kỹ, form đẹp, dễ phối đồ. Đây là sản phẩm mẫu để xem giao diện, thông tin thật sẽ được cập nhật khi shop đăng hàng.";
-var DEMO=[1,2,3,4,5,6,7,8].map(function(n){var im=(((n-1)%6)+1);return{id:"demo-0"+n,slug:"demo-0"+n,demo:true,name:"Giày mẫu 0"+n+" (demo)",cat:n<5?"Giày Sneaker":"Giày công sở",price:3000000,image:ROOT+"assets/images/demo/shoe-demo-"+im+".jpg",images:[ROOT+"assets/images/demo/shoe-demo-"+im+".jpg",ROOT+"assets/images/demo/shoe-demo-"+(im%6+1)+".jpg"],desc:DESC,sizes:["40","41","42","43","44"],available:5,brand:n%2?"Gucci":"Khác"}});
+var SIZES=["37-37.5","38-38.5","39-39.5","40-40.5","41-41.5","42-42.5","43-43.5","44-44.5","45-45.5"];
+var DEMO=[1,2,3,4,5,6,7,8].map(function(n){var im=(((n-1)%6)+1);return{id:"demo-0"+n,slug:"demo-0"+n,demo:true,name:"Giày mẫu 0"+n+" (demo)",cat:n<5?"Giày Sneaker":"Giày công sở",price:3000000,image:ROOT+"assets/images/demo/shoe-demo-"+im+".jpg",images:[ROOT+"assets/images/demo/shoe-demo-"+im+".jpg",ROOT+"assets/images/demo/shoe-demo-"+(im%6+1)+".jpg"],desc:DESC,sizes:SIZES.slice(),available:5,brand:n%2?"Gucci":"Khác"}});
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function money(n){return new Intl.NumberFormat("vi-VN").format(Number(n))+" ₫"}
 function svg(d,fill){var s=document.createElementNS("http://www.w3.org/2000/svg","svg");s.setAttribute("viewBox","0 0 24 24");s.setAttribute("aria-hidden","true");var p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",d);s.appendChild(p);return s}
@@ -95,7 +96,7 @@ function load(cb){
     fin(out.length?out:DEMO);
   }).catch(function(){fin(DEMO)});
 }
-window.AMO_LW={inRange:inRange,card:card,demo:DEMO,money:money,apply:apply,engine:ENGINE,store:STORE,load:load,root:ROOT,el:el,refreshCart:refreshCart,lang:function(){return lang}};
+window.AMO_LW={sizes:SIZES,inRange:inRange,card:card,demo:DEMO,money:money,apply:apply,engine:ENGINE,store:STORE,load:load,root:ROOT,el:el,refreshCart:refreshCart,lang:function(){return lang}};
 
 function home(){
   var g=document.getElementById("lwHomeGrid");if(!g)return;
