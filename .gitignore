@@ -1,2 +1,5 @@
 
 .wrangler/
+backups/
+node_modules/
+.wrangler/
