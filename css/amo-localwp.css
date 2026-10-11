@@ -156,3 +156,7 @@ main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 
 .lw-head .lw-brand{order:1}.lw-head .lw-nav{order:2}.lw-head .lw-tools{order:3}
 @media(max-width:520px){.lw-head .lw-nav{order:3}.lw-head .lw-tools{order:2}}
+
+.lw-tools .lw-ico.on{border-color:var(--lw-gold);color:var(--lw-gold-2)}
+.lw-tools .lw-ico.on::after{content:"";position:absolute;right:1px;top:1px;width:9px;height:9px;border-radius:50%;background:#3ecf6e;border:2px solid var(--lw-hdr)}
+@media(max-width:380px){.lw-nav{gap:10px}.lw-nav a{font-size:12.5px}.lw-tools{gap:5px}.lw-tools .lw-ico{width:34px;height:34px}}
