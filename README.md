@@ -10,3 +10,4 @@ Storefront commerce calls the existing HC Shop Engine API. Never commit admin to
 
 ## Safety
 Reference/demo products must not be treated as real sellable inventory. Import verified catalog data through the authorized commerce admin/data workflow.
+Auto 24/7 test OK
