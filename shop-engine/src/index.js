@@ -1,3 +1,4 @@
+import {handleContent} from "./content.js";
 import {handleCustomers,customerFromReq,orderDiscount,lineAutoPercent,activePromos} from "./customers.js";
 const ORIGINS=["https://amonguyen.hcdecorhub.com","http://localhost","http://127.0.0.1"];
 const originOk=o=>ORIGINS.some(x=>o.startsWith(x))||/^https:\/\/([a-z0-9-]+\.)?hcdecorhub\.com$/.test(o);
@@ -20,6 +21,7 @@ export default {async fetch(req,env){
   const sup=await isAdmin(req,env),mem=sup?null:await memberAuth(req,env),own=mem&&mem.store_id===store.id?mem:null,lvl=sup?9:(own?ROLES[own.role]||0:0);
   const need=n=>async()=>lvl>=n,needAdmin=async r=>lvl>=(r.method==="GET"?1:2),needMgr=need(3),needOwner=need(4);
   {const r=await handleCustomers(req,env,store,{json,clean,id,input},{lvl,sup,own});if(r)return r}
+  {const r=await handleContent(req,env,store,{json,clean,id,input},{lvl,sup,own,who:sup?"super":(own?own.email:null)});if(r)return r}
   if(path==="/api/auth/me"){if(!lvl)return json(req,{error:"unauthorized"},401);return json(req,{kind:sup?"super":"member",role:sup?"super":own.role,email:own?.email||null,name:own?.name||null,store:{id:store.id,code:store.code,name:store.name,slug:store.slug}})}
   if(path==="/api/store")return json(req,{id:store.id,code:store.code,name:store.name,slug:store.slug,domain:store.domain,currency:store.currency,locale:store.locale});
   if(path==="/api/stores"&&req.method==="GET"){if(!lvl)return json(req,{error:"unauthorized"},401);return json(req,{items:(await env.DB.prepare("SELECT id,code,name,slug,domain,currency,locale,active FROM stores WHERE active=1 AND (?=1 OR id=?) ORDER BY created_at").bind(sup?1:0,store.id).all()).results})}
