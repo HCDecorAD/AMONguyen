@@ -53,7 +53,7 @@ function fromDemo(d){
     variants:d.sizes.map(function(s){return{id:d.id+"-"+s,sku:d.id.toUpperCase()+"-"+s,size:s,available:d.available}})};
 }
 function fromEngine(w){
-  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),images:w.images||[],demo:false,
+  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),images:(w.images||[]).map(function(i){return typeof i==="string"?i:i&&i.url}).filter(Boolean),demo:false,
     variants:(w.variants||[]).map(function(v){return{id:v.id,sku:v.sku,size:v.size||v.color||"Free",price:Number(v.price||0),available:Number(v.available||0)}})};
 }
 function start(){

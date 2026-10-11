@@ -243,7 +243,7 @@ export async function handleCustomers(req, env, store, H, auth) {
     if (path === "/api/c/me" && m === "GET") {
       const tiers = await loadTiers(env, store), { spent, completed } = await spentOf(env, store, cust.id), tier = tierFor(tiers, spent, cust.tier_override);
       const next = tiers.find((t) => t.min_spent > spent) || null;
-      const orders = (await env.DB.prepare("SELECT order_no,status,subtotal,discount,discount_label,total,created_at FROM orders WHERE store_id=? AND customer_id=? ORDER BY created_at DESC LIMIT 30").bind(store.id, cust.id).all()).results;
+      const orders = (await env.DB.prepare("SELECT order_no,status,subtotal,discount,discount_label,total,deposit_paid,created_at FROM orders WHERE store_id=? AND customer_id=? ORDER BY created_at DESC LIMIT 30").bind(store.id, cust.id).all()).results;
       return json(req, { customer: publicProfile(cust), tier: { code: tier.code, name: tier.name, percent: tier.percent }, spent, completed_orders: completed, next_tier: next ? { name: next.name, percent: next.percent, remaining: next.min_spent - spent } : null, orders });
     }
     if (path === "/api/c/me" && m === "PATCH") {

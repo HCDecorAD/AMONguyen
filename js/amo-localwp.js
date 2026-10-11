@@ -118,10 +118,43 @@ function listPage(){
     if(em)em.hidden=a.length>0;apply();
   });
 }
+var ICONS={
+ foot:"M7 20c-1.5 0-2.5-1-2.5-2.5 0-3 1.5-5 1.5-8C6 6 7.5 4 10 4s3.5 2 3.5 4.5c0 2 .8 3 2.5 4.2 1.8 1.200 3 2 3 4.3 0 1.800-1 3-3 3H7z",
+ swap:"M4 8h13M13 4l4 4-4 4M20 16H7M11 12l-4 4 4 4",
+ truck:"M2 6h12v10H2zM14 10h4l3 3v3h-7M6.500 19a1.500 1.500 0 1 0 0-3 1.500 1.500 0 0 0 0 3zM17.500 19a1.500 1.500 0 1 0 0-3 1.500 1.500 0 0 0 0 3z",
+ wallet:"M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7zm0 0V6a2 2 0 0 1 2-2h12M16 14h2",
+ heart:"M12 20s-7-4.400-7-10a4 4 0 0 1 7-2.600A4 4 0 0 1 19 10c0 5.600-7 10-7 10z",
+ tag:"M3 12V4h8l10 10-8 8L3 12zM7.500 8.500h.01",
+ star:"M12 3l2.600 5.600 6 .7-4.500 4.100 1.200 6L12 16.400 6.700 19.400l1.200-6L3.400 9.300l6-.7L12 3z",
+ shield:"M12 3l8 3v6c0 4.500-3.200 8-8 9-4.800-1-8-4.500-8-9V6l8-3zM9 12l2 2 4-4",
+ gem:"M6 4h12l3 5-9 11L3 9l3-5zM3 9h18M9 4l3 5 3-5",
+ info:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01"
+};
+function pickIcon(t){t=String(t).toLowerCase().replace(/đ/g,"d").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+ if(/thu chan|size|form/.test(t))return/doi/.test(t)?"swap":"foot";
+ if(/doi |doi\/|hoan|tra hang/.test(t))return"swap";
+ if(/ship|van chuyen|giao hang/.test(t))return"truck";
+ if(/coc|thanh toan|chuyen khoan/.test(t))return"wallet";
+ if(/cam on|tran trong|lua chon|mot doi/.test(t))return"heart";
+ if(/hang si|tuyen ky|chat luong|bao hanh/.test(t))return"shield";
+ if(/uu dai|khuyen mai|gia/.test(t))return"tag";
+ if(/phong cach|chon|gu|buoc di/.test(t))return"gem";
+ if(/gioi thieu|lien he|huong dan|bao quan/.test(t))return"info";
+ return"star"}
+function decorate(){
+  var pg=(location.pathname.split("/").pop()||"");
+  if(!/^(policy|story|size-guide|shoe-care|guide|lookbook|contact|huong-dan-chu-shop)\.html$/.test(pg))return;
+  document.querySelectorAll("main h2,main h3,main .amo-h2").forEach(function(h){
+    if(h.dataset.lwIco||h.closest(".lw-co,.lw-pd,.lw-shop,.lw-cat,.lw-foot")||h.classList.contains("sr-only"))return;
+    var t=h.textContent.trim();if(!t)return;h.dataset.lwIco="1";
+    var k=pickIcon(t),sp=el("span","lw-hico");sp.setAttribute("aria-hidden","true");sp.appendChild(svg(ICONS[k]));
+    h.insertBefore(sp,h.firstChild);h.classList.add("lw-hrow");
+  });
+}
 function init(){
   header();footer();floats();refreshCart();setInterval(refreshCart,1000);
   window.addEventListener("storage",refreshCart);
-  home();listPage();apply();
+  home();listPage();decorate();apply();
   var sc=document.createElement("script");sc.src=ROOT+"js/amo-i18n.js";sc.onload=apply;document.head.appendChild(sc);
   if(window.__amoTheme)window.__amoTheme();
 }

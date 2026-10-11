@@ -1,47 +1,71 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout | AMO NGUYEN</title><link rel="stylesheet" href="css/amo-style.css"><style>.wrap{max-width:1100px;margin:auto;padding:7rem 5%;display:grid;grid-template-columns:1fr .8fr;gap:6vw}.field{margin:12px 0}.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #ccc;background:#fff}.sum{background:#f4f2ee;padding:25px;height:max-content}.row{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:10px 0}.btn{width:100%;background:#111;color:#fff;border:0;padding:15px;margin-top:20px;cursor:pointer}.done{text-align:center;padding:80px 10px}@media(max-width:760px){.wrap{grid-template-columns:1fr}}</style><link rel="stylesheet" href="css/amo-localwp.css"></head><body><main class="wrap" id="wrap"><section><a href="cart.html">← Giỏ hàng</a><h1 class="amo-h1">CHECKOUT</h1><div class="field"><label>Họ và tên *</label><input id="name"></div><div class="field"><label>Số điện thoại *</label><input id="phone" inputmode="tel"></div><div class="field"><label>Email</label><input id="email" type="email"></div><div class="field"><label>Địa chỉ giao hàng *</label><textarea id="address" rows="3"></textarea></div><div class="field"><label>Thanh toán</label><p>Phương thức thanh toán sẽ được AMO xác nhận trực tiếp khi liên hệ.</p></div><div class="field"><label>Ghi chú</label><textarea id="note" rows="2"></textarea></div></section><aside class="sum"><h3>ĐƠN HÀNG</h3><div id="items"></div><div class="row"><b>Tổng cộng</b><b id="total"></b></div><button class="btn" id="place">ĐẶT HÀNG</button><p id="msg"></p></aside></main><script>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thanh toán | AMO NGUYỄN</title><meta name="robots" content="noindex"><link rel="stylesheet" href="css/amo-style.css"><link rel="stylesheet" href="css/amo-localwp.css"></head><body>
+<main class="lw-co" id="wrap">
+<div class="lw-co-top"><a href="cart.html" class="back">← Giỏ hàng</a><h1>Thanh toán</h1></div>
+<form class="lw-co-form" id="coForm" novalidate>
+<section class="lw-co-card"><h2><span class="n">1</span>Thông tin nhận hàng</h2>
+<div class="g2"><label>Họ và tên *<input id="name" autocomplete="name" required></label><label>Số điện thoại *<input id="phone" inputmode="tel" autocomplete="tel" required></label></div>
+<label>Email (không bắt buộc)<input id="email" type="email" autocomplete="email"></label>
+<label>Địa chỉ giao hàng *<textarea id="address" rows="3" autocomplete="street-address" required></textarea></label>
+<label>Ghi chú cho shop<textarea id="note" rows="2" placeholder="Ví dụ: giao giờ hành chính, gọi trước khi giao"></textarea></label></section>
+<section class="lw-co-card"><h2><span class="n">2</span>Hình thức thanh toán</h2>
+<label class="opt"><input type="radio" name="pay" value="deposit" checked><span><b>Chuyển khoản cọc trước</b> <em>Ưu tiên</em><small>Shop giữ đôi giày cho anh/chị và lên đơn trước. Shop sẽ nhắn qua Zalo/điện thoại để gửi thông tin chuyển khoản. Phần cọc đã nhận sẽ được trừ vào tổng đơn.</small></span></label>
+<label class="opt"><input type="radio" name="pay" value="cod"><span><b>Thanh toán khi nhận hàng (COD)</b><small>Được kiểm tra và thử chân khi nhận hàng. Shop sẽ gọi xác nhận đơn trước khi giao.</small></span></label></section>
+<section class="lw-co-card"><h2><span class="n">3</span>Mã giảm giá</h2>
+<div class="cp"><input id="coupon" placeholder="Nhập mã nếu có" autocomplete="off"><button type="button" id="cpApply">Áp dụng</button></div><p id="cpMsg" class="cpm" role="status"></p></section>
+</form>
+<aside class="lw-co-sum" aria-label="Tóm tắt đơn hàng"><h2>Đơn hàng</h2><div id="items" class="its"></div>
+<dl class="tot"><div><dt>Tạm tính</dt><dd id="tSub">0 đ</dd></div><div id="rDisc" hidden><dt id="tDiscL">Giảm giá</dt><dd id="tDisc" class="neg">0 đ</dd></div><div><dt>Phí vận chuyển</dt><dd id="tShip">Miễn phí</dd></div><div class="grand"><dt>Tổng cộng</dt><dd id="total">0 đ</dd></div><div><dt>Đã thanh toán trước</dt><dd id="tPaid">0 đ</dd></div><div class="due"><dt>Còn phải thanh toán</dt><dd id="tDue">0 đ</dd></div></dl>
+<p class="hint" id="paidHint">Khoản “đã thanh toán trước” sẽ được shop cập nhật sau khi nhận được tiền cọc của anh/chị.</p>
+<button class="go" id="place" type="submit" form="coForm">Đặt hàng</button><p id="msg" class="msg" role="alert"></p></aside>
+</main>
+<script>
 (function(){
 var ENGINE="https://hc-shop-engine.huycuongonline.workers.dev",STORE="store_amo";
 var $=function(i){return document.getElementById(i)};
-var money=function(n){return new Intl.NumberFormat("vi-VN").format(Number(n||0))+" đ"};
+var money=function(n){return new Intl.NumberFormat("vi-VN").format(Math.round(Number(n||0)))+" đ"};
 var c=[];try{c=JSON.parse(localStorage.AMO_CART||"[]");if(!Array.isArray(c))c=[]}catch(e){c=[]}
 c=c.filter(function(x){return x&&String(x.variant_id||"").trim()&&Number(x.price)>0&&Number(x.qty)>0});
 if(!c.length){location.href="cart.html";return}
-var itemsEl=$("items"),totalEl=$("total"),placeEl=$("place"),msgEl=$("msg");
-var sub=c.reduce(function(a,x){return a+Number(x.price)*Number(x.qty)},0),disc=0,code="";
-function row(l,r,bold){var d=document.createElement("div");d.className="row";var a=document.createElement(bold?"b":"span"),b=document.createElement(bold?"b":"span");a.textContent=l;b.textContent=r;d.append(a,b);return d}
-function draw(){itemsEl.replaceChildren();c.forEach(function(x){itemsEl.appendChild(row((x.name||"Sản phẩm AMO")+" · "+(x.size||x.sku||"")+" × "+Number(x.qty),money(Number(x.price)*Number(x.qty))))});
- if(disc>0)itemsEl.appendChild(row("Giảm giá"+(code?" ("+code+")":""),"- "+money(disc)));
- totalEl.textContent=money(Math.max(0,sub-disc))}
-draw();
-var f=document.createElement("div");f.className="field";f.innerHTML='<label>Mã giảm giá</label><div style="display:flex;gap:8px"><input id="coupon" placeholder="Nhập mã nếu có" style="flex:1"><button type="button" class="btn" id="cpApply" style="width:auto;padding:0 16px">Áp dụng</button></div><p id="cpMsg" style="margin:6px 0 0;font-size:13px"></p>';
-var note=$("note");note.closest(".field").before(f);
-$("cpApply").onclick=function(){var v=$("coupon").value.trim(),m=$("cpMsg");if(!v){code="";disc=0;m.textContent="";draw();return}
- m.textContent="Đang kiểm tra...";
+var sub=c.reduce(function(a,x){return a+Number(x.price)*Number(x.qty)},0),disc=0,code="",paid=0,busy=false;
+function el(t,cls,txt){var e=document.createElement(t);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function drawItems(){var box=$("items");box.replaceChildren();c.forEach(function(x){
+ var r=el("div","it"),im=el("div","im");if(x.image){var i=el("img");i.src=x.image;i.alt="";im.appendChild(i)}
+ var nm=el("div","nm"),a=el("b",null,x.name||"Sản phẩm AMO"),b=el("small",null,"Size "+(x.size||x.sku||"")+" · SL "+Number(x.qty));nm.append(a,b);
+ r.append(im,nm,el("div","pr",money(Number(x.price)*Number(x.qty))));box.appendChild(r)})}
+function draw(){var total=Math.max(0,sub-disc);
+ $("tSub").textContent=money(sub);$("rDisc").hidden=!(disc>0);$("tDisc").textContent="- "+money(disc);$("tDiscL").textContent="Giảm giá"+(code?" ("+code+")":"");
+ $("total").textContent=money(total);$("tPaid").textContent=money(paid);$("tDue").textContent=money(Math.max(0,total-paid))}
+drawItems();draw();
+$("cpApply").onclick=function(){var v=$("coupon").value.trim(),m=$("cpMsg");
+ if(!v){code="";disc=0;m.textContent="";m.className="cpm";draw();return}
+ m.textContent="Đang kiểm tra...";m.className="cpm";
  fetch(ENGINE+"/api/c/coupon?store="+STORE+"&code="+encodeURIComponent(v)+"&subtotal="+sub).then(function(r){return r.json()}).then(function(d){
-  if(d&&d.discount>0){disc=d.discount;code=v.toUpperCase();m.textContent="Đã áp dụng mã, giảm "+money(disc)}else{disc=0;code="";m.textContent=(d&&d.coupon_error)||"Mã không hợp lệ hoặc chưa đủ điều kiện."}draw()
- }).catch(function(){m.textContent="Không kiểm tra được mã lúc này."})};
-var busy=false;
-placeEl.textContent="ĐẶT HÀNG";
-placeEl.onclick=function(){
+  if(d&&d.discount>0){disc=d.discount;code=v.toUpperCase();m.textContent="Đã áp dụng mã, giảm "+money(disc);m.className="cpm ok"}
+  else{disc=0;code="";m.textContent=(d&&d.coupon_error)||"Mã không hợp lệ hoặc chưa đủ điều kiện.";m.className="cpm bad"}draw()
+ }).catch(function(){m.textContent="Không kiểm tra được mã lúc này.";m.className="cpm bad"})};
+function fail(t){$("msg").textContent=t;$("msg").className="msg bad"}
+$("coForm").addEventListener("submit",function(ev){ev.preventDefault();
  if(busy)return;
- if(c.some(function(x){return x.demo})){msgEl.textContent="Giỏ có sản phẩm mẫu nên chưa thể đặt hàng. Vui lòng chọn sản phẩm thật hoặc liên hệ AMO.";return}
+ if(c.some(function(x){return x.demo})){fail("Giỏ có sản phẩm mẫu nên chưa thể đặt hàng. Vui lòng chọn sản phẩm thật hoặc liên hệ AMO.");return}
  var name=$("name").value.trim(),phone=$("phone").value.trim(),address=$("address").value.trim();
- if(!name||!phone||!address){msgEl.textContent="Vui lòng nhập họ tên, số điện thoại và địa chỉ giao hàng.";return}
- if(!/^[0-9+\s.()-]{8,15}$/.test(phone)){msgEl.textContent="Số điện thoại chưa đúng.";return}
- busy=true;placeEl.disabled=true;msgEl.textContent="Đang gửi đơn hàng...";
- var body={items:c.map(function(x){return{variant_id:x.variant_id,qty:Math.trunc(Number(x.qty))}}),customer:{name:name,phone:phone,email:$("email").value.trim(),address:address},note:$("note").value.trim(),payment_method:"cod"};
+ if(!name||!phone||!address){fail("Vui lòng nhập họ tên, số điện thoại và địa chỉ giao hàng.");return}
+ if(!/^[0-9+\s.()-]{8,15}$/.test(phone)){fail("Số điện thoại chưa đúng.");return}
+ var pay=(document.querySelector('input[name=pay]:checked')||{}).value||"cod";
+ busy=true;$("place").disabled=true;$("msg").textContent="Đang gửi đơn hàng...";$("msg").className="msg";
+ var body={items:c.map(function(x){return{variant_id:x.variant_id,qty:Math.trunc(Number(x.qty))}}),customer:{name:name,phone:phone,email:$("email").value.trim(),address:address},note:$("note").value.trim(),payment_method:pay};
  if(code)body.coupon=code;
  fetch(ENGINE+"/api/orders?store="+STORE,{method:"POST",headers:{"content-type":"application/json","x-store-id":STORE},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(d){return{ok:r.ok,d:d}})}).then(function(o){
   if(!o.ok||!o.d.ok)throw new Error((o.d&&o.d.error)||"Không tạo được đơn");
   try{localStorage.removeItem("AMO_CART")}catch(e){}
-  var w=$("wrap");w.replaceChildren();var s=document.createElement("section");s.style.gridColumn="1/-1";s.style.textAlign="center";s.style.padding="40px 0";
-  var h=document.createElement("h1");h.className="amo-h1";h.textContent="ĐẶT HÀNG THÀNH CÔNG";
-  var p1=document.createElement("p");p1.textContent="Mã đơn: "+o.d.order_no;p1.style.fontSize="20px";
-  var p2=document.createElement("p");p2.textContent="Tổng thanh toán: "+money(o.d.total)+(o.d.discount>0?" (đã giảm "+money(o.d.discount)+")":"");
-  var p3=document.createElement("p");p3.textContent="AMO sẽ liên hệ xác nhận đơn và giao hàng qua số "+phone+". Cảm ơn anh/chị đã mua hàng.";
-  var a=document.createElement("a");a.href="shop.html";a.textContent="Tiếp tục xem sản phẩm";a.className="btn";a.style.display="inline-block";a.style.marginTop="14px";
-  s.append(h,p1,p2,p3,a);w.appendChild(s);scrollTo(0,0);
- }).catch(function(e){busy=false;placeEl.disabled=false;var m=String(e.message||"");msgEl.textContent=/stock/i.test(m)?"Một sản phẩm không đủ tồn kho. Vui lòng giảm số lượng hoặc chọn size khác.":/variant/i.test(m)?"Sản phẩm trong giỏ không còn bán. Vui lòng chọn lại.":"Chưa gửi được đơn: "+m})
-};
+  var d=o.d,w=$("wrap");w.className="lw-co lw-co-done";w.replaceChildren();
+  var s=el("section","lw-co-card ok");s.append(el("div","tick","✓"),el("h1",null,"Đặt hàng thành công"),el("p","code","Mã đơn: "+d.order_no));
+  var dl=el("dl","tot");
+  [["Tạm tính",money(d.subtotal)],d.discount>0?["Giảm giá"+(d.discount_label?" ("+d.discount_label+")":""),"- "+money(d.discount)]:null,["Phí vận chuyển","Miễn phí"],["Tổng cộng",money(d.total),"grand"],["Đã thanh toán trước",money(d.deposit_paid||0)],["Còn phải thanh toán",money(Math.max(0,d.total-(d.deposit_paid||0))),"due"]].forEach(function(r){if(!r)return;var row=el("div",r[2]||"");row.append(el("dt",null,r[0]),el("dd",null,r[1]));dl.appendChild(row)});
+  s.appendChild(dl);
+  s.appendChild(el("p","hint",pay==="deposit"?"AMO sẽ liên hệ qua số "+phone+" để gửi thông tin chuyển khoản cọc và giữ hàng cho anh/chị.":"AMO sẽ gọi số "+phone+" để xác nhận đơn và sắp xếp giao hàng."));
+  var a=el("a","go","Tiếp tục xem sản phẩm");a.href="shop.html";s.appendChild(a);w.appendChild(s);scrollTo(0,0);
+ }).catch(function(e){busy=false;$("place").disabled=false;var m=String(e.message||"");fail(/stock/i.test(m)?"Một sản phẩm không đủ tồn kho. Vui lòng giảm số lượng hoặc chọn size khác.":/variant/i.test(m)?"Sản phẩm trong giỏ không còn bán. Vui lòng chọn lại.":"Chưa gửi được đơn: "+m)})
+});
 })();
-</script><script src="js/amo-theme.js" defer></script><script src="js/amo-localwp.js" defer></script></body></html>
+</script>
+<script src="js/amo-theme.js" defer></script><script src="js/amo-localwp.js" defer></script></body></html>

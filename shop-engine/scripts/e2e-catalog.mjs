@@ -24,4 +24,10 @@ eq((await pub('/api/public/products?store=store_nope')).status>=400,true,'unknow
 // order flow from the public side
 const o=await call('/api/orders',{method:'POST',token:null,body:{items:[{variant_id:s41.id,qty:2}],customer:{name:'Khach Test',phone:'0900000000',address:'1 Test'}}});eq(o.status,201,'public order created');eq(o.data.total,3000000,'order total');
 const o2=await call('/api/orders',{method:'POST',token:null,body:{items:[{variant_id:s42.id,qty:1}],customer:{name:'K',phone:'0900000001',address:'x'}}});eq(o2.status>=400,true,'sold-out variant rejected');
+// deposit / thanh toan truoc
+const od=await call('/api/orders/'+o.data.id);eq(od.data.deposit_paid,0,'deposit default 0');
+const dp=await call('/api/orders/'+o.data.id+'/payment',{method:'POST',body:{deposit_paid:1000000}});eq(dp.status,200,'set deposit');eq(dp.data.remaining,2000000,'remaining');
+eq((await call('/api/orders/'+o.data.id+'/payment',{method:'POST',body:{deposit_paid:9999999999}})).status>=400,true,'deposit above total rejected');
+eq((await call('/api/orders/'+o.data.id+'/payment',{method:'POST',token:null,body:{deposit_paid:1}})).status,401,'payment needs admin');
+
 console.log('CATALOG_E2E PASS');
