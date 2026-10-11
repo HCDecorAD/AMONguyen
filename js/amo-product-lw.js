@@ -32,7 +32,7 @@ function render(){
   var box=$("pOpts");box.replaceChildren();
   product.variants.forEach(function(v){
     var b=document.createElement("button");b.type="button";b.textContent=v.size;b.disabled=v.available<=0;b.setAttribute("aria-pressed","false");b.dataset.id=v.id;
-    b.onclick=function(){selected=v;Array.prototype.forEach.call(box.children,function(x){x.setAttribute("aria-pressed",String(x===b))});say("")};
+    b.onclick=function(){selected=v;if(v.price>0)$("pPrice").textContent=money(v.price);Array.prototype.forEach.call(box.children,function(x){x.setAttribute("aria-pressed",String(x===b))});say("")};
     box.appendChild(b)});
   if(product.demo)$("pNote").textContent="Đây là sản phẩm mẫu để xem giao diện. Shop sẽ cập nhật hình ảnh, giá và tồn kho thật khi đăng hàng. Chưa thể đặt hàng sản phẩm mẫu.";
   if(!product.variants.length){$("pAdd").disabled=true;say("Vui lòng liên hệ AMO để biết tình trạng hàng.")}
@@ -42,25 +42,19 @@ function add(){
   if(!selected)return say("Vui lòng chọn size.");
   var q=Math.max(1,Math.min(20,Number($("pQty").value)||1));
   if(q>selected.available)return say("Số lượng vượt tồn kho (còn "+selected.available+").");
-  if(!(product.price>0))return say("Giá đang được xác nhận. Vui lòng liên hệ AMO.");
+  var up=selected.price>0?selected.price:product.price;if(!(up>0))return say("Giá đang được xác nhận. Vui lòng liên hệ AMO.");
   var c=cart(),x=c.find(function(i){return i.variant_id===selected.id});
   if(x)x.qty=Math.min(selected.available,Number(x.qty||0)+q);
-  else c.push({variant_id:selected.id,product_id:product.id,name:product.name,sku:selected.sku,size:selected.size,price:product.price,image:(product.images||[])[0]||"",qty:q,demo:!!product.demo});
+  else c.push({variant_id:selected.id,product_id:product.id,name:product.name,sku:selected.sku,size:selected.size,price:up,image:(product.images||[])[0]||"",qty:q,demo:!!product.demo});
   saveCart(c);say("Đã thêm vào giỏ hàng.");
 }
 function fromDemo(d){
   return{id:d.id,name:d.name,cat:d.cat,price:d.price,desc:d.desc,images:d.images,demo:true,
     variants:d.sizes.map(function(s){return{id:d.id+"-"+s,sku:d.id.toUpperCase()+"-"+s,size:s,available:d.available}})};
 }
-function fromWoo(w){
-  var mu=Math.pow(10,Number(w.prices&&w.prices.currency_minor_unit||0));
-  var sizes=[];(w.attributes||[]).forEach(function(a){if(/size/i.test(a.name||""))(a.terms||[]).forEach(function(t){sizes.push(t.name)})});
-  if(!sizes.length)sizes=["Free"];
-  var av=w.is_in_stock?Math.max(1,Number(w.low_stock_remaining||20)):0;
-  return{id:w.id,name:w.name,cat:(w.categories&&w.categories[0]&&w.categories[0].name)||"",price:Number(w.prices&&w.prices.price||0)/mu,
-    desc:String(w.short_description||w.description||"").replace(/<[^>]*>/g,"").trim(),
-    images:(w.images||[]).map(function(i){return i.src}).filter(Boolean),demo:false,
-    variants:sizes.map(function(s){return{id:w.id+"-"+s,sku:w.sku,size:s,available:av}})};
+function fromEngine(w){
+  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),images:w.images||[],demo:false,
+    variants:(w.variants||[]).map(function(v){return{id:v.id,sku:v.sku,size:v.size||v.color||"Free",price:Number(v.price||0),available:Number(v.available||0)}})};
 }
 function start(){
   if(!window.AMO_LW){setTimeout(start,40);return}
@@ -68,9 +62,8 @@ function start(){
   if(!key)return fail();
   var d=lw().demo.filter(function(x){return x.slug===key})[0];
   if(d){product=fromDemo(d);return render()}
-  fetch(lw().api+"/products?slug="+encodeURIComponent(key)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(a){
-    var w=Array.isArray(a)?a[0]:null;if(!w||String(w.sku||"").indexOf("AMO-")!==0)throw 0;
-    product=fromWoo(w);render();
+  fetch(lw().engine+"/api/public/product?store="+lw().store+"&slug="+encodeURIComponent(key)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(w){
+    product=fromEngine(w);render();
   }).catch(fail);
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
