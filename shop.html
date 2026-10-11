@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://amonguyen.com/shop.html">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/amo-style.css">
-  <link rel="stylesheet" href="css/amo-responsive.css">
+  <link rel="stylesheet" href="css/amo-responsive.css"><link rel="stylesheet" href="css/amo-localwp.css">
   <style>
     .amo-shop-toolbar { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(26,26,26,0.1); margin-bottom: var(--amo-space-lg); padding-bottom: 1rem; flex-wrap: wrap; gap: 1.5rem; }
     .amo-shop-filter { display: flex; gap: 2rem; overflow-x: auto; scrollbar-width: none; }
@@ -60,44 +60,16 @@
   <div class="amo-new-top">SHOP GIÀY SI AMO NGUYỄN · CHUYÊN GIÀY SI HIỆU NAM</div>
 <header class="amo-new-header"><div class="amo-new-head"><a class="amo-new-logo" href="index.html"><img src="assets/images/amo-logo-new.jpg" alt="AMO Nguyễn"></a><div class="amo-new-brand"><b>AMO NGUYỄN</b><span>CHỌN GIÀY CÓ GU, BƯỚC ĐI CÓ CHẤT</span></div><div class="amo-new-contact">ĐT / ZALO<br>093.268.0592</div></div>
 <nav class="amo-new-nav"><div><a href="index.html">TRANG CHỦ</a><a href="shop.html">SẢN PHẨM</a><a href="#thuong-hieu">THƯƠNG HIỆU</a><a href="story.html">GIỚI THIỆU</a><a href="policy.html">CHÍNH SÁCH</a><a href="contact.html">LIÊN HỆ</a></div></nav></header>
-<main class="amo-container" style="min-height: 80vh;" role="main">
-    <section class="amo-page-header amo-reveal" aria-labelledby="shop-title">
-      <h1 id="shop-title" class="amo-h1">BỘ SƯU TẬP</h1>
-      <p class="amo-caption" style="margin-top: 1rem;">Danh mục sản phẩm AMO NGUYỄN</p>
-    </section>
-
-    <div class="amo-shop-toolbar amo-reveal">
-      <div class="amo-shop-filter" role="tablist" aria-label="Lọc danh mục sản phẩm">
-        <button class="amo-filter-btn is-active" data-filter="all" role="tab" aria-selected="true">Tất cả</button>
-        <button class="amo-filter-btn" data-filter="lv" role="tab" aria-selected="false">LV</button>
-        <button class="amo-filter-btn" data-filter="gucci" role="tab" aria-selected="false">GUCCI</button>
-        <button class="amo-filter-btn" data-filter="salvatore-ferragamo" role="tab" aria-selected="false">Salvatore Ferragamo</button>
-        <button class="amo-filter-btn" data-filter="bally" role="tab" aria-selected="false">BALLY</button><button class="amo-filter-btn" data-filter="khac" role="tab" aria-selected="false">KHÁC</button>
-      </div>
-      
-      <div class="amo-shop-actions">
-        <input type="text" id="amoSearch" class="amo-shop-input" placeholder="Tìm kiếm..." aria-label="Tìm kiếm sản phẩm">
-        <select id="amoSort" class="amo-shop-input" aria-label="Sắp xếp sản phẩm">
-          <option value="newest">Mới nhất</option>
-          <option value="price-asc">Giá: Thấp đến Cao</option>
-          <option value="price-desc">Giá: Cao đến Thấp</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Empty/Loading State Hook -->
-    <div id="amoEmptyState" class="amo-shop-empty-state" aria-live="polite">
-      <h3 class="amo-h3" style="color: var(--amo-charcoal); margin-bottom: 1rem;">Chưa có sản phẩm phù hợp</h3>
-      <p class="amo-body">Vui lòng thử lại với từ khóa hoặc danh mục khác.</p>
-    </div>
-
-    <!-- Catalog Hook (Ready for Data) -->
-    <div id="amoProductGrid" class="amo-grid-4 amo-reveal" style="margin-bottom: var(--amo-space-xl);" aria-live="polite"></div>
-  </main>
+<main class="lw-shop" role="main">
+<aside class="lw-filter" aria-label="Bộ lọc"><h3 data-vi="Bộ lọc" data-en="Filters">Bộ lọc</h3><h4>Size</h4><label><input type="checkbox" name="size" value="37-37.5">37-37.5</label><label><input type="checkbox" name="size" value="38-38.5">38-38.5</label><label><input type="checkbox" name="size" value="39-39.5">39-39.5</label><label><input type="checkbox" name="size" value="40-40.5">40-40.5</label><label><input type="checkbox" name="size" value="41-41.5">41-41.5</label><label><input type="checkbox" name="size" value="42-42.5">42-42.5</label><label><input type="checkbox" name="size" value="43-43.5">43-43.5</label><label><input type="checkbox" name="size" value="44-44.5">44-44.5</label><label><input type="checkbox" name="size" value="45-45.5">45-45.5</label><h4 data-vi="Thương hiệu" data-en="Brand">Thương hiệu</h4><label><input type="checkbox" name="brand" value="Bally">Bally</label><label><input type="checkbox" name="brand" value="Gucci">Gucci</label><label><input type="checkbox" name="brand" value="Khác">Khác</label><label><input type="checkbox" name="brand" value="LV">LV</label><label><input type="checkbox" name="brand" value="Salvatore Ferragamo">Salvatore Ferragamo</label><h4 data-vi="Tình trạng hàng" data-en="Availability">Tình trạng hàng</h4><label><input type="checkbox" id="lwStock"><span data-vi="Còn hàng" data-en="In stock">Còn hàng</span></label></aside>
+<section><p class="lw-crumb"><a href="index.html" data-vi="Trang chủ" data-en="Home">Trang chủ</a> / <span data-vi="Sản phẩm" data-en="Products">Sản phẩm</span></p><h1 id="shop-title" data-vi="Sản phẩm" data-en="Products">Sản phẩm</h1>
+<div class="lw-bar"><span id="lwCount" aria-live="polite"></span><span><input type="text" id="amoSearch" placeholder="Tìm kiếm..." aria-label="Tìm kiếm sản phẩm"> <select id="amoSort" aria-label="Sắp xếp sản phẩm"><option value="newest">Sắp xếp mặc định</option><option value="price-asc">Giá: Thấp đến Cao</option><option value="price-desc">Giá: Cao đến Thấp</option></select></span></div>
+<div id="amoEmptyState" class="lw-empty" aria-live="polite" hidden><h3 style="margin:0 0 6px">Chưa có sản phẩm phù hợp</h3><p>Vui lòng thử lại với từ khóa hoặc bộ lọc khác.</p></div>
+<div id="amoProductGrid" class="lw-grid" aria-live="polite"></div></section></main>
 
 <section class="amo-usp-strip" aria-label="Cam kết AMO"><div class="amo-usp"><svg viewBox="0 0 24 24"><path d="m12 3 7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6Z"/><path d="m9 12 2 2 4-5"/></svg><div><b>TUYỂN CHỌN</b><span>AMO curated selection</span></div></div><div class="amo-usp"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 10h8M8 14h5"/></svg><div><b>HỖ TRỢ SIZE</b><span>Tư vấn trước khi đặt</span></div></div><div class="amo-usp"><svg viewBox="0 0 24 24"><path d="M3 7h11v10H3zM14 11h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><div><b>GIAO TOÀN QUỐC</b><span>Theo chính sách đơn hàng</span></div></div><div class="amo-usp"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6"/><path d="M4 4v5h5"/></svg><div><b>HỖ TRỢ ĐỔI</b><span>Theo điều kiện áp dụng</span></div></div></section><footer class="amo-new-footer">AMO NGUYỄN · SHOP GIÀY SI HIỆU NAM · CHỌN GIÀY CÓ GU, BƯỚC ĐI CÓ CHẤT</footer>
 <script src="js/amo-app.js"></script>
-  <script src="js/amo-shop.js"></script>
+  <script src="js/amo-localwp.js" defer></script><script src="js/amo-shop-lw.js" defer></script>
 <script src="js/amo-theme.js" defer></script><script src="js/hc-customer.js" data-store="store_amo" data-popup="on" data-cart-key="AMO_CART" defer></script></body>
 </html>
 

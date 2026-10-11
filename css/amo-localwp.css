@@ -1,0 +1,79 @@
+/* AMO: giao diện theo bản LocalWP (nền đen + vàng, khung giữa hẹp). Giữ nguyên cấu trúc trang. */
+:root{--lw-bg:#080808;--lw-panel:#121212;--lw-card:#181818;--lw-line:#2a2a2a;--lw-gold:#d4a933;--lw-gold-2:#e8c574;--lw-text:#f1ece0;--lw-mute:#8d887c;--lw-w:940px}
+body{background:var(--lw-bg);color:var(--lw-text);font-family:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit}
+.amo-new-top,.amo-new-header{display:none!important}
+
+/* header */
+.lw-header{background:#0a0a0a;border-bottom:1px solid #6b5420;position:sticky;top:0;z-index:60}
+.lw-head{max-width:var(--lw-w);margin:auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lw-brand{display:flex;align-items:center;gap:14px;text-decoration:none;font-size:20px;font-weight:600;letter-spacing:.02em}
+.lw-brand img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid #6b5420}
+.lw-nav{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.lw-nav a,.lw-nav button{color:var(--lw-text);text-decoration:none;font-size:14px;background:none;border:0;cursor:pointer;padding:6px 0;font-family:inherit}
+.lw-nav a:hover,.lw-nav button:hover{color:var(--lw-gold-2)}
+.lw-nav a[aria-current=page]{color:var(--lw-gold)}
+.lw-nav a:focus-visible,.lw-nav button:focus-visible{outline:2px solid var(--lw-gold);outline-offset:3px}
+
+/* khung giữa */
+.amo-new-hero,.amo-new-section,.amo-new-intro,.amo-new-cta{max-width:var(--lw-w)}
+.amo-new-hero{margin-top:48px;padding:0 16px}
+.amo-new-hero img{border:0;box-shadow:none}
+.amo-new-section{padding:36px 16px 20px}
+.amo-new-title{border-bottom:0;margin-bottom:18px}
+.amo-new-title h2{font-size:28px;font-weight:500}
+.amo-new-title a{color:var(--lw-gold-2);font-size:14px}
+.amo-new-cta{margin:30px auto 0;background:var(--lw-panel);border:1px solid var(--lw-line);padding:44px 16px}
+.amo-new-intro{padding:50px 16px 10px}.amo-new-intro h1{font-size:clamp(28px,4vw,44px)}
+
+/* Danh mục */
+.lw-cat{background:var(--lw-panel);padding:8px 0 8px}
+.lw-cat-main{border:1px solid var(--lw-line);padding:18px 20px;margin-bottom:12px}
+.lw-cat-main h3{margin:0 0 14px;font-size:18px;color:var(--lw-gold-2);font-weight:600}
+.lw-cat-main h3 a{text-decoration:none}
+.lw-sizes{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.lw-sizes a{border:1px solid #7b6325;padding:6px 10px;font-size:12px;text-decoration:underline;color:var(--lw-text)}
+.lw-sizes a:hover{background:#2a2310}
+.lw-cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.lw-cat-grid a{border:1px solid var(--lw-line);min-height:82px;display:grid;place-items:center;text-align:center;padding:8px;font-size:13px;font-weight:600;text-decoration:underline;background:#141414}
+.lw-cat-grid a:hover{border-color:#7b6325}
+.lw-more{display:inline-block;margin-top:16px;color:var(--lw-gold);font-size:13px;font-weight:700;text-decoration:underline}
+
+/* thẻ sản phẩm */
+.lw-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.lw-card{background:var(--lw-card);border:1px solid var(--lw-line);padding:6px 6px 14px;display:flex;flex-direction:column;gap:6px;text-decoration:none;min-width:0}
+.lw-card .im{aspect-ratio:1/1;background:#fff;overflow:hidden;display:grid;place-items:center;color:#555;font-size:12px}
+.lw-card .im img{width:100%;height:100%;object-fit:cover;display:block}
+.lw-card .ct{font-size:11px;color:var(--lw-mute);margin-top:6px;padding:0 4px}
+.lw-card .nm{font-size:13px;font-weight:600;padding:0 4px;overflow-wrap:anywhere}
+.lw-card .pr{font-size:12px;font-weight:700;color:var(--lw-gold-2);padding:0 4px}
+.lw-card .bt{margin:6px 4px 0;background:var(--lw-gold);color:#111;font-weight:700;font-size:12px;text-align:center;padding:10px 6px}
+.lw-card:hover{border-color:#7b6325}
+
+/* trang Sản phẩm: cột lọc + lưới */
+.lw-shop{max-width:var(--lw-w);margin:0 auto;padding:40px 16px 60px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:0 36px}
+.lw-filter{border-right:1px solid #444;padding-right:24px}
+.lw-filter h3{font-size:20px;margin:0 0 18px;font-weight:600}
+.lw-filter h4{font-size:17px;margin:26px 0 12px;font-weight:600}
+.lw-filter label{display:flex;gap:12px;align-items:center;font-size:11px;font-weight:600;margin:0 0 12px;cursor:pointer}
+.lw-filter input{appearance:none;width:15px;height:15px;border:1px solid #7b6325;background:#1a1608;border-radius:2px;display:inline-grid;place-items:center;margin:0;cursor:pointer}
+.lw-filter input:checked{background:var(--lw-gold)}
+.lw-filter input:focus-visible{outline:2px solid var(--lw-gold);outline-offset:2px}
+.lw-crumb{font-size:11px;color:#ccc;margin:0 0 14px}.lw-crumb a{text-decoration:none}
+.lw-shop h1{font-size:30px;font-weight:400;margin:0 0 26px}
+.lw-bar{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.lw-bar select,.lw-bar input{background:#1c1c1c;color:var(--lw-text);border:1px solid #333;padding:9px 12px;font-size:12px;font-family:inherit}
+.lw-empty{padding:40px 0;color:var(--lw-mute)}
+
+/* nút nổi */
+.lw-float{position:fixed;right:14px;bottom:80px;display:flex;flex-direction:column;gap:12px;z-index:70}
+.lw-float a{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:11px;text-decoration:none;box-shadow:0 3px 12px #0008}
+.lw-float .zl{background:#0068ff}.lw-float .fb{background:#1877f2;font-size:22px;font-family:Georgia,serif}
+
+@media(max-width:820px){.lw-shop{grid-template-columns:1fr}.lw-filter{border-right:0;border-bottom:1px solid #444;padding:0 0 18px;margin-bottom:22px}.lw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lw-cat-grid{grid-template-columns:repeat(3,1fr)}.lw-nav{gap:16px}}
+@media(max-width:520px){.lw-brand{font-size:17px}.lw-brand img{width:44px;height:44px}.lw-cat-grid{grid-template-columns:repeat(2,1fr)}.lw-nav{gap:12px;width:100%;overflow-x:auto;flex-wrap:nowrap}.lw-nav a,.lw-nav button{white-space:nowrap;font-size:13px}}
+
+/* dải cam kết: nền tối */
+.amo-usp-strip{background:var(--lw-panel)!important;border:1px solid var(--lw-line);max-width:var(--lw-w);margin:0 auto 40px}
+.amo-usp{background:transparent!important;color:var(--lw-text)!important}
+.amo-usp b{color:var(--lw-gold-2)!important}.amo-usp span{color:var(--lw-mute)!important}.amo-usp svg{stroke:var(--lw-gold)!important}
