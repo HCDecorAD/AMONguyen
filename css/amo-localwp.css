@@ -228,3 +228,4 @@ main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 /* chip size trang chủ: gọn, 5 cột trên mobile */
 .lw-sizes span{display:none}
 @media(max-width:600px){.lw-sizes{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.lw-sizes a{padding:6px 2px;font-size:11.5px;text-align:center;white-space:nowrap}}
+#pColors{margin-bottom:12px}

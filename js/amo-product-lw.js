@@ -36,10 +36,23 @@ function render(){
   };
   gallery(product.images||[]);
   var box=$("pOpts");box.replaceChildren();
-  product.variants.forEach(function(v){
-    var b=document.createElement("button");b.type="button";b.textContent=v.size;b.disabled=v.available<=0;b.setAttribute("aria-pressed","false");b.dataset.id=v.id;
-    b.onclick=function(){selected=v;if(v.price>0)$("pPrice").textContent=money(v.price);Array.prototype.forEach.call(box.children,function(x){x.setAttribute("aria-pressed",String(x===b))});say("")};
-    box.appendChild(b)});
+  var cols=[];product.variants.forEach(function(v){if(v.color&&cols.indexOf(v.color)<0)cols.push(v.color)});
+  var cbox=$("pColors");if(!cbox&&cols.length){cbox=document.createElement("div");cbox.id="pColors";cbox.className=box.className;var sl=box.previousElementSibling;if(cols.length&&sl){var cl=document.createElement("div");cl.className="lab";cl.textContent="Chọn màu";sl.parentNode.insertBefore(cl,sl);sl.parentNode.insertBefore(cbox,sl)}}
+  if(cbox)cbox.replaceChildren();selected=null;
+  var curColor=cols[0]||"";
+  function drawSizes(){
+    box.replaceChildren();
+    product.variants.filter(function(v){return !cols.length||v.color===curColor}).forEach(function(v){
+      var b=document.createElement("button");b.type="button";b.textContent=v.size;b.disabled=v.available<=0;b.setAttribute("aria-pressed",String(selected===v));b.dataset.id=v.id;
+      b.onclick=function(){selected=v;if(v.price>0)$("pPrice").textContent=money(v.price);Array.prototype.forEach.call(box.children,function(x){x.setAttribute("aria-pressed",String(x===b))});say("")};
+      box.appendChild(b)});
+  }
+  if(cols.length&&cbox){cols.forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c;b.setAttribute("aria-pressed",String(c===curColor));
+    b.onclick=function(){curColor=c;selected=null;Array.prototype.forEach.call(cbox.children,function(x){x.setAttribute("aria-pressed",String(x===b))});drawSizes();say("")};cbox.appendChild(b)})}
+  drawSizes();
+  var meta=[];if(product.material)meta.push("Chất liệu: "+product.material);if(product.origin)meta.push("Xuất xứ: "+product.origin);
+  if(meta.length)$("pDesc").textContent=(product.desc?product.desc+"\n":"")+meta.join(" · ");
+  if(product.badge)$("pCat").textContent=(product.cat||"AMO NGUYỄN")+" · "+product.badge;
   if(product.demo)$("pNote").textContent="Đây là sản phẩm mẫu để xem giao diện. Shop sẽ cập nhật hình ảnh, giá và tồn kho thật khi đăng hàng. Chưa thể đặt hàng sản phẩm mẫu.";
   if(!product.variants.length){$("pAdd").disabled=true;say("Vui lòng liên hệ AMO để biết tình trạng hàng.")}
   lw().apply();
@@ -51,7 +64,7 @@ function add(){
   var up=selected.price>0?selected.price:product.price;if(!(up>0))return say("Giá đang được xác nhận. Vui lòng liên hệ AMO.");
   var c=cart(),x=c.find(function(i){return i.variant_id===selected.id});
   if(x)x.qty=Math.min(selected.available,Number(x.qty||0)+q);
-  else c.push({variant_id:selected.id,product_id:product.id,name:product.name,sku:selected.sku,size:selected.size,price:up,image:(product.images||[])[0]||"",qty:q,demo:!!product.demo});
+  else c.push({variant_id:selected.id,product_id:product.id,name:product.name,sku:selected.sku,size:selected.size+(selected.color?" · "+selected.color:""),price:up,image:(product.images||[])[0]||"",qty:q,demo:!!product.demo});
   saveCart(c);say("Đã thêm vào giỏ hàng.");
 }
 function fromDemo(d){
@@ -59,8 +72,8 @@ function fromDemo(d){
     variants:d.sizes.map(function(s){return{id:d.id+"-"+s,sku:d.id.toUpperCase()+"-"+s,size:s,available:d.available}})};
 }
 function fromEngine(w){
-  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),images:(w.images||[]).map(function(i){return typeof i==="string"?i:i&&i.url}).filter(Boolean),demo:false,
-    variants:(w.variants||[]).map(function(v){return{id:v.id,sku:v.sku,size:v.size||v.color||"Free",price:Number(v.price||0),available:Number(v.available||0)}})};
+  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),material:w.material||"",origin:w.origin||"",badge:w.badge||"",images:(w.images||[]).map(function(i){return typeof i==="string"?i:i&&i.url}).filter(Boolean),demo:false,
+    variants:(w.variants||[]).map(function(v){return{id:v.id,sku:v.sku,size:v.size||v.color||"Free",color:v.color||"",price:Number(v.price||0),available:Number(v.available||0)}})};
 }
 function start(){
   if(!window.AMO_LW){setTimeout(start,40);return}

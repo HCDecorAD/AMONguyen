@@ -1,0 +1,4 @@
+ALTER TABLE products ADD COLUMN material TEXT;
+ALTER TABLE products ADD COLUMN origin TEXT;
+ALTER TABLE products ADD COLUMN badge TEXT;
+ALTER TABLE products ADD COLUMN tags TEXT;
