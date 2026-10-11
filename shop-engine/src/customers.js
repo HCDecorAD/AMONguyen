@@ -118,7 +118,8 @@ export async function handleCustomers(req, env, store, H, auth) {
     if (path === "/api/c/config" && m === "GET") {
       const tiers = await loadTiers(env, store);
       const auto = (await activePromos(env, store)).filter((p) => p.scope !== "coupon").map((p) => ({ id: p.id, name: p.name, percent: p.value, scope: p.scope, scope_ref: p.scope_ref, min_order: p.min_order, ends_at: p.ends_at }));
-      return json(req, { store: store.code, google_client_id: env.GOOGLE_CLIENT_ID?.value ?? env.GOOGLE_CLIENT_ID ?? null, tiers, promos: auto });
+      const wc = (await activePromos(env, store)).find((p) => p.scope === "coupon" && String(p.code || "").toUpperCase() === "WELCOME");
+      return json(req, { welcome: wc ? { percent: wc.value, min_order: wc.min_order } : null, store: store.code, google_client_id: env.GOOGLE_CLIENT_ID?.value ?? env.GOOGLE_CLIENT_ID ?? null, tiers, promos: auto });
     }
 
     if (path === "/api/c/register" && m === "POST") {
@@ -184,6 +185,32 @@ export async function handleCustomers(req, env, store, H, auth) {
       return json(req, { ok: true, token: await newSession(env, store, c.id), customer: publicProfile(c) });
     }
 
+    if (path === "/api/c/lead" && m === "POST") {
+      const d = await input(req), email = normEmail(d.email), phone = normPhone(d.phone), name = clean(d.name).slice(0, 80);
+      if (!d.consent) return bad("Cần đồng ý để chúng tôi lưu thông tin liên hệ");
+      if (!email && !phone) return bad("Cần email hoặc số điện thoại hợp lệ");
+      const vid = /^[A-Za-z0-9_-]{8,64}$/.test(String(d.visitor_id || "")) ? d.visitor_id : null;
+      if (!vid) return bad("Thiếu visitor_id");
+      const recent = await env.DB.prepare("SELECT COUNT(*) n FROM customer_events WHERE store_id=? AND visitor_id=? AND type='lead' AND created_at>?").bind(store.id, vid, plusIso(-3600e3)).first();
+      if (recent.n >= 3) return bad("Bạn thao tác quá nhanh, vui lòng thử lại sau", 429);
+      const src = clean(d.source).slice(0, 60) || "popup";
+      let row = await env.DB.prepare(`SELECT id,password_hash,google_sub FROM customers WHERE store_id=? AND status='active' AND (${email ? "email=?" : "phone=?"}) ORDER BY (password_hash IS NULL AND google_sub IS NULL) DESC LIMIT 1`).bind(store.id, email || phone).first();
+      const guest = row && !row.password_hash && !row.google_sub;
+      let cid = null;
+      if (guest) {
+        cid = row.id;
+        await env.DB.prepare("UPDATE customers SET name=CASE WHEN name=email OR name=phone OR name='' THEN COALESCE(NULLIF(?,''),name) ELSE name END,phone=COALESCE(phone,?),email=COALESCE(email,?),source=COALESCE(source,?),lead_at=COALESCE(lead_at,?),consent_at=COALESCE(consent_at,?),last_seen_at=? WHERE id=?").bind(name, phone || null, email || null, src, nowIso(), nowIso(), nowIso(), cid).run();
+      } else if (!row) {
+        cid = id("cus");
+        await env.DB.prepare("INSERT INTO customers(id,store_id,name,phone,email,source,lead_at,consent_at,last_seen_at) VALUES(?,?,?,?,?,?,?,?,?)").bind(cid, store.id, name || email || phone, phone || null, email || null, src, nowIso(), nowIso(), nowIso()).run();
+      }
+      if (cid) await linkVisitor(env, store, cid, vid);
+      // existing registered account: respond identically, never reveal that it exists
+      await logEvent(env, store, cid, vid, "lead", src, null, id);
+      const wc = (await activePromos(env, store)).find((p) => p.scope === "coupon" && String(p.code || "").toUpperCase() === "WELCOME");
+      return json(req, { ok: true, coupon: wc ? { code: "WELCOME", percent: wc.value, min_order: wc.min_order } : null }, 201);
+    }
+
     if (path === "/api/c/logout" && m === "POST") {
       const t = (req.headers.get("authorization") || "").replace(/^Bearer\s+/, "");
       if (t) await env.DB.prepare("DELETE FROM customer_sessions WHERE token_hash=?").bind(await sha(t)).run();
@@ -198,7 +225,8 @@ export async function handleCustomers(req, env, store, H, auth) {
       const who = cust ? ["customer_id", cust.id] : ["visitor_id", vid];
       const recent = await env.DB.prepare(`SELECT COUNT(*) n FROM customer_events WHERE store_id=? AND ${who[0]}=? AND created_at>?`).bind(store.id, who[1], plusIso(-3600e3)).first();
       if (recent.n >= 60) return json(req, { ok: true, skipped: true });
-      await logEvent(env, store, cust?.id || null, vid, type, clean(d.ref).slice(0, 200) || null, d.meta ? JSON.stringify(d.meta).slice(0, 500) : null, id);
+      const known = cust ? null : (await env.DB.prepare("SELECT customer_id FROM customer_events WHERE store_id=? AND visitor_id=? AND customer_id IS NOT NULL ORDER BY created_at DESC LIMIT 1").bind(store.id, vid).first())?.customer_id;
+      await logEvent(env, store, cust?.id || known || null, vid, type, clean(d.ref).slice(0, 200) || null, d.meta ? JSON.stringify(d.meta).slice(0, 500) : null, id);
       if (cust) await env.DB.prepare("UPDATE customers SET last_seen_at=? WHERE id=?").bind(nowIso(), cust.id).run();
       return json(req, { ok: true });
     }
@@ -258,7 +286,7 @@ export async function handleCustomers(req, env, store, H, auth) {
     if (lvl < 2) return deny();
     const q = clean(u.searchParams.get("q")).slice(0, 60), lim = Math.min(500, parseInt(u.searchParams.get("limit") || "200", 10) || 200);
     const like = "%" + q.replace(/[%_]/g, "") + "%";
-    const rows = (await env.DB.prepare(`SELECT c.id,c.name,c.email,c.phone,c.address,c.status,c.tier_override,c.created_at,c.last_login_at,c.last_seen_at,(c.password_hash IS NOT NULL OR c.google_sub IS NOT NULL) has_account,
+    const rows = (await env.DB.prepare(`SELECT c.id,c.name,c.email,c.phone,c.address,c.status,c.tier_override,c.created_at,c.last_login_at,c.last_seen_at,c.source,c.lead_at,(c.password_hash IS NOT NULL OR c.google_sub IS NOT NULL) has_account,
       COALESCE((SELECT SUM(total) FROM orders o WHERE o.customer_id=c.id AND o.status='completed'),0) spent,
       (SELECT COUNT(*) FROM orders o WHERE o.customer_id=c.id) orders,
       (SELECT COUNT(*) FROM customer_events e WHERE e.customer_id=c.id AND e.type='visit') visits

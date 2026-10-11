@@ -36,3 +36,9 @@ Mỗi website (store) có hệ thống khách riêng; dữ liệu tách theo `st
 - Bật Google: tạo OAuth Client ID (Web) → `wrangler secret put GOOGLE_CLIENT_ID`; thêm domain site vào Authorized JavaScript origins.
 - Dọn log: `customer_events` tăng theo lượt xem; nên xóa bản ghi > 180 ngày định kỳ.
 - Test: `node scripts/e2e-customers.mjs` (cần `wrangler dev --local --port 8793 --var TEST_ADMIN_TOKEN:local-e2e`).
+
+### Thu thập khách tham quan (migration 0013)
+- Widget `hc-customer.js` đã nhúng vào các trang AMO (`data-popup="on"`, `data-cart-key="AMO_CART"`): ghi lượt xem trang kèm nguồn (utm_source / referrer), xem sản phẩm, thêm giỏ — chỉ sau khi khách bấm Đồng ý ở banner.
+- Popup nhận email/SĐT (có ô đồng ý riêng, hiện sau 15 giây hoặc khi rê chuột ra khỏi trang, 1 lần/thiết bị). Lưu vào `customers` với `source`; lịch sử ẩn danh của thiết bị đó được gắn vào hồ sơ.
+- Mã quà tặng: tạo coupon có mã đúng `WELCOME` ở tab Khuyến mãi — popup sẽ hiện mã này cho khách vừa để lại liên hệ.
+- Giới hạn 3 lượt/giờ/thiết bị; email đã có tài khoản vẫn trả phản hồi giống hệt (không lộ tài khoản tồn tại).

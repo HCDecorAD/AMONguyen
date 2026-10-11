@@ -32,16 +32,16 @@ eq((await call('/api/c/me',{token:T,store:s2.data.id})).status,401,'customer tok
 // customer token cannot act as admin
 eq((await call('/api/customers',{token:T})).status,401,'customer token is not admin');
 // promos: coupon 10%, product 20%
-const cp=await call('/api/v1/promotions',{method:'POST',body:{name:'Chao he',code:'he10',scope:'coupon',percent:10,min_order:500000,max_uses:1}});eq(cp.status,201,'create coupon');
-eq((await call('/api/v1/promotions',{method:'POST',body:{name:'x',code:'HE10',scope:'coupon',percent:5}})).status,400,'duplicate coupon rejected');
+const cp=await call('/api/v1/promotions',{method:'POST',body:{name:'Chao he',code:'he'+u,scope:'coupon',percent:10,min_order:500000,max_uses:1}});eq(cp.status,201,'create coupon');
+eq((await call('/api/v1/promotions',{method:'POST',body:{name:'x',code:'HE'+u,scope:'coupon',percent:5}})).status,400,'duplicate coupon rejected');
 eq((await call('/api/v1/promotions',{method:'POST',body:{name:'x',code:'BIG',scope:'coupon',percent:99}})).status,400,'percent > 90 rejected');
-const q1=await call('/api/c/coupon?code=he10&subtotal=1000000',{token:T});eq(q1.data.discount,100000,'coupon preview 10%');
-eq((await call('/api/c/coupon?code=he10&subtotal=100000',{token:T})).data.discount,0,'below min order');
+const q1=await call('/api/c/coupon?code=he'+u+'&subtotal=1000000',{token:T});eq(q1.data.discount,100000,'coupon preview 10%');
+eq((await call('/api/c/coupon?code=he'+u+'&subtotal=100000',{token:T})).data.discount,0,'below min order');
 // order with coupon
-const ord=await call('/api/orders',{method:'POST',token:T,body:{items:[{variant_id:vid_,qty:1}],coupon:'HE10',customer:{name:'Khach Test',phone:'0900000001',address:'HCM'}}});eq(ord.status,201,'order with coupon');
+const ord=await call('/api/orders',{method:'POST',token:T,body:{items:[{variant_id:vid_,qty:1}],coupon:'HE'+u,customer:{name:'Khach Test',phone:'0900000001',address:'HCM'}}});eq(ord.status,201,'order with coupon');
 eq(ord.data.discount,100000,'order discount applied');eq(ord.data.total,900000,'order total after coupon');
 // coupon exhausted (max_uses 1)
-const ord2=await call('/api/orders',{method:'POST',token:T,body:{items:[{variant_id:vid_,qty:1}],coupon:'HE10',customer:{name:'K',phone:'0900000001',address:'HCM'}}});eq(ord2.status,400,'exhausted coupon rejected');
+const ord2=await call('/api/orders',{method:'POST',token:T,body:{items:[{variant_id:vid_,qty:1}],coupon:'HE'+u,customer:{name:'K',phone:'0900000001',address:'HCM'}}});eq(ord2.status,400,'exhausted coupon rejected');
 // product promo 20% (auto) -> unit price 800000
 eq((await call('/api/v1/promotions',{method:'POST',body:{name:'Sale giay',scope:'product',scope_ref:pid,percent:20}})).status,201,'create product promo');
 const ord3=await call('/api/orders',{method:'POST',token:T,body:{items:[{variant_id:vid_,qty:1}],customer:{name:'K',phone:'0900000001',address:'HCM'}}});eq(ord3.data.total,800000,'product promo applied to line');
@@ -58,4 +58,20 @@ eq((await call('/api/v1/customers/'+me.id,{method:'PATCH',body:{status:'blocked'
 eq((await call('/api/c/me',{token:T})).status,401,'blocked customer session dead');
 eq((await call('/api/c/login',{method:'POST',token:null,body:{login:mail,password:'matkhau123'}})).status,401,'blocked customer cannot login');
 // viewer cannot read PII
+// ---- lead capture ----
+const lv='lead'+u,lm=`lead${u}@example.test`;
+eq((await call('/api/c/lead',{method:'POST',token:null,body:{email:lm,visitor_id:lv}})).status,400,'lead needs consent');
+eq((await call('/api/c/lead',{method:'POST',token:null,body:{email:'nope',consent:true,visitor_id:lv}})).status,400,'lead needs valid contact');
+eq((await call('/api/c/lead',{method:'POST',token:null,body:{email:lm,consent:true,visitor_id:lv,source:'facebook'}})).status,201,'lead saved');
+eq((await call('/api/c/lead',{method:'POST',token:null,body:{email:lm,consent:true,visitor_id:lv}})).status,201,'duplicate lead idempotent');
+const L=(await call('/api/v1/customers?q=lead'+u)).data.items.filter(c=>c.email===lm);eq(L.length,1,'lead stored once');eq(L[0].source,'facebook','lead source kept');eq(L[0].has_account?1:0,0,'lead has no account');
+// lead for a registered email must not reveal or alter the account
+const rm=`reg${u}@example.test`;eq((await call('/api/c/register',{method:'POST',token:null,body:{name:'Reg',email:rm,password:'matkhau123',consent:true}})).status,201,'register second customer');
+eq((await call('/api/c/lead',{method:'POST',token:null,body:{email:rm,consent:true,visitor_id:lv}})).status,201,'lead on registered email gives same response');
+const dup=(await call('/api/v1/customers?q=reg'+u)).data.items.filter(c=>c.email===rm);eq(dup.length,1,'no duplicate row for registered email');eq(dup[0].has_account?1:0,1,'account row untouched');
+// welcome coupon appears in config + lead response
+await call('/api/v1/promotions',{method:'POST',body:{name:'Welcome',code:'WELCOME',scope:'coupon',percent:10}});
+eq(!!(await call('/api/c/config',{token:null})).data.welcome,true,'config exposes welcome offer');
+eq((await call('/api/c/lead',{method:'POST',token:null,body:{phone:'09'+String(u).slice(-8).split('').reverse().join(''),consent:true,visitor_id:lv+'b'}})).data.coupon.code,'WELCOME','lead gets welcome code');
+eq((await call('/api/c/lead',{method:'POST',token:null,body:{phone:'0912345678',consent:true,visitor_id:lv}})).status,429,'lead rate limited per visitor');
 console.log('ALL OK');
