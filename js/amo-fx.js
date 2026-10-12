@@ -12,6 +12,7 @@
     var on = v.on !== false && !reduce;
     ["reveal", "lift", "shine", "pulse"].forEach(function (k) { b.classList.toggle("fx-" + k, on && v[k] !== false); });
     if (on && v.reveal !== false) startReveal(); else stopReveal();
+    if (document.querySelector(".sk-bar")) { var q = document.querySelector(".sk-bar"); q.dataset.k = ""; deco(); }
   }
   function startReveal() {
     if (io || !("IntersectionObserver" in window)) return;
@@ -25,13 +26,37 @@
     if (io) { io.disconnect(); io = null; } if (mo) { mo.disconnect(); mo = null; }
     document.querySelectorAll(".fx-pre").forEach(function (el) { el.classList.remove("fx-pre"); el.classList.add("fx-in"); });
   }
+  var SEASON = {
+    noel: { fall: ["❄", "❅", "❆", "•", "❄"], bar: "🎄 Giáng sinh an lành · Merry Christmas 🎁", lamps: "🎅" },
+    tet: { fall: ["🌼", "🌸", "✿", "🧧", "🌼"], bar: "🧧 Chúc Mừng Năm Mới · An Khang Thịnh Vượng 🏮", lamps: "🏮" }
+  };
+  function deco() {
+    var r = document.documentElement, k = r.dataset.skin, S = SEASON[k], b = document.body; if (!b) return;
+    var hd = document.querySelector(".lw-header"), ex = document.querySelector(".sk-bar");
+    if (S && ex && ex.dataset.k === k && (!hd || hd.querySelector(".sk-lan"))) return;
+    document.querySelectorAll(".sk-fall,.sk-bar,.sk-lan").forEach(function (e) { e.remove(); });
+    if (!S) return;
+    var bar = document.createElement("div"); bar.className = "sk-bar"; bar.dataset.k = k; bar.textContent = S.bar; b.insertBefore(bar, b.firstChild);
+    var h = document.querySelector(".lw-header");
+    if (h) ["l", "r"].forEach(function (c) { var e = document.createElement("span"); e.className = "sk-lan " + c; e.textContent = S.lamps; e.setAttribute("aria-hidden", "true"); h.appendChild(e); });
+    var f = (cur || DEF); if (reduce || f.on === false || f.pulse === false && f.shine === false && f.reveal === false) return;
+    var box = document.createElement("div"); box.className = "sk-fall"; box.setAttribute("aria-hidden", "true");
+    var N = window.innerWidth < 600 ? 14 : 26;
+    for (var i = 0; i < N; i++) {
+      var s = document.createElement("i"); s.textContent = S.fall[i % S.fall.length];
+      s.style.cssText = "left:" + (Math.random() * 100).toFixed(1) + "%;font-size:" + (10 + Math.random() * 14).toFixed(0) + "px;animation-duration:" + (9 + Math.random() * 10).toFixed(1) + "s,"+ (3 + Math.random() * 3).toFixed(1) + "s;animation-delay:-" + (Math.random() * 18).toFixed(1) + "s,-" + (Math.random() * 5).toFixed(1) + "s;opacity:" + (.45 + Math.random() * .5).toFixed(2);
+      box.appendChild(s);
+    }
+    b.appendChild(box);
+  }
   function skin(v) {
     var r = document.documentElement; v = /^[a-z]{3,12}$/.test(v) && v !== "noir" ? v : "";
     try { if (v) localStorage.setItem("AMO_SKIN", v); else localStorage.removeItem("AMO_SKIN"); } catch (e) {}
     if (v) { r.dataset.skin = v; if (!document.getElementById("skin-font")) { var l = document.createElement("link"); l.id = "skin-font"; l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap"; document.head.appendChild(l); } } else delete r.dataset.skin;
+    if (document.body) deco(); else document.addEventListener("DOMContentLoaded", deco);
   }
   function init() {
-    apply(read());
+    apply(read()); deco(); setTimeout(deco, 900);
     try {
       fetch(ENGINE + "/api/site/settings", { headers: { "x-store-id": STORE } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
         if (d && d.effects) { save(d.effects); apply(d.effects); }
