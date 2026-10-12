@@ -147,6 +147,6 @@
       prev = n;
     }, 1000);
   }
-  const start = () => { banner(); HCC.track("visit", location.pathname, Object.keys(utm).length ? utm : undefined); autoTrack(); popup(); };
+  const start = () => { banner(); HCC.track("visit", location.pathname, (function () { const m = Object.assign({}, utm); try { const h = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, "") : ""; if (h && h !== location.hostname) m.ref_host = h; } catch {} return Object.keys(m).length ? m : undefined; })()); autoTrack(); popup(); };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();

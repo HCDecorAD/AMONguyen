@@ -102,7 +102,7 @@ function load(cb){
   }).catch(function(){fin(DEMO)});
 }
 window.AMO_LW={sizes:SIZES,inRange:inRange,card:card,demo:DEMO,money:money,apply:apply,engine:ENGINE,store:STORE,load:load,root:ROOT,el:el,refreshCart:refreshCart,lang:function(){return lang}};
-try{var fxs=document.createElement("script");fxs.src=ROOT+"js/amo-fx.js?v=20261017";fxs.defer=true;document.head.appendChild(fxs)}catch(e){}
+try{var fxs=document.createElement("script");fxs.src=ROOT+"js/amo-fx.js?v=20261018";fxs.defer=true;document.head.appendChild(fxs)}catch(e){}
 
 function home(){
   var gs=document.querySelectorAll("#lwHomeGrid,[data-hcb-products]");if(!gs.length)return;
@@ -164,3 +164,10 @@ function init(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
+
+/* Theo dõi hành vi: bấm Zalo / gọi / mạng xã hội / thẻ sản phẩm (chỉ khi khách đồng ý theo dõi) */
+(function(){document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href]");if(!a||!window.HCC||!HCC.track)return;var h=a.getAttribute("href")||"",pg=location.pathname.replace(/^.*\//,"")||"index";
+try{if(/zalo\.me/.test(h))HCC.track("click_zalo",new URLSearchParams(location.search).get("p")||pg);
+else if(/^tel:/.test(h))HCC.track("click_call",pg);
+else if(/facebook\.com|tiktok\.com|youtube\.com|youtu\.be/.test(h))HCC.track("click_social",(h.match(/(facebook|tiktok|youtube)/)||[])[1]||"social");
+else if(a.classList.contains("lw-card")){var m=h.match(/[?&]p=([^&]+)/);if(m)HCC.track("click_product",decodeURIComponent(m[1]))}}catch(x){}},true)})();
