@@ -98,12 +98,28 @@
   };
 
 
-  window.siteLive = function (on) {
-    var f = document.getElementById("slive"), p = document.getElementById("sprev"); if (!f || !p) return;
-    document.getElementById("mLive").className = on ? "on" : ""; document.getElementById("mDraft").className = on ? "" : "on";
-    p.style.display = on ? "none" : ""; f.style.display = on ? "block" : "none";
-    if (on) { var u = viewUrl(ED.slug); f.src = u ? u + (u.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now() : "about:blank"; }
+  var VIEW = "live", DEV = "desktop", DT = 0;
+  function sizeDev() {
+    var w = document.getElementById("sdev"); if (!w) return;
+    var fs = [document.getElementById("sdraft"), document.getElementById("slive")], cw = w.clientWidth || 360, H = Math.max(420, Math.round(window.innerHeight * 0.72));
+    var vw = DEV === "mobile" ? 390 : 1200, sc = Math.min(1, cw / vw), lw = Math.round(vw * sc);
+    w.style.height = (H + 4) + "px";
+    fs.forEach(function (f) { if (!f) return; f.style.width = vw + "px"; f.style.height = Math.round(H / sc) + "px"; f.style.transform = "scale(" + sc + ")"; f.style.transformOrigin = "0 0"; f.style.marginLeft = Math.max(0, Math.round((cw - lw) / 2)) + "px"; });
+  }
+  window.siteDev = function (d) {
+    DEV = d; var a = document.getElementById("dDesk"), b = document.getElementById("dMob"); if (a) a.className = d === "desktop" ? "on" : ""; if (b) b.className = d === "mobile" ? "on" : "";
+    sizeDev(); try { localStorage.setItem("siteDev", d); } catch (e) {}
   };
+  window.siteLive = function (on) {
+    VIEW = on ? "live" : "edit";
+    var f = document.getElementById("slive"), dr = document.getElementById("sdraft"); if (!f || !dr) return;
+    document.getElementById("mLive").className = on ? "on" : ""; document.getElementById("mDraft").className = on ? "" : "on";
+    f.style.display = on ? "block" : "none"; dr.style.display = on ? "none" : "block";
+    if (on) { var u = viewUrl(ED.slug); f.src = u ? u + (u.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now() : "about:blank"; } else drawPreview();
+    sizeDev();
+  };
+  window.addEventListener("resize", function () { sizeDev(); });
+  window.addEventListener("message", function (e) { if (e.data && e.data.hcBlk && canW()) siteBlock(e.data.hcBlk); });
   window.siteRefresh = function () {
     if (ED && ED.dirty && !confirm("Có thay đổi chưa lưu. Tải lại sẽ MẤT các thay đổi này. Tiếp tục?")) return;
     location.href = location.pathname + "?v=" + Date.now() + "#site";
@@ -112,7 +128,7 @@
     act(async function () {
       var d = await api("/api/v1/site/pages/" + encodeURIComponent(slug));
       ED = { slug: slug, title: d.title || (slug === "home" ? "Trang chủ" : slug), blocks: d.exists ? d.draft : [], version: d.version || 0, published: !!d.published, dirty: false, base: d.updated_at || "", live: d.published || null, liveAt: d.published_at || "", exists: !!d.exists };
-      if (ED.slug === "home" && !ED.blocks.length && canW()) ED.blocks = seedHome(); setnav("site", "Giao diện website"); document.body.classList.add("side-off"); siteDraw(); siteLive(true);
+      if (ED.slug === "home" && !ED.blocks.length && canW()) ED.blocks = seedHome(); setnav("site", "Giao diện website"); document.body.classList.add("side-off"); siteDraw(); try { DEV = localStorage.getItem("siteDev") || (window.innerWidth < 700 ? "mobile" : "desktop"); } catch (e) { DEV = "desktop"; } siteDev(DEV); siteLive(true); if (window.innerWidth <= 700 && window.siteTab) siteTab("prev");
     });
   };
   function mark() { ED.dirty = true; var s = document.getElementById("sdirty"); if (s) s.hidden = false; drawPreview(); }
@@ -125,9 +141,9 @@
       (canMgr() ? ' <button class="primary" onclick="sitePublish()">Đăng lên web</button>' : "") + (canMgr() && ED.published ? ' <button onclick="siteUnpublish()">Gỡ xuất bản</button>' : "") +
       ' <button onclick="siteRefresh()" title="Tải lại dữ liệu & giao diện mới nhất">↻ Cập nhật</button> <button onclick="siteVersions()">Lịch sử</button>' + (u ? ' <a href="' + esc(u) + '" target="_blank" rel="noopener"><button>Mở trang ↗</button></a>' : "") + '</div>' +
       '<p class="sm" style="margin:8px 0;padding:8px 10px;border-radius:8px;background:' + (ED.published ? '#12261a' : '#33260c') + '">' + (ED.published ? '🟢 Web đang chạy bản <b>v' + ED.version + '</b>' + (ED.liveAt ? ' (đăng ' + esc(String(ED.liveAt).slice(0, 16)) + ')' : '') + '. Khung bên dưới là <b>bản nháp</b>, chỉ lên web khi bấm “Đăng lên web”.' : '🟠 Web hiện <b>chưa dùng trang này từ trình sửa</b> (đang là nội dung cũ). Khung bên dưới là bản nháp, <b>chưa phải trang đang chạy</b>.') + '</p>' + '<p class="muted sm shelp" style="margin:8px 0 0"><b>Cách làm:</b> ① Xem <b>Trang thật</b> (↻ Cập nhật nếu cần) → ② bấm <b>✏ Chỉnh sửa</b>, chọn vùng cần sửa rồi bấm <b>Xong</b> → ③ bấm <b>Đăng lên web</b>.</p>' + (w ? '<input id="stitle" value="' + esc(ED.title) + '" placeholder="Tên trang" style="max-width:320px" oninput="ED_title(this.value)">' : "") + (canMgr() ? "" : '<p class="muted sm">Bạn có thể soạn nháp. Cần quyền quản lý (manager) trở lên để xuất bản.</p>') + '</div>' +
-      '<div class="seg mobonly" style="margin:10px 0"><button type="button" class="on" id="tabB" onclick="siteTab(\'blocks\')">Các khối</button><button type="button" id="tabP" onclick="siteTab(\'prev\')">Xem trước</button></div><div class="siteGrid" id="sgrid" data-p="blocks"><div class="panel"><div class="actions"><h3>Các khối</h3>' + (w ? '<span><select id="sadd"><option value="">+ Thêm khối…</option>' + Object.keys(TYPE_NAME).map(function (t) { return '<option value="' + t + '">' + esc(TYPE_NAME[t]) + '</option>'; }).join("") + '</select></span>' : "") + '</div>' +
+      '<div class="seg mobonly" style="margin:10px 0"><button type="button" class="on" id="tabB" onclick="siteTab(\'blocks\')">Các khối</button><button type="button" id="tabP" onclick="siteTab(\'prev\')">Trang web</button></div><div class="siteGrid" id="sgrid" data-p="blocks"><div class="panel"><div class="actions"><h3>Các khối</h3>' + (w ? '<span><select id="sadd"><option value="">+ Thêm khối…</option>' + Object.keys(TYPE_NAME).map(function (t) { return '<option value="' + t + '">' + esc(TYPE_NAME[t]) + '</option>'; }).join("") + '</select></span>' : "") + '</div>' +
       '<div id="sblocks"></div>' + (w && ED.slug === "home" && !ED.blocks.length ? '<button onclick="siteSeed()">Nạp mẫu từ trang chủ hiện tại</button>' : "") + '</div>' +
-      '<div class="panel"><div class="actions"><h3>Xem trước</h3><span class="seg" style="margin:0"><button type="button" class="on" id="mDraft" onclick="siteLive(false)">✏ Chỉnh sửa</button><button type="button" id="mLive" onclick="siteLive(true)">Trang thật</button></span></div><div id="sprev" class="sprev"></div><iframe id="slive" class="sprev" style="display:none;width:100%;height:78vh;border:1px solid #27303a;border-radius:10px;background:#0d0c0a" title="Trang web đang chạy"></iframe></div></div>';
+      '<div class="panel"><div class="actions"><h3>Xem trước</h3><span class="seg" style="margin:0"><button type="button" id="mDraft" onclick="siteLive(false)">✏ Chỉnh sửa</button><button type="button" id="mLive" class="on" onclick="siteLive(true)">Trang thật</button></span></div><div class="seg" style="margin:6px 0"><button type="button" id="dDesk" class="on" onclick="siteDev(\'desktop\')">🖥 Máy tính</button><button type="button" id="dMob" onclick="siteDev(\'mobile\')">📱 Điện thoại</button></div><div id="sdev" class="sdev"><div id="sprev" style="display:none"></div><iframe id="sdraft" title="Bản nháp"></iframe><iframe id="slive" title="Trang web đang chạy" style="display:none"></iframe></div></div></div>';
     if (!document.getElementById("sitecss")) { var st = document.createElement("style"); st.id = "sitecss"; st.textContent =
       "[hidden]{display:none!important}.siteGrid{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:14px;align-items:start}@media(max-width:1000px){.siteGrid{grid-template-columns:1fr}}" +
       ".sb{display:flex;align-items:center;gap:8px;border:1px solid #27303a;border-radius:10px;padding:8px 10px;margin:8px 0;background:#0f141a}.sb.off{opacity:.5}.sb.over{border-color:#246bfe}.sb .dg{cursor:grab;font-size:18px;color:#7f8c9b;padding:0 4px;user-select:none;touch-action:none}.sb .tx{flex:1;min-width:0}.sb .tx b{display:block}.sb .tx span{display:block;color:#8d9aa8;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sb button{padding:5px 8px}" +
@@ -135,13 +151,19 @@
       "@media(max-width:700px) and (orientation:portrait){.mobonly{display:flex}.siteGrid>.panel{display:none}.siteGrid[data-p=blocks]>.panel:first-child{display:block}.siteGrid[data-p=prev]>.panel:last-child{display:block}.sbar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:#11161d;border-top:1px solid #27303a;padding:10px 12px!important;margin:0!important;justify-content:center}.sbar button{flex:1 1 auto}.sprev{max-height:none}.sb{flex-wrap:wrap}.sb .tx{flex:1 1 100%}#content{padding-bottom:84px}}" +
       "@media(orientation:landscape) and (max-height:560px){.siteGrid{grid-template-columns:minmax(230px,320px) 1fr!important}.sprev{max-height:calc(100vh - 110px)}.mobonly{display:none!important}.siteGrid>.panel{display:block!important}.shelp{display:none}.main .top{display:none}.sb{padding:6px 8px}}" +
       ".seg{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0}.seg button{min-width:56px;padding:9px 14px;font-size:14px}.seg button.on{background:#246bfe;color:#fff}.sprev [data-block]{cursor:pointer;outline:2px solid transparent;outline-offset:-2px;transition:outline-color .15s}.sprev [data-block]:hover{outline-color:#246bfe}" +
-      ".sprev{background:#0d0c0a;color:#f7f1e4;border:1px solid #27303a;border-radius:10px;max-height:78vh;overflow:auto;--amog:#d5a83f}.sit{border:1px dashed #34404d;border-radius:8px;padding:8px;margin:6px 0}"; document.head.appendChild(st); }
+      ".sdev{overflow:hidden;border:1px solid #27303a;border-radius:10px;background:#0d0c0a}.sdev iframe{border:0;display:block;background:#0d0c0a}.sprev{background:#0d0c0a;color:#f7f1e4;border:1px solid #27303a;border-radius:10px;max-height:78vh;overflow:auto;--amog:#d5a83f}.sit{border:1px dashed #34404d;border-radius:8px;padding:8px;margin:6px 0}"; document.head.appendChild(st); }
     var add = document.getElementById("sadd"); if (add) add.onchange = function () { if (!add.value) return; var b = blank(add.value); ED.blocks.push(b); add.value = ""; mark(); drawBlocks(); siteBlock(b.id); };
     drawBlocks(); drawPreview();
   }
   window.ED_title = function (v) { ED.title = v; ED.dirty = true; var s = document.getElementById("sdirty"); if (s) s.hidden = false; };
-  function drawPreview() { var p = document.getElementById("sprev"); if (p && window.HCBlocks) { HCBlocks.render(ED.blocks, p);
-    if (canW()) { p.title = "Bấm vào vùng muốn sửa"; p.onclick = function (e) { var n = e.target.closest ? e.target.closest("[data-block]") : null; if (n) { e.preventDefault(); siteBlock(n.getAttribute("data-block")); } }; } if (!ED.blocks.some(function (b) { return b.enabled; })) p.innerHTML = '<p class="muted" style="padding:20px">Chưa có khối nào đang bật.</p>'; } }
+  function drawPreview() {
+    clearTimeout(DT); DT = setTimeout(function () {
+      var f = document.getElementById("sdraft"); if (!f) return;
+      var on = ED.blocks.some(function (b) { return b.enabled; });
+      var data = JSON.stringify(ED.blocks).replace(/</g, "\\u003c");
+      f.srcdoc = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="' + location.origin + '/"><style>body{margin:0;background:#0d0c0a;color:#f7f1e4;font-family:system-ui,sans-serif;--amog:#d5a83f}[data-block]{cursor:pointer}[data-block]:hover{outline:2px solid #246bfe;outline-offset:-2px}</style></head><body><div id="r"></div><script src="js/hc-blocks.js?v=' + Date.now() + '"><\/script><script>var B=' + data + ';var r=document.getElementById("r");' + (on ? 'HCBlocks.render(B,r);' : 'r.innerHTML="<p style=padding:20px>Chưa có khối nào đang bật.</p>";') + 'document.addEventListener("click",function(e){var n=e.target.closest&&e.target.closest("[data-block]");if(n){e.preventDefault();parent.postMessage({hcBlk:n.getAttribute("data-block")},"*")}},true)<\/script></body></html>';
+    }, 120);
+  }
   function drawBlocks() {
     var host = document.getElementById("sblocks"), w = canW(); if (!host) return;
     if (!ED.blocks.length) { host.innerHTML = '<p class="muted">Trang trống. Thêm khối từ danh sách phía trên.</p>'; return; }
@@ -202,7 +224,7 @@
     h += '<div class="actions stick"><button onclick="closeBox()">Đóng</button>' + (w ? '<button class="primary" onclick="siteApply(\'' + type + '\')">Xong</button>' : "") + '</div>';
     openBox(h);
   }
-  window.siteTab = function (t) { var g = document.getElementById("sgrid"); if (!g) return; g.setAttribute("data-p", t); document.getElementById("tabB").className = t === "blocks" ? "on" : ""; document.getElementById("tabP").className = t === "prev" ? "on" : ""; };
+  window.siteTab = function (t) { var g = document.getElementById("sgrid"); if (!g) return; g.setAttribute("data-p", t); document.getElementById("tabB").className = t === "blocks" ? "on" : ""; document.getElementById("tabP").className = t === "prev" ? "on" : ""; sizeDev(); };
   window.siteSeg = function (k, v, type) { FORM.props[k] = v; formDraw(type); };
   window.siteSet = function (el) {
     var path = el.dataset.k.split("."), o = FORM.props; for (var i = 0; i < path.length - 1; i++) o = o[path[i]]; o[path[path.length - 1]] = el.value;
