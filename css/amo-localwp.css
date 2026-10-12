@@ -353,3 +353,26 @@ body .amo-new-policy div{flex:0 1 auto;border:1px solid rgba(213,168,63,.3)!impo
 body .amo-new-policy div::before{content:"✓ ";color:#d5a83f}
 body .amo-new-section{padding-top:14px!important}
 html[data-theme="light"] body .amo-new-policy div{border-color:rgba(160,115,20,.35)!important;background:#fffaf0;color:#4a3f2a}
+
+/* ==== Hieu ung nhe (bat/tat trong Admin) ==== */
+@media(prefers-reduced-motion:no-preference){
+body.fx-reveal .fx-pre{opacity:0;transform:translateY(16px);transition:opacity .7s ease var(--fx-d,0ms),transform .7s cubic-bezier(.2,.7,.2,1) var(--fx-d,0ms)}
+body.fx-reveal .fx-pre.fx-in{opacity:1;transform:none}
+body.fx-lift .lw-card{transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s,border-color .35s}
+body.fx-lift .lw-card:hover{transform:translateY(-5px);box-shadow:0 14px 30px rgba(0,0,0,.35),0 0 0 1px rgba(213,168,63,.45);border-color:rgba(213,168,63,.5)}
+body.fx-lift .lw-card img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}body.fx-lift .lw-card:hover img{transform:scale(1.05)}
+body.fx-lift .lw-card{overflow:hidden}
+body.fx-lift .lw-cat-grid a,body.fx-lift .lw-sizes a,body.fx-lift .hcb-card{transition:transform .25s,box-shadow .25s,border-color .25s}
+body.fx-lift .lw-cat-grid a:hover,body.fx-lift .lw-sizes a:hover,body.fx-lift .hcb-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(213,168,63,.18)}
+body.fx-shine .amo-new-hero{position:relative;overflow:hidden}
+body.fx-shine .amo-new-hero::after,body.fx-shine .hcb-hero::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;pointer-events:none;background:linear-gradient(105deg,transparent,rgba(255,236,170,.22),transparent);transform:skewX(-18deg);animation:fxSweep 7s ease-in-out 1.5s infinite}
+body.fx-shine .hcb-hero{position:relative;overflow:hidden}
+@keyframes fxSweep{0%{left:-60%}30%,100%{left:130%}}
+body.fx-shine .amo-new-brands a{animation:fxGlow 5s ease-in-out infinite}
+body.fx-shine .amo-new-brands a:nth-child(2n){animation-delay:1.2s}body.fx-shine .amo-new-brands a:nth-child(3n){animation-delay:2.4s}
+@keyframes fxGlow{0%,100%{box-shadow:0 0 0 1px rgba(0,0,0,.4) inset,0 2px 10px rgba(213,168,63,.12)}50%{box-shadow:0 0 0 1px rgba(0,0,0,.4) inset,0 0 16px rgba(240,200,90,.38)}}
+body.fx-pulse .lw-float .zl{animation:fxPulse 2.8s ease-out infinite}
+@keyframes fxPulse{0%{box-shadow:0 3px 12px #0008,0 0 0 0 rgba(0,104,255,.55)}70%,100%{box-shadow:0 3px 12px #0008,0 0 0 16px rgba(0,104,255,0)}}
+body.fx-pulse :not(.lw-card)>.lw-badge{animation:fxPop 3.2s ease-in-out infinite}
+@keyframes fxPop{0%,86%,100%{transform:scale(1)}92%{transform:scale(1.18)}}
+}

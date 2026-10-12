@@ -87,8 +87,26 @@
         '<p class="muted sm">Mỗi trang gồm các khối xếp chồng. Kéo thả hoặc dùng nút ↑ ↓ để đổi thứ tự. Chỉnh sửa lưu ở dạng <b>nháp</b>; khách chỉ thấy khi bấm <b>Xuất bản</b>. Trang chưa xuất bản sẽ hiện nội dung cũ của website.</p>' +
         htable(rows, [["Trang", function (x) { return esc(x.title || x.slug); }], ["Địa chỉ", function (x) { return esc(x.slug === "home" ? "Trang chủ" : "p.html?slug=" + x.slug); }],
           ["Trạng thái", function (x) { return x.published ? '<span class="pill g">Đã xuất bản v' + x.version + '</span>' + (x.unpublished_changes ? ' <span class="pill y">Có thay đổi chưa xuất bản</span>' : "") : (x.empty ? '<span class="pill">Đang dùng nội dung cũ</span>' : '<span class="pill y">Nháp</span>'); }],
-          ["Cập nhật", function (x) { return esc((x.updated_at || "").slice(0, 16) || "—"); }]], function (x) { return '<button onclick="siteEdit(\'' + esc(x.slug) + '\')">' + (canW() ? "Sửa" : "Xem") + '</button>'; }) + '</div>';
+          ["Cập nhật", function (x) { return esc((x.updated_at || "").slice(0, 16) || "—"); }]], function (x) { return '<button onclick="siteEdit(\'' + esc(x.slug) + '\')">' + (canW() ? "Sửa" : "Xem") + '</button>'; }) + '</div>' + '<div class="panel" id="fxPanel" style="margin-top:14px"><div class="actions"><h3>✨ Hiệu ứng sinh động</h3></div><p class="muted sm">Hiệu ứng nhẹ giúp website bớt tĩnh, thu hút khách. Bật/tắt từng loại, lưu ngay, khách thấy sau vài giây. Khách đã bật chế độ "giảm chuyển động" trên điện thoại sẽ không thấy hiệu ứng.</p><div id="fxBody" class="muted sm">Đang tải…</div></div>';
+      siteFx();
     });
+  };
+
+  var FXL = [["on", "Bật tất cả hiệu ứng", "Tắt mục này = website đứng yên hoàn toàn"], ["reveal", "Hiện dần khi cuộn", "Khối nội dung trượt nhẹ lên khi khách kéo tới"], ["lift", "Thẻ sản phẩm nhấc lên", "Chạm/rê vào sản phẩm: nâng nhẹ, ảnh phóng nhẹ"], ["shine", "Ánh kim", "Tia sáng lướt qua banner, thương hiệu phát sáng nhịp nhẹ"], ["pulse", "Nhịp nút Zalo & giỏ hàng", "Nút Zalo tỏa sóng nhẹ, số giỏ hàng nảy nhẹ"]];
+  window.siteFx = function () {
+    api("/api/v1/site/settings").then(function (d) {
+      var f = d.effects || {}, w = canMgr(), h = FXL.map(function (x) {
+        return '<label class="fxr"><input type="checkbox" data-k="' + x[0] + '"' + (f[x[0]] !== false ? " checked" : "") + (w ? "" : " disabled") + ' onchange="siteFxSave()"><span><b>' + esc(x[1]) + '</b><small>' + esc(x[2]) + '</small></span></label>';
+      }).join("");
+      var b = document.getElementById("fxBody"); if (!b) return;
+      b.innerHTML = h + (w ? "" : '<p class="muted sm">Cần quyền quản lý (manager) để thay đổi.</p>') + '<p id="fxMsg" class="muted sm"></p>';
+      if (!document.getElementById("fxcss")) { var st = document.createElement("style"); st.id = "fxcss"; st.textContent = ".fxr{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid #222c36;cursor:pointer}.fxr:first-child{border-top:0}.fxr input{width:22px;height:22px;margin:2px 0 0;accent-color:#246bfe}.fxr b{display:block;font-size:15px;color:#e8eef5}.fxr small{display:block;color:#8d9aa8;font-size:12.5px;margin-top:2px}"; document.head.appendChild(st); }
+    }).catch(function () { var b = document.getElementById("fxBody"); if (b) b.textContent = "Chưa tải được cài đặt hiệu ứng."; });
+  };
+  window.siteFxSave = function () {
+    var o = {}; document.querySelectorAll("#fxBody input[data-k]").forEach(function (i) { o[i.getAttribute("data-k")] = i.checked; });
+    var m = document.getElementById("fxMsg"); if (m) m.textContent = "Đang lưu…";
+    api("/api/v1/site/settings", { method: "POST", body: JSON.stringify({ effects: o }) }).then(function () { var m2 = document.getElementById("fxMsg"); if (m2) m2.textContent = "✓ Đã lưu. Khách thấy sau vài giây."; }).catch(function (e) { var m3 = document.getElementById("fxMsg"); if (m3) m3.textContent = "Lỗi: " + e.message; });
   };
   window.sitePageNew = function () {
     var s = (prompt("Địa chỉ trang (chữ thường, số, gạch ngang). Ví dụ: khuyen-mai, gioi-thieu") || "").trim().toLowerCase();
