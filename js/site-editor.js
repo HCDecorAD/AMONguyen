@@ -100,7 +100,7 @@
   window.siteEdit = function (slug) {
     act(async function () {
       var d = await api("/api/v1/site/pages/" + encodeURIComponent(slug));
-      ED = { slug: slug, title: d.title || (slug === "home" ? "Trang chủ" : slug), blocks: d.exists ? d.draft : [], version: d.version || 0, published: !!d.published, dirty: false };
+      ED = { slug: slug, title: d.title || (slug === "home" ? "Trang chủ" : slug), blocks: d.exists ? d.draft : [], version: d.version || 0, published: !!d.published, dirty: false, base: d.updated_at || "", live: d.published || null, liveAt: d.published_at || "", exists: !!d.exists };
       setnav("site", "Giao diện website"); document.body.classList.add("side-off"); siteDraw();
     });
   };
@@ -113,10 +113,10 @@
       (w ? '<button onclick="siteSave()">Lưu tạm</button>' : "") +
       (canMgr() ? ' <button class="primary" onclick="sitePublish()">Đăng lên web</button>' : "") + (canMgr() && ED.published ? ' <button onclick="siteUnpublish()">Gỡ xuất bản</button>' : "") +
       ' <button onclick="siteVersions()">Lịch sử</button>' + (u ? ' <a href="' + esc(u) + '" target="_blank" rel="noopener"><button>Mở trang ↗</button></a>' : "") + '</div>' +
-      '<p class="muted sm shelp" style="margin:8px 0 0"><b>Cách làm:</b> ① Bấm vào vùng cần sửa ở khung <b>Xem trước</b> (hoặc nút <b>Sửa</b> bên trái) → ② chỉnh chữ, ảnh, kích cỡ rồi bấm <b>Xong</b> → ③ bấm <b>Đăng lên web</b>. Khách thấy ngay.</p>' + (w ? '<input id="stitle" value="' + esc(ED.title) + '" placeholder="Tên trang" style="max-width:320px" oninput="ED_title(this.value)">' : "") + (canMgr() ? "" : '<p class="muted sm">Bạn có thể soạn nháp. Cần quyền quản lý (manager) trở lên để xuất bản.</p>') + '</div>' +
+      '<p class="sm" style="margin:8px 0;padding:8px 10px;border-radius:8px;background:' + (ED.published ? '#12261a' : '#33260c') + '">' + (ED.published ? '🟢 Web đang chạy bản <b>v' + ED.version + '</b>' + (ED.liveAt ? ' (đăng ' + esc(String(ED.liveAt).slice(0, 16)) + ')' : '') + '. Khung bên dưới là <b>bản nháp</b>, chỉ lên web khi bấm “Đăng lên web”.' : '🟠 Web hiện <b>chưa dùng trang này từ trình sửa</b> (đang là nội dung cũ). Khung bên dưới là bản nháp, <b>chưa phải trang đang chạy</b>.') + '</p>' + '<p class="muted sm shelp" style="margin:8px 0 0"><b>Cách làm:</b> ① Bấm vào vùng cần sửa ở khung <b>Xem trước</b> (hoặc nút <b>Sửa</b> bên trái) → ② chỉnh chữ, ảnh, kích cỡ rồi bấm <b>Xong</b> → ③ bấm <b>Đăng lên web</b>. Khách thấy ngay.</p>' + (w ? '<input id="stitle" value="' + esc(ED.title) + '" placeholder="Tên trang" style="max-width:320px" oninput="ED_title(this.value)">' : "") + (canMgr() ? "" : '<p class="muted sm">Bạn có thể soạn nháp. Cần quyền quản lý (manager) trở lên để xuất bản.</p>') + '</div>' +
       '<div class="seg mobonly" style="margin:10px 0"><button type="button" class="on" id="tabB" onclick="siteTab(\'blocks\')">Các khối</button><button type="button" id="tabP" onclick="siteTab(\'prev\')">Xem trước</button></div><div class="siteGrid" id="sgrid" data-p="blocks"><div class="panel"><div class="actions"><h3>Các khối</h3>' + (w ? '<span><select id="sadd"><option value="">+ Thêm khối…</option>' + Object.keys(TYPE_NAME).map(function (t) { return '<option value="' + t + '">' + esc(TYPE_NAME[t]) + '</option>'; }).join("") + '</select></span>' : "") + '</div>' +
       '<div id="sblocks"></div>' + (w && ED.slug === "home" && !ED.blocks.length ? '<button onclick="siteSeed()">Nạp mẫu từ trang chủ hiện tại</button>' : "") + '</div>' +
-      '<div class="panel"><div class="actions"><h3>Xem trước</h3><span class="muted sm">Đúng như khách sẽ thấy</span></div><div id="sprev" class="sprev"></div></div></div>';
+      '<div class="panel"><div class="actions"><h3>Xem trước</h3><span class="muted sm">Bản nháp – chưa lên web</span></div><div id="sprev" class="sprev"></div></div></div>';
     if (!document.getElementById("sitecss")) { var st = document.createElement("style"); st.id = "sitecss"; st.textContent =
       "[hidden]{display:none!important}.siteGrid{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:14px;align-items:start}@media(max-width:1000px){.siteGrid{grid-template-columns:1fr}}" +
       ".sb{display:flex;align-items:center;gap:8px;border:1px solid #27303a;border-radius:10px;padding:8px 10px;margin:8px 0;background:#0f141a}.sb.off{opacity:.5}.sb.over{border-color:#246bfe}.sb .dg{cursor:grab;font-size:18px;color:#7f8c9b;padding:0 4px;user-select:none;touch-action:none}.sb .tx{flex:1;min-width:0}.sb .tx b{display:block}.sb .tx span{display:block;color:#8d9aa8;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sb button{padding:5px 8px}" +
@@ -209,13 +209,27 @@
 
   /* ---- server actions ---- */
   async function save() {
-    var r = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug), { method: "POST", body: JSON.stringify({ title: ED.title, blocks: ED.blocks }) });
-    ED.blocks = r.blocks; ED.dirty = false; return r;
+    var r = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug), { method: "POST", body: JSON.stringify({ title: ED.title, blocks: ED.blocks, base: ED.base }) });
+    ED.blocks = r.blocks; ED.dirty = false; ED.base = r.updated_at || ED.base; return r;
   }
   window.siteSave = function () { act(async function () { await save(); siteDraw(); }); };
+  function bsig(b) { return JSON.stringify([b.type, b.enabled, b.props]); }
+  function diffTxt(live, cur) {
+    if (!live) return "Trang này CHƯA có bản đăng trong hệ thống: đang chạy nội dung cũ của website. Đăng lúc này sẽ THAY THẾ toàn bộ trang bằng " + cur.length + " khối đang soạn.";
+    var lm = {}, cm = {}, add = 0, del = 0, chg = 0;
+    live.forEach(function (b) { lm[b.id] = b; }); cur.forEach(function (b) { cm[b.id] = b; });
+    cur.forEach(function (b) { if (!lm[b.id]) add++; else if (bsig(b) !== bsig(lm[b.id])) chg++; });
+    live.forEach(function (b) { if (!cm[b.id]) del++; });
+    if (!add && !del && !chg) return "Không có thay đổi nào so với bản đang chạy.";
+    return "So với bản đang chạy: thêm " + add + " khối, sửa " + chg + " khối, xóa " + del + " khối.";
+  }
   window.sitePublish = function () {
-    if (!confirm("Xuất bản trang này? Khách truy cập sẽ thấy ngay nội dung mới.")) return;
-    act(async function () { await save(); var r = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug) + "/publish", { method: "POST" }); ED.published = true; ED.version = r.version; siteDraw(); alert("Đã xuất bản phiên bản " + r.version); });
+    act(async function () {
+      var f = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug) + "?t=" + Date.now());
+      if (f.exists && ED.base && f.updated_at !== ED.base) { alert("Trang vừa được người khác sửa. Sẽ tải lại bản mới nhất, bạn xem lại rồi đăng."); return siteEdit(ED.slug); }
+      if (!confirm(diffTxt(f.published, ED.blocks) + "\n\nĐăng lên web? Khách sẽ thấy ngay.")) return;
+      await save(); var r = await api("/api/v1/site/pages/" + encodeURIComponent(ED.slug) + "/publish", { method: "POST" }); ED.published = true; ED.version = r.version; ED.live = ED.blocks; siteDraw(); alert("Đã đăng phiên bản " + r.version);
+    });
   };
   window.siteUnpublish = function () {
     if (!confirm("Gỡ xuất bản? Website sẽ quay về nội dung mặc định cũ (bản nháp vẫn được giữ).")) return;
