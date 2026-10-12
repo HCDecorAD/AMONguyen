@@ -62,13 +62,18 @@ async function readFx(env, store) {
   } catch { return { ...FX_DEFAULT }; }
 }
 
+const SKINS = ["noir", "ivory", "emerald", "burgundy"];
+async function readSkin(env, store) {
+  try { const r = await env.DB.prepare("SELECT value FROM store_settings WHERE store_id=? AND key='skin'").bind(store.id).first(); return r && SKINS.includes(r.value) ? r.value : "noir"; } catch { return "noir"; }
+}
+
 export async function handleContent(req, env, store, H, auth) {
   const { json, clean, id, input } = H, u = new URL(req.url), path = u.pathname, m = req.method;
   const bad = (msg, code = 400) => json(req, { ok: false, error: msg }, code), deny = () => json(req, { error: "unauthorized" }, 401);
   const parse = (s) => { try { return JSON.parse(s); } catch { return []; } };
 
   if (path === "/api/site/settings" && m === "GET") {
-    return json(req, { effects: await readFx(env, store) });
+    return json(req, { effects: await readFx(env, store), skin: await readSkin(env, store) });
   }
   if (path === "/api/site/page" && m === "GET") {
     const slug = clean(u.searchParams.get("slug")).toLowerCase();
@@ -79,11 +84,16 @@ export async function handleContent(req, env, store, H, auth) {
   }
   if (path === "/api/v1/site/settings") {
     if (!auth || auth.lvl < 2) return deny();
-    if (m === "GET") return json(req, { effects: await readFx(env, store) });
+    if (m === "GET") return json(req, { effects: await readFx(env, store), skin: await readSkin(env, store) });
     if (m === "POST") {
       if (auth.lvl < 3) return deny();
-      const d = await input(req), f = d.effects || {}, out = { on: f.on !== false }; FX_KEYS.forEach((k) => { out[k] = f[k] !== false; });
-      await env.DB.prepare("INSERT INTO store_settings(store_id,key,value,updated_at) VALUES(?,?,?,?) ON CONFLICT(store_id,key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(store.id, "effects", JSON.stringify(out), new Date().toISOString()).run();
+      const d = await input(req), up = (k, v) => env.DB.prepare("INSERT INTO store_settings(store_id,key,value,updated_at) VALUES(?,?,?,?) ON CONFLICT(store_id,key) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at").bind(store.id, k, v, new Date().toISOString()).run();
+      if (typeof d.skin === "string") {
+        if (!SKINS.includes(d.skin)) return bad("giao diện không hợp lệ");
+        await up("skin", d.skin); return json(req, { ok: true, skin: d.skin });
+      }
+      const f = d.effects || {}, out = { on: f.on !== false }; FX_KEYS.forEach((k) => { out[k] = f[k] !== false; });
+      await up("effects", JSON.stringify(out));
       return json(req, { ok: true, effects: out });
     }
     return bad("method", 405);

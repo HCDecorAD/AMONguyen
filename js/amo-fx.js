@@ -25,14 +25,20 @@
     if (io) { io.disconnect(); io = null; } if (mo) { mo.disconnect(); mo = null; }
     document.querySelectorAll(".fx-pre").forEach(function (el) { el.classList.remove("fx-pre"); el.classList.add("fx-in"); });
   }
+  function skin(v) {
+    var r = document.documentElement; v = /^[a-z]{3,12}$/.test(v) && v !== "noir" ? v : "";
+    try { if (v) localStorage.setItem("AMO_SKIN", v); else localStorage.removeItem("AMO_SKIN"); } catch (e) {}
+    if (v) { r.dataset.skin = v; if (!document.getElementById("skin-font")) { var l = document.createElement("link"); l.id = "skin-font"; l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap"; document.head.appendChild(l); } } else delete r.dataset.skin;
+  }
   function init() {
     apply(read());
     try {
       fetch(ENGINE + "/api/site/settings", { headers: { "x-store-id": STORE } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
         if (d && d.effects) { save(d.effects); apply(d.effects); }
+        if (d && typeof d.skin === "string") skin(d.skin);
       }).catch(function () {});
     } catch (e) {}
   }
-  window.AMO_FX = { apply: apply };
+  window.AMO_FX = { apply: apply, skin: skin };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
