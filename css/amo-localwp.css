@@ -390,3 +390,47 @@ html[data-skin] body h1{font-weight:600}
 html[data-skin] .lw-card,html[data-skin] .my .card,html[data-skin] .lw-cat-grid a{border-radius:2px}
 html[data-skin] body .btn,html[data-skin] body .buy,html[data-skin] .lw-card .bt,html[data-skin] .lw-buy .go{letter-spacing:.08em;text-transform:uppercase;font-size:12.5px;border-radius:0}
 html[data-skin] .lw-header{border-bottom-width:1px;box-shadow:0 1px 0 rgba(var(--lw-gr),.25)}
+
+/* ===== Giao diện theo mùa: Giáng sinh & Tết ===== */
+html[data-skin="noel"]{--lw-bg:#07140e;--lw-panel:#0c1f16;--lw-card:#10281c;--lw-field:#112a1d;--lw-line:#2c4d3b;--lw-gold:#c8283a;--lw-gold-2:#f4d58d;--lw-gold-ink:#fff;--lw-text:#f6f3ea;--lw-soft:#d9e4d6;--lw-mute:#a4bba9;--lw-hdr:#06110b;--lw-gr:200,40,58}
+html[data-skin="noel"][data-theme="light"]{--lw-bg:#f5f9f3;--lw-panel:#fdfffb;--lw-card:#fff;--lw-field:#fff;--lw-line:#cfe0cf;--lw-gold:#b3202f;--lw-gold-2:#8f1a27;--lw-gold-ink:#fff;--lw-text:#14261c;--lw-soft:#2f4b3a;--lw-mute:#55705e;--lw-hdr:#fdfffb;--lw-gr:179,32,47}
+html[data-skin="tet"]{--lw-bg:#1a0506;--lw-panel:#260909;--lw-card:#2e0d0d;--lw-field:#330f0f;--lw-line:#6a1f1f;--lw-gold:#f5c518;--lw-gold-2:#ffe08a;--lw-gold-ink:#5a0a0a;--lw-text:#fff3dc;--lw-soft:#f1dcb8;--lw-mute:#c9aa86;--lw-hdr:#4a0a0c;--lw-gr:245,197,24}
+html[data-skin="tet"][data-theme="light"]{--lw-bg:#fff5e1;--lw-panel:#fffcf2;--lw-card:#fff;--lw-field:#fff;--lw-line:#efd29a;--lw-gold:#c4161c;--lw-gold-2:#a30f14;--lw-gold-ink:#fff;--lw-text:#3a0d0d;--lw-soft:#5a2a22;--lw-mute:#85594a;--lw-hdr:#fffcf2;--lw-gr:196,22,28}
+/* dải chúc mừng */
+.sk-bar{text-align:center;font-size:12.5px;letter-spacing:.06em;padding:6px 10px;font-weight:600;position:relative;z-index:61}
+html[data-skin="noel"] .sk-bar{background:linear-gradient(90deg,#8f1a27,#c8283a,#8f1a27);color:#fff}
+html[data-skin="tet"] .sk-bar{background:linear-gradient(90deg,#8a0b10,#c4161c,#8a0b10);color:#ffe08a}
+/* dây đèn / viền đỏ-vàng dưới header */
+html[data-skin="noel"] .lw-header{border-bottom:0;overflow:visible}
+html[data-skin="noel"] .lw-header::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:8px;pointer-events:none;background:radial-gradient(circle at 8px 4px,#ff4d5a 0 3px,transparent 3.5px) 0 0/48px 8px,radial-gradient(circle at 24px 4px,#ffd35c 0 3px,transparent 3.5px) 0 0/48px 8px,radial-gradient(circle at 40px 4px,#5ee08a 0 3px,transparent 3.5px) 0 0/48px 8px;animation:skBlink 1.6s steps(2) infinite;filter:drop-shadow(0 0 3px rgba(255,220,120,.7))}
+html[data-skin="tet"] .lw-header{border-bottom:2px solid #f5c518;background:linear-gradient(180deg,#5a0a0d,#3b0709)}
+html[data-skin="tet"][data-theme="light"] .lw-header{background:linear-gradient(180deg,#fffcf2,#fff1d0);border-bottom-color:#c4161c}
+html[data-skin="tet"] .lw-header .lw-nav a,html[data-skin="tet"] .lw-header .lw-brand{color:#ffe9b8}
+html[data-skin="tet"][data-theme="light"] .lw-header .lw-nav a,html[data-skin="tet"][data-theme="light"] .lw-header .lw-brand{color:#5a1014}
+@keyframes skBlink{50%{opacity:.45}}
+/* đèn lồng treo / mũ ông già Noel */
+.sk-lan{position:absolute;top:100%;font-size:34px;line-height:1;pointer-events:none;transform-origin:50% 0;animation:skSway 3.4s ease-in-out infinite;z-index:62;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.sk-lan.l{left:10px}.sk-lan.r{right:10px;animation-delay:-1.7s}
+html[data-skin="noel"] .sk-lan{font-size:30px;top:calc(100% + 4px)}
+@keyframes skSway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@media(max-width:600px){.sk-lan{font-size:24px}.sk-lan.l{left:4px}.sk-lan.r{right:4px}}
+/* tuyết / hoa mai rơi */
+.sk-fall{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:55}
+.sk-fall i{position:absolute;top:-30px;font-style:normal;color:#fff;animation:skFall linear infinite,skSwing ease-in-out infinite alternate;text-shadow:0 0 6px rgba(255,255,255,.6)}
+html[data-skin="noel"][data-theme="light"] .sk-fall i{color:#8fb4d9;text-shadow:0 0 4px rgba(120,160,210,.6)}
+html[data-skin="tet"] .sk-fall i{text-shadow:none}
+@keyframes skFall{to{top:105vh}}
+@keyframes skSwing{from{transform:translateX(-18px) rotate(-30deg)}to{transform:translateX(18px) rotate(40deg)}}
+/* icon trang trí tiêu đề, nút, thẻ */
+html[data-skin="noel"] body .amo-new-title:before,html[data-skin="noel"] .lw-cat-main h3:before,html[data-skin="noel"] body .amo-h2:before{content:"❄ ";color:#9fd8ff}
+html[data-skin="tet"] body .amo-new-title:before,html[data-skin="tet"] .lw-cat-main h3:before,html[data-skin="tet"] body .amo-h2:before{content:"🌼 "}
+html[data-skin="noel"] .lw-card .bt:before,html[data-skin="noel"] .lw-buy .go:before{content:"🎁 "}
+html[data-skin="tet"] .lw-card .bt:before,html[data-skin="tet"] .lw-buy .go:before{content:"🧧 "}
+html[data-skin="noel"] .lw-card,html[data-skin="tet"] .lw-card{position:relative}
+html[data-skin="noel"] .lw-card:after{content:"🎄";position:absolute;top:6px;left:6px;font-size:15px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+html[data-skin="tet"] .lw-card:after{content:"🌸";position:absolute;top:6px;left:6px;font-size:15px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+html[data-skin="noel"] .lw-footer{border-top:3px dashed #c8283a}
+html[data-skin="tet"] .lw-footer{border-top:3px double #f5c518}
+html[data-skin="noel"] .lw-footer:before{content:"🎄 ❄ 🎁 ❄ 🎄";display:block;text-align:center;padding-top:10px;letter-spacing:.4em}
+html[data-skin="tet"] .lw-footer:before{content:"🧧 🌼 🏮 🌼 🧧";display:block;text-align:center;padding-top:10px;letter-spacing:.4em}
+@media(prefers-reduced-motion:reduce){.sk-lan,.sk-fall i,html[data-skin="noel"] .lw-header::after{animation:none!important}}

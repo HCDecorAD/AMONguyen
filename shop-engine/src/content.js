@@ -62,7 +62,7 @@ async function readFx(env, store) {
   } catch { return { ...FX_DEFAULT }; }
 }
 
-const SKINS = ["noir", "ivory", "emerald", "burgundy"];
+const SKINS = ["noir", "ivory", "emerald", "burgundy", "noel", "tet"];
 async function readSkin(env, store) {
   try { const r = await env.DB.prepare("SELECT value FROM store_settings WHERE store_id=? AND key='skin'").bind(store.id).first(); return r && SKINS.includes(r.value) ? r.value : "noir"; } catch { return "noir"; }
 }

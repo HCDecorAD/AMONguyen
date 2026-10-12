@@ -103,7 +103,7 @@
       if (!document.getElementById("fxcss")) { var st = document.createElement("style"); st.id = "fxcss"; st.textContent = ".fxr{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid #222c36;cursor:pointer}.fxr:first-child{border-top:0}.fxr input{width:22px;height:22px;margin:2px 0 0;accent-color:#246bfe}.fxr b{display:block;font-size:15px;color:#e8eef5}.fxr small{display:block;color:#8d9aa8;font-size:12.5px;margin-top:2px}"; document.head.appendChild(st); }
     }).catch(function () { var b = document.getElementById("fxBody"); if (b) b.textContent = "Chưa tải được cài đặt hiệu ứng."; });
   };
-  var SKL = [["noir", "Noir Gold", "Đen & vàng kim – mặc định", "#0b0b0b", "#d4a933"], ["ivory", "Ivory Maison", "Kem ấm & đồng champagne", "#f7f1e7", "#a9794a"], ["emerald", "Emerald Club", "Xanh ngọc thẫm & vàng nhạt", "#06110d", "#c9ab62"], ["burgundy", "Burgundy Atelier", "Đỏ rượu vang & hồng vàng", "#12080a", "#d7a58f"]];
+  var SKL = [["noir", "Noir Gold", "Đen & vàng kim – mặc định", "#0b0b0b", "#d4a933"], ["ivory", "Ivory Maison", "Kem ấm & đồng champagne", "#f7f1e7", "#a9794a"], ["emerald", "Emerald Club", "Xanh ngọc thẫm & vàng nhạt", "#06110d", "#c9ab62"], ["burgundy", "Burgundy Atelier", "Đỏ rượu vang & hồng vàng", "#12080a", "#d7a58f"], ["noel", "🎄 Giáng sinh", "Xanh thông & đỏ, tuyết rơi, đèn nháy", "#08150f", "#c8283a"], ["tet", "🧧 Tết", "Đỏ & vàng, hoa mai rơi, đèn lồng", "#1a0505", "#f5c518"]];
   window.siteSkin = function () {
     api("/api/v1/site/settings").then(function (d) {
       var cur = d.skin || "noir", w = canMgr(), b = document.getElementById("skBody"); if (!b) return;
