@@ -347,10 +347,9 @@ html[data-theme="light"] .my .bar{background:#eadfc4}
 html[data-theme="light"] .amo-usp-strip .amo-usp{border-color:rgba(160,115,20,.15)}
 html[data-theme="light"] .lw-buy .zalo b{color:#fff}
 
-/* ==== Chinh sach ngan tren trang chu: gon, mem ==== */
-body .amo-new-policy{gap:8px!important}
-body .amo-new-policy div{border:1px solid rgba(213,168,63,.28)!important;border-radius:14px;padding:11px 14px 11px 34px!important;font-size:13.5px;line-height:1.4;position:relative;background:rgba(213,168,63,.05)}
-body .amo-new-policy div::before{content:"✓";position:absolute;left:13px;top:10px;color:#d5a83f;font-size:13px}
-@media(max-width:900px){body .amo-new-policy{grid-template-columns:1fr 1fr!important}}
-@media(max-width:520px){body .amo-new-policy{grid-template-columns:1fr!important}body .amo-new-policy div{font-size:13px;padding:10px 12px 10px 32px!important}body .amo-new-section{padding-top:18px!important}}
+/* ==== Chinh sach ngan tren trang chu: chip nho, mot cum gon ==== */
+body .amo-new-policy{display:flex!important;flex-wrap:wrap;justify-content:center;gap:8px!important}
+body .amo-new-policy div{flex:0 1 auto;border:1px solid rgba(213,168,63,.3)!important;border-radius:999px;padding:7px 14px!important;font-size:12.5px;line-height:1.35;background:rgba(213,168,63,.06);text-align:center}
+body .amo-new-policy div::before{content:"✓ ";color:#d5a83f}
+body .amo-new-section{padding-top:14px!important}
 html[data-theme="light"] body .amo-new-policy div{border-color:rgba(160,115,20,.35)!important;background:#fffaf0;color:#4a3f2a}
