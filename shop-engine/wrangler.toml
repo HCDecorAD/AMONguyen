@@ -10,3 +10,4 @@ migrations_dir = "migrations"
 
 [vars]
 APP_NAME = "HC Shop Engine"
+GOOGLE_CLIENT_ID = "68822242851-fd2h2lj0uprcab0bdkeo9k9j4maaps15.apps.googleusercontent.com"
