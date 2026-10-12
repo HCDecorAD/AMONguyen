@@ -104,9 +104,10 @@ function load(cb){
 window.AMO_LW={sizes:SIZES,inRange:inRange,card:card,demo:DEMO,money:money,apply:apply,engine:ENGINE,store:STORE,load:load,root:ROOT,el:el,refreshCart:refreshCart,lang:function(){return lang}};
 
 function home(){
-  var g=document.getElementById("lwHomeGrid");if(!g)return;
-  load(function(list){g.replaceChildren();list.slice(0,8).forEach(function(p){g.appendChild(card(p))});apply()});
+  var gs=document.querySelectorAll("#lwHomeGrid,[data-hcb-products]");if(!gs.length)return;
+  load(function(list){gs.forEach(function(g){var n=Number(g.getAttribute("data-limit"))||8;g.replaceChildren();list.slice(0,n).forEach(function(p){g.appendChild(card(p))})});apply()});
 }
+document.addEventListener("hcb:rendered",function(){home()});
 /* trang size / thương hiệu */
 function listPage(){
   var g=document.getElementById("amoProductGrid");if(!g||!(g.dataset.size||g.dataset.brand))return;

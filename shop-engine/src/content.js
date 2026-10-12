@@ -2,7 +2,7 @@
 // Public:  GET /api/site/page?slug=home
 // Admin:   /api/v1/site/pages[/:slug[/publish|unpublish|rollback|versions]]
 const MAX_BLOCKS = 60, MAX_BYTES = 120000, KEEP_VERSIONS = 25;
-const TYPES = ["hero", "text", "image", "gallery", "video", "cards", "links", "list", "cta"];
+const TYPES = ["hero", "text", "image", "gallery", "video", "cards", "links", "list", "cta", "products"];
 const nowIso = () => new Date().toISOString().slice(0, 19).replace("T", " ");
 const SAFE_LINK = /^(https?:\/\/[^\s<>"']+|\/[^\s<>"':]*|#[\w-]*|mailto:[^\s<>"']+|tel:\+?[\d\s.-]+|[A-Za-z0-9_\-./]+(\?[^\s<>"']*)?(#[\w-]*)?)$/;
 const SAFE_IMG = /^(https?:\/\/[^\s<>"']+|\/[^\s<>"':]+|[A-Za-z0-9_\-./]+(\?[^\s<>"']*)?)$/;
@@ -35,6 +35,7 @@ function cleanBlock(b, mkId) {
     case "cards": Object.assign(out, { title: str(p.title, 120), linkLabel: str(p.linkLabel, 40), linkUrl: link(p.linkUrl), items: items(p.items, 16, (x) => ({ title: str(x?.title, 100), subtitle: str(x?.subtitle, 200), image: img(x?.image), url: link(x?.url) })).filter((x) => x.title) }); break;
     case "links": Object.assign(out, { title: str(p.title, 120), note: str(p.note, 200), items: items(p.items, 24, (x) => ({ label: str(x?.label, 60), url: link(x?.url) })).filter((x) => x.label) }); break;
     case "list": Object.assign(out, { title: str(p.title, 120), linkLabel: str(p.linkLabel, 40), linkUrl: link(p.linkUrl), items: items(p.items, 20, (x) => str(typeof x === "string" ? x : x?.text, 200)).filter(Boolean) }); break;
+    case "products": Object.assign(out, { title: str(p.title, 120), linkLabel: str(p.linkLabel, 40), linkUrl: link(p.linkUrl), limit: [4, 6, 8, 12, 16].includes(Number(p.limit)) ? Number(p.limit) : 8 }); break;
     case "cta": Object.assign(out, { title: str(p.title, 160), text: str(p.text, 400), buttonLabel: str(p.buttonLabel, 40), buttonUrl: link(p.buttonUrl) }); break;
   }
   out.size = ["s", "m", "l"].includes(p.size) ? p.size : "m";

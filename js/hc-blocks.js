@@ -104,6 +104,10 @@
       var s = el("section", "hcb-b"), h = head(p.title, p.linkLabel, p.linkUrl); if (h) s.appendChild(h); var g = el("div", "hcb-list");
       (p.items || []).forEach(function (x) { g.appendChild(el("div", "", x)); }); if (!g.childNodes.length) return null; s.appendChild(g); return s;
     },
+    products: function (p) {
+      var s = el("section", "hcb-b"), h = head(p.title, p.linkLabel, p.linkUrl); if (h) s.appendChild(h);
+      var g = el("div", "lw-grid"); g.setAttribute("data-hcb-products", ""); g.setAttribute("data-limit", String(p.limit || 8)); s.appendChild(g); return s;
+    },
     cta: function (p) {
       var s = el("section", "hcb-cta hcb-c"); if (p.title) s.appendChild(el("h2", "", p.title)); if (p.text) s.appendChild(el("p", "hcb-lead", p.text));
       if (p.buttonLabel && href(p.buttonUrl)) s.appendChild(anchor("hcb-btn p", p.buttonUrl, p.buttonLabel)); return s.childNodes.length ? s : null;
@@ -137,7 +141,7 @@
       .then(function (r) { return r.ok ? r.json() : { published: false }; })
       .then(function (d) {
         if (!d.published || !Array.isArray(d.blocks) || !d.blocks.length) { if (o.onMissing) o.onMissing(); return false; }
-        render(d.blocks, o.target); if (o.onTitle && d.title) o.onTitle(d.title); target_mark(o.target); return true;
+        render(d.blocks, o.target); try { document.dispatchEvent(new Event("hcb:rendered")); } catch (e) {} if (o.onTitle && d.title) o.onTitle(d.title); target_mark(o.target); return true;
       })
       .catch(function () { if (o.onMissing) o.onMissing(); return false; });
   }

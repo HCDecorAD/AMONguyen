@@ -2,7 +2,7 @@
    Relies on shop-admin globals: api, act, esc, content, setnav, openBox, closeBox, canW, canMgr, STORE, ME, table. */
 (function () {
   "use strict";
-  var TYPE_NAME = { hero: "Banner đầu trang", text: "Văn bản", image: "Một ảnh", gallery: "Thư viện ảnh", video: "Video", cards: "Thẻ / danh mục", links: "Dãy liên kết", list: "Danh sách ý", cta: "Kêu gọi hành động" };
+  var TYPE_NAME = { hero: "Banner đầu trang", text: "Văn bản", image: "Một ảnh", gallery: "Thư viện ảnh", video: "Video", cards: "Thẻ / danh mục", links: "Dãy liên kết", list: "Danh sách ý", cta: "Kêu gọi hành động", products: "Lưới sản phẩm (tự động từ kho)" };
   var FIELDS = {
     hero: [["eyebrow", "Dòng nhỏ phía trên"], ["title", "Tiêu đề lớn"], ["lead", "Mô tả ngắn", "area"], ["image", "Ảnh banner (link hoặc đường dẫn)", "img"], ["alt", "Mô tả ảnh"], ["primaryLabel", "Nút chính - chữ"], ["primaryUrl", "Nút chính - link"], ["secondaryLabel", "Nút phụ - chữ"], ["secondaryUrl", "Nút phụ - link"]],
     text: [["kicker", "Dòng nhỏ phía trên"], ["title", "Tiêu đề"], ["body", "Nội dung", "area"], ["align", "Căn lề", "align"]],
@@ -12,6 +12,7 @@
     cards: [["title", "Tiêu đề khu vực"], ["linkLabel", "Chữ link góc phải"], ["linkUrl", "Link góc phải"]],
     links: [["title", "Tiêu đề"], ["note", "Ghi chú nhỏ"]],
     list: [["title", "Tiêu đề"], ["linkLabel", "Chữ link góc phải"], ["linkUrl", "Link góc phải"]],
+    products: [["title", "Tiêu đề"], ["linkLabel", "Chữ liên kết (vd: Xem tất cả →)"], ["linkUrl", "Link (vd: shop.html)"]],
     cta: [["title", "Tiêu đề"], ["text", "Nội dung", "area"], ["buttonLabel", "Chữ nút"], ["buttonUrl", "Link nút"]]
   };
   var ITEMS = {
@@ -57,17 +58,15 @@
 
   /* AMO home as blocks, so the owner can start from what the site shows today */
   function seedHome() {
-    var cat = function (t, s, u) { return { title: t, subtitle: s, image: "", url: u }; };
+    var cat = function (t, u) { return { title: t, subtitle: "", image: "", url: u }; };
+    var sz = ["37-37.5", "38-38.5", "39-39.5", "40-40.5", "41-41.5", "42-42.5", "43-43.5", "44-44.5", "45-45.5"].map(function (x) { return { label: x, url: "size/" + x.replace(/[-.]/g, "-").replace("--", "-") + "/" }; });
     return [
       { id: nid(), type: "hero", enabled: true, props: { eyebrow: "", title: "", lead: "", image: "assets/images/amo-banner-new.png", alt: "Shop Giày Si AMO Nguyễn", primaryLabel: "", primaryUrl: "", secondaryLabel: "", secondaryUrl: "" } },
-      { id: nid(), type: "text", enabled: true, props: { kicker: "AMO NGUYỄN", title: "Chọn giày có gu, bước đi có chất.", body: "Không gian dành cho giày nam và phong cách nam. Danh mục, thương hiệu, size và tình trạng hàng chỉ hiển thị theo dữ liệu thực tế được xác nhận.", align: "center" } },
-      { id: nid(), type: "cards", enabled: true, props: { title: "Sản phẩm", linkLabel: "Xem tất cả →", linkUrl: "shop.html", items: [
-        cat("GIÀY SNEAKER", "Hiện tất cả · lọc theo size", "shop.html?cat=sneakers"), cat("GIÀY CÔNG SỞ", "Danh mục sản phẩm", "shop.html?cat=cong-so"), cat("DÉP", "Danh mục sản phẩm", "shop.html?cat=dep"),
-        cat("ÁO + ÁO KHOÁC", "Danh mục sản phẩm", "shop.html?cat=ao"), cat("TÚI XÁCH", "Danh mục sản phẩm", "shop.html?cat=tui-xach"), cat("QUẦN", "Danh mục sản phẩm", "shop.html?cat=quan"),
-        cat("THẮT LƯNG + PHỤ KIỆN KHÁC", "Danh mục sản phẩm", "shop.html?cat=phu-kien"), cat("SIZE SNEAKER", "37 đến 45.5", "size-guide.html")] } },
-      { id: nid(), type: "links", enabled: true, props: { title: "Thương hiệu", note: "Chọn để xem sản phẩm đã được gắn đúng thương hiệu", items: [
-        { label: "LV", url: "shop.html?brand=LV" }, { label: "GUCCI", url: "shop.html?brand=GUCCI" }, { label: "SALVATORE FERRAGAMO", url: "shop.html?brand=Salvatore%20Ferragamo" }, { label: "BALLY", url: "shop.html?brand=BALLY" }, { label: "KHÁC", url: "shop.html?brand=KHAC" }] } },
-      { id: nid(), type: "cta", enabled: true, props: { title: "ĐT / ZALO: 093.268.0592", text: "Facebook · TikTok · YouTube · Zalo", buttonLabel: "LIÊN HỆ / SOCIAL", buttonUrl: "contact.html" } }
+      { id: nid(), type: "links", enabled: true, props: { title: "Giày Sneaker → chọn size", note: "", items: sz } },
+      { id: nid(), type: "cards", enabled: true, props: { title: "Danh mục", linkLabel: "Xem tất cả →", linkUrl: "shop.html", cols: 3, size: "s", items: [cat("Giày công sở", "shop.html?cat=cong-so"), cat("Dép", "shop.html?cat=dep"), cat("Áo + Áo khoác", "shop.html?cat=ao"), cat("Túi xách", "shop.html?cat=tui-xach"), cat("Quần", "shop.html?cat=quan"), cat("Thắt lưng + Phụ kiện khác", "shop.html?cat=phu-kien")] } },
+      { id: nid(), type: "products", enabled: true, props: { title: "", linkLabel: "", linkUrl: "", limit: 8 } },
+      { id: nid(), type: "links", enabled: true, props: { title: "", note: "", items: [{ label: "LV", url: "shop.html?brand=LV" }, { label: "GUCCI", url: "shop.html?brand=GUCCI" }, { label: "SALVATORE FERRAGAMO", url: "shop.html?brand=Salvatore%20Ferragamo" }, { label: "BALLY", url: "shop.html?brand=BALLY" }, { label: "KHÁC", url: "shop.html?brand=KHAC" }] } },
+      { id: nid(), type: "list", enabled: true, props: { title: "", linkLabel: "Xem chính sách bán hàng →", linkUrl: "policy.html", items: ["Thử chân khi nhận hàng", "Đổi size / đổi mẫu theo điều kiện và hàng còn sẵn", "Miễn phí ship toàn quốc theo chính sách áp dụng", "Quy định cọc / giữ hàng"] } }
     ];
   }
 
@@ -128,7 +127,7 @@
     act(async function () {
       var d = await api("/api/v1/site/pages/" + encodeURIComponent(slug));
       ED = { slug: slug, title: d.title || (slug === "home" ? "Trang chủ" : slug), blocks: d.exists ? d.draft : [], version: d.version || 0, published: !!d.published, dirty: false, base: d.updated_at || "", live: d.published || null, liveAt: d.published_at || "", exists: !!d.exists };
-      if (ED.slug === "home" && !ED.blocks.length && canW()) ED.blocks = seedHome(); setnav("site", "Giao diện website"); document.body.classList.add("side-off"); siteDraw(); try { DEV = localStorage.getItem("siteDev") || (window.innerWidth < 700 ? "mobile" : "desktop"); } catch (e) { DEV = "desktop"; } siteDev(DEV); siteLive(true); if (window.innerWidth <= 700 && window.siteTab) siteTab("prev");
+      if (ED.slug === "home" && canW() && !ED.published && (!ED.blocks.length || !ED.blocks.some(function (b) { return b.type === "products"; }))) ED.blocks = seedHome(); setnav("site", "Giao diện website"); document.body.classList.add("side-off"); siteDraw(); try { DEV = localStorage.getItem("siteDev") || (window.innerWidth < 700 ? "mobile" : "desktop"); } catch (e) { DEV = "desktop"; } siteDev(DEV); siteLive(true); if (window.innerWidth <= 700 && window.siteTab) siteTab("prev");
     });
   };
   function mark() { ED.dirty = true; var s = document.getElementById("sdirty"); if (s) s.hidden = false; drawPreview(); }
@@ -139,10 +138,10 @@
       '<div class="actions sbar" style="flex-wrap:wrap;gap:8px"><span id="sdirty" class="pill y" ' + (ED.dirty ? "" : "hidden") + '>Có thay đổi chưa đăng</span>' +
       (w ? '<button onclick="siteSave()">Lưu tạm</button>' : "") +
       (canMgr() ? ' <button class="primary" onclick="sitePublish()">Đăng lên web</button>' : "") + (canMgr() && ED.published ? ' <button class="opt" onclick="siteUnpublish()">Gỡ xuất bản</button>' : "") +
-      ' <button onclick="siteRefresh()" title="Tải lại dữ liệu & giao diện mới nhất">↻<span class="lb"> Cập nhật</span></button> <button onclick="siteVersions()">Lịch sử</button>' + (u ? ' <a href="' + esc(u) + '" target="_blank" rel="noopener"><button>Mở trang ↗</button></a>' : "") + '</div>' +
+      ' <button onclick="siteRefresh()" title="Tải lại dữ liệu & giao diện mới nhất">↻<span class="lb"> Cập nhật</span></button> <button onclick="siteVersions()">Lịch sử</button>' + (u ? ' <a class="opt" href="' + esc(u) + '" target="_blank" rel="noopener"><button>Mở trang ↗</button></a>' : "") + '</div>' +
       '<p class="sm" style="margin:8px 0;padding:8px 10px;border-radius:8px;background:' + (ED.published ? '#12261a' : '#33260c') + '">' + (ED.published ? '🟢 Web đang chạy bản <b>v' + ED.version + '</b>' + (ED.liveAt ? ' (đăng ' + esc(String(ED.liveAt).slice(0, 16)) + ')' : '') + '. Khung bên dưới là <b>bản nháp</b>, chỉ lên web khi bấm “Đăng lên web”.' : '🟠 Web hiện <b>chưa dùng trang này từ trình sửa</b> (đang là nội dung cũ). Khung bên dưới là bản nháp, <b>chưa phải trang đang chạy</b>.') + '</p>' + '<p class="muted sm shelp" style="margin:8px 0 0"><b>Cách làm:</b> ① Xem <b>Trang thật</b> (↻ Cập nhật nếu cần) → ② bấm <b>✏ Chỉnh sửa</b>, chọn vùng cần sửa rồi bấm <b>Xong</b> → ③ bấm <b>Đăng lên web</b>.</p>' + (w ? '<input id="stitle" value="' + esc(ED.title) + '" placeholder="Tên trang" style="max-width:320px" oninput="ED_title(this.value)">' : "") + (canMgr() ? "" : '<p class="muted sm">Bạn có thể soạn nháp. Cần quyền quản lý (manager) trở lên để xuất bản.</p>') + '</div>' +
       '<div class="seg mobonly" style="margin:10px 0"><button type="button" class="on" id="tabB" onclick="siteTab(\'blocks\')">Các khối</button><button type="button" id="tabP" onclick="siteTab(\'prev\')">Trang web</button></div><div class="siteGrid" id="sgrid" data-p="blocks"><div class="panel"><div class="actions"><h3>Các khối</h3>' + (w ? '<span><select id="sadd"><option value="">+ Thêm khối…</option>' + Object.keys(TYPE_NAME).map(function (t) { return '<option value="' + t + '">' + esc(TYPE_NAME[t]) + '</option>'; }).join("") + '</select></span>' : "") + '</div>' +
-      '<div id="sblocks"></div>' + (w && ED.slug === "home" && !ED.blocks.length ? '<button onclick="siteSeed()">Nạp mẫu từ trang chủ hiện tại</button>' : "") + '</div>' +
+      '<div id="sblocks"></div>' + (w && ED.slug === "home" ? '<button class="opt2" onclick="if(confirm(\'Đặt lại các khối theo trang chủ hiện tại? Thay đổi chưa đăng sẽ mất.\'))siteSeed()">↺ Lấy lại từ trang chủ hiện tại</button>' : "") + '</div>' +
       '<div class="panel"><div class="actions"><h3>Xem trước</h3><span class="seg mini" style="margin:0"><button type="button" id="mDraft" onclick="siteLive(false)">✏ Chỉnh sửa</button><button type="button" id="mLive" class="on" onclick="siteLive(true)">Trang thật</button></span></div><div class="seg mini" style="margin:6px 0"><button type="button" id="dDesk" class="on" onclick="siteDev(\'desktop\')">🖥 Máy tính</button><button type="button" id="dMob" onclick="siteDev(\'mobile\')">📱 Điện thoại</button></div><div id="sdev" class="sdev"><div id="sprev" style="display:none"></div><iframe id="sdraft" title="Bản nháp"></iframe><iframe id="slive" title="Trang web đang chạy" style="display:none"></iframe></div></div></div>';
     if (!document.getElementById("sitecss")) { var st = document.createElement("style"); st.id = "sitecss"; st.textContent =
       "[hidden]{display:none!important}.siteGrid{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:14px;align-items:start}@media(max-width:1000px){.siteGrid{grid-template-columns:1fr}}" +
@@ -162,7 +161,7 @@
       var f = document.getElementById("sdraft"); if (!f) return;
       var on = ED.blocks.some(function (b) { return b.enabled; });
       var data = JSON.stringify(ED.blocks).replace(/</g, "\\u003c");
-      f.srcdoc = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="' + location.origin + '/"><style>body{margin:0;background:#0d0c0a;color:#f7f1e4;font-family:system-ui,sans-serif;--amog:#d5a83f}[data-block]{cursor:pointer}[data-block]:hover{outline:2px solid #246bfe;outline-offset:-2px}</style></head><body><div id="r"></div><script src="js/hc-blocks.js?v=' + Date.now() + '"><\/script><script>var B=' + data + ';var r=document.getElementById("r");' + (on ? 'HCBlocks.render(B,r);' : 'r.innerHTML="<p style=padding:20px>Chưa có khối nào đang bật.</p>";') + 'document.addEventListener("click",function(e){var n=e.target.closest&&e.target.closest("[data-block]");if(n){e.preventDefault();parent.postMessage({hcBlk:n.getAttribute("data-block")},"*")}},true)<\/script></body></html>';
+      f.srcdoc = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="' + location.origin + '/"><style>body{margin:0;background:#0d0c0a;color:#f7f1e4;font-family:system-ui,sans-serif;--amog:#d5a83f}[data-block]{cursor:pointer}[data-block]:hover{outline:2px solid #246bfe;outline-offset:-2px}</style></head><body><div id="r"></div><script src="js/hc-blocks.js?v=' + Date.now() + '"><\/script><script>var B=' + data + ';var r=document.getElementById("r");' + (on ? 'HCBlocks.render(B,r);' : 'r.innerHTML="<p style=padding:20px>Chưa có khối nào đang bật.</p>";') + 'document.querySelectorAll("[data-hcb-products]").forEach(function(g){g.innerHTML="<p style=\\"padding:18px;opacity:.7;text-align:center;border:1px dashed #6b5a2e;border-radius:12px\\">Lưới sản phẩm thật – tự lấy từ kho hàng khi lên web</p>"});document.addEventListener("click",function(e){var n=e.target.closest&&e.target.closest("[data-block]");if(n){e.preventDefault();parent.postMessage({hcBlk:n.getAttribute("data-block")},"*")}},true)<\/script></body></html>';
     }, 120);
   }
   function drawBlocks() {
