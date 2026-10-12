@@ -7,7 +7,7 @@ const DEFAULT_TIERS = [
   { code: "gold", name: "Vàng", min_spent: 15000000, percent: 5 },
   { code: "vip", name: "VIP", min_spent: 30000000, percent: 8 },
 ];
-const EVENT_TYPES = new Set(["visit", "view_product", "add_cart", "search", "wishlist"]);
+const EVENT_TYPES = new Set(["visit", "view_product", "add_cart", "search", "wishlist", "click_zalo", "click_call", "click_social", "click_product", "buy_now"]);
 const SESSION_DAYS = 30;
 const b64u = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 const nowIso = () => new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -300,6 +300,24 @@ export async function handleCustomers(req, env, store, H, auth) {
   }
 
   // ===== admin =====
+  if (path === "/api/v1/analytics" && m === "GET") {
+    if (!auth || auth.lvl < 2) return json(req, { error: "unauthorized" }, 401);
+    const days = Math.max(1, Math.min(90, parseInt(u.searchParams.get("days") || "7", 10) || 7)), since = plusIso(-days * 86400e3).slice(0, 10);
+    const A = (sql, ...b) => env.DB.prepare(sql).bind(store.id, since, ...b).all().then((r) => r.results || []);
+    const [tot, daily, prod, vis, soc] = await Promise.all([
+      A("SELECT type, COUNT(*) n, COUNT(DISTINCT COALESCE(visitor_id,customer_id)) u FROM customer_events WHERE store_id=? AND created_at>=? GROUP BY type"),
+      A("SELECT substr(created_at,1,10) d, type, COUNT(*) n FROM customer_events WHERE store_id=? AND created_at>=? AND type IN ('visit','click_zalo','view_product') GROUP BY d,type ORDER BY d"),
+      A("SELECT ref, type, COUNT(*) n FROM customer_events WHERE store_id=? AND created_at>=? AND ref IS NOT NULL AND ref<>'' AND type IN ('view_product','click_product','add_cart','click_zalo','buy_now') GROUP BY ref,type"),
+      A("SELECT meta, COUNT(*) n FROM customer_events WHERE store_id=? AND created_at>=? AND type='visit' AND meta IS NOT NULL GROUP BY meta ORDER BY n DESC LIMIT 40"),
+      A("SELECT ref, COUNT(*) n FROM customer_events WHERE store_id=? AND created_at>=? AND type='click_social' GROUP BY ref ORDER BY n DESC LIMIT 10"),
+    ]);
+    const totals = {}; tot.forEach((r) => { totals[r.type] = { n: r.n, u: r.u }; });
+    const pm = {}; prod.forEach((r) => { (pm[r.ref] = pm[r.ref] || { ref: r.ref })[r.type] = r.n; });
+    const products = Object.values(pm).sort((a, b) => ((b.view_product || 0) + (b.click_product || 0)) - ((a.view_product || 0) + (a.click_product || 0))).slice(0, 12);
+    const src = {}; vis.forEach((r) => { let k = "Trực tiếp"; try { const m2 = JSON.parse(r.meta); k = m2.utm_source || m2.ref_host || k; } catch {} src[k] = (src[k] || 0) + r.n; });
+    const sources = Object.entries(src).map(([name, n]) => ({ name, n })).sort((a, b) => b.n - a.n).slice(0, 10);
+    return json(req, { ok: true, days, totals, daily, products, sources, social: soc });
+  }
   if (!path.startsWith("/api/v1/customers") && !path.startsWith("/api/v1/promotions") && path !== "/api/v1/tiers") return null;
   const { lvl } = auth, deny = () => json(req, { error: "unauthorized" }, 401);
 

@@ -22,7 +22,7 @@ async function api(p,opt={}){const h={"content-type":"application/json"};if(STOR
 function login(msg){root.innerHTML='<div class="login"><h2>HC Shop Manager</h2><p class="muted">Đăng nhập quản lý cửa hàng</p>'+(msg?'<div class="warn">'+esc(msg)+'</div>':'')+'<label>Mã truy cập</label><input id="tok" type="password" autofocus placeholder="mem_… hoặc mã quản trị" onkeydown="if(event.key===\'Enter\')doLogin()"><label class="rem"><input type="checkbox" id="rem" checked> Ghi nhớ trên thiết bị này (tự đăng nhập lần sau)</label><button class="primary" onclick="doLogin()">Đăng nhập</button><p class="muted sm">Chủ shop nhận mã truy cập từ người quản trị. Không chia sẻ mã này. Chỉ bật ghi nhớ trên thiết bị của bạn.</p></div>'}
 async function doLogin(){TOKEN=tok.value.trim();ME=null;try{ME=await api("/api/auth/me");sessionStorage.HC_SHOP_TOKEN=TOKEN;if(ME.kind==="member"){STORE=ME.store.id}sessionStorage.HC_STORE=STORE;if(document.getElementById("rem")?.checked!==false){LS.set("HC_SHOP_TOKEN",TOKEN);LS.set("HC_STORE",STORE)}app()}catch(e){TOKEN="";ME=null;sessionStorage.removeItem("HC_SHOP_TOKEN");LS.del("HC_SHOP_TOKEN");login(e.message)}}
 function logout(){TOKEN="";ME=null;STORE="";sessionStorage.removeItem("HC_SHOP_TOKEN");sessionStorage.removeItem("HC_STORE");LS.del("HC_SHOP_TOKEN");LS.del("HC_STORE");login()}
-const NAV=[["dashboard","Tổng quan"],["products","Sản phẩm & Media"],["inventory","Kho hàng"],["csv","Nhập / Xuất CSV"],["bulk","Sửa hàng loạt"],["orders","Đơn hàng"],["site","Giao diện website"],["customers","Khách hàng"],["promotions","Khuyến mãi"],["reports","Báo cáo"],["team","Thành viên"],["help","Hướng dẫn"]];
+const NAV=[["dashboard","Tổng quan"],["products","Sản phẩm & Media"],["inventory","Kho hàng"],["csv","Nhập / Xuất CSV"],["bulk","Sửa hàng loạt"],["orders","Đơn hàng"],["site","Giao diện website"],["customers","Khách hàng"],["stats","Thống kê truy cập"],["promotions","Khuyến mãi"],["reports","Báo cáo"],["team","Thành viên"],["help","Hướng dẫn"]];
 async function app(){
  document.body.classList.toggle("ro",!canW());
  const nav=NAV.filter(x=>x[0]!=="team"||canMgr());
@@ -47,6 +47,7 @@ async function view(v){menuClose();document.body.classList.remove("side-off");tr
  if(v==="help"){window.open("huong-dan-chu-shop.html","_blank");return}
  if(v==="site")return siteView();
  if(v==="customers")return custView();
+ if(v==="stats")return statsView();
  if(v==="promotions")return promoView();
  if(v==="reports"){setnav(v,"Báo cáo");const d=await api("/api/reports");content.innerHTML='<div class="panel"><h3>Bán chạy</h3>'+table(d.best_sellers||[],[["SKU",r=>r.sku],["Tên",r=>r.name],["SL",r=>r.qty],["Doanh thu",r=>money(r.revenue)]])+'</div><div class="panel"><h3>Lịch sử kho</h3>'+table(d.movements||[],[["Loại",r=>r.type],["SL",r=>r.qty],["Tham chiếu",r=>r.reference_type],["Ngày",r=>r.created_at]])+'</div>'}
  }catch(e){content.innerHTML='<div class="panel">'+esc(e.message)+'</div>'}}

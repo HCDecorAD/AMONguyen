@@ -93,6 +93,25 @@
   };
 
   var FXL = [["on", "Bật tất cả hiệu ứng", "Tắt mục này = website đứng yên hoàn toàn"], ["reveal", "Hiện dần khi cuộn", "Khối nội dung trượt nhẹ lên khi khách kéo tới"], ["lift", "Thẻ sản phẩm nhấc lên", "Chạm/rê vào sản phẩm: nâng nhẹ, ảnh phóng nhẹ"], ["shine", "Ánh kim", "Tia sáng lướt qua banner, thương hiệu phát sáng nhịp nhẹ"], ["pulse", "Nhịp nút Zalo & giỏ hàng", "Nút Zalo tỏa sóng nhẹ, số giỏ hàng nảy nhẹ"]];
+  window.statsView = function (days) {
+    days = days || 7; document.getElementById("title").textContent = "Thống kê truy cập";
+    document.querySelectorAll(".nav button").forEach(function (b) { b.classList.toggle("on", b.dataset.v === "stats"); });
+    content.innerHTML = '<div class="panel">Đang tải…</div>';
+    api("/api/v1/analytics?days=" + days).then(function (d) {
+      var T = d.totals || {}, n = function (k) { return (T[k] && T[k].n) || 0; }, u = function (k) { return (T[k] && T[k].u) || 0; };
+      var cards = [["Lượt ghé", n("visit")], ["Khách ghé", u("visit")], ["Xem sản phẩm", n("view_product")], ["Bấm Zalo", n("click_zalo")], ["Bấm gọi", n("click_call")], ["Thêm giỏ", n("add_cart")], ["Mở mạng XH", n("click_social")]];
+      var bydate = {}; (d.daily || []).forEach(function (r) { (bydate[r.d] = bydate[r.d] || {})[r.type] = r.n; });
+      var ds = Object.keys(bydate).sort(), mx = Math.max.apply(null, [1].concat(ds.map(function (k) { return bydate[k].visit || 0; })));
+      var bars = ds.map(function (k) { var v = bydate[k].visit || 0, z = bydate[k].click_zalo || 0; return '<div class="sbar" title="' + esc(k) + ': ' + v + ' lượt ghé, ' + z + ' bấm Zalo"><i style="height:' + Math.max(3, Math.round(v / mx * 70)) + 'px"></i><small>' + esc(k.slice(5)) + '</small></div>'; }).join("");
+      var prod = (d.products || []).map(function (r) { return '<tr><td>' + esc(r.ref) + '</td><td>' + (r.view_product || 0) + '</td><td>' + (r.click_product || 0) + '</td><td>' + (r.add_cart || 0) + '</td><td>' + (r.click_zalo || 0) + '</td></tr>'; }).join("") || '<tr><td colspan="5" class="muted">Chưa có dữ liệu</td></tr>';
+      var src = (d.sources || []).map(function (r) { return '<tr><td>' + esc(r.name) + '</td><td>' + r.n + '</td></tr>'; }).join("") || '<tr><td colspan="2" class="muted">Chưa có dữ liệu</td></tr>';
+      var soc = (d.social || []).map(function (r) { return esc(r.ref) + ': <b>' + r.n + '</b>'; }).join(" · ") || "—";
+      if (!document.getElementById("stcss")) { var st = document.createElement("style"); st.id = "stcss"; st.textContent = ".stc{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin:10px 0}.stc div{background:#111a23;border:1px solid #222c36;border-radius:10px;padding:10px}.stc b{display:block;font-size:22px;color:#e8eef5}.stc small{color:#8d9aa8;font-size:12px}.sbars{display:flex;gap:6px;align-items:flex-end;height:96px;overflow-x:auto;padding-top:6px}.sbar{display:flex;flex-direction:column;align-items:center;min-width:26px}.sbar i{display:block;width:16px;background:#246bfe;border-radius:3px 3px 0 0}.sbar small{font-size:10px;color:#8d9aa8;margin-top:3px}.stt{width:100%;border-collapse:collapse;font-size:13px}.stt td,.stt th{padding:6px 4px;border-top:1px solid #222c36;text-align:left}"; document.head.appendChild(st); }
+      content.innerHTML = '<div class="panel"><div class="actions"><h3>Khách ghé shop</h3><span>' + [7, 30, 90].map(function (x) { return '<button' + (x === d.days ? ' class="primary"' : '') + ' onclick="statsView(' + x + ')">' + x + ' ngày</button>'; }).join(" ") + '</span></div><div class="stc">' + cards.map(function (c) { return '<div><b>' + c[1] + '</b><small>' + esc(c[0]) + '</small></div>'; }).join("") + '</div><p class="muted sm">Chỉ tính khách đã bấm "Đồng ý" theo dõi. Số thực tế thường cao hơn.</p><h4>Lượt ghé theo ngày</h4><div class="sbars">' + (bars || '<span class="muted sm">Chưa có dữ liệu</span>') + '</div></div>' +
+        '<div class="panel" style="margin-top:14px"><h3>Sản phẩm được quan tâm</h3><div style="overflow-x:auto"><table class="stt"><tr><th>Mã SP</th><th>Xem</th><th>Bấm thẻ</th><th>Giỏ</th><th>Zalo</th></tr>' + prod + '</table></div></div>' +
+        '<div class="panel" style="margin-top:14px"><h3>Khách đến từ đâu</h3><table class="stt"><tr><th>Nguồn</th><th>Lượt</th></tr>' + src + '</table><p class="muted sm" style="margin-top:8px">Bấm mạng xã hội: ' + soc + '</p></div>';
+    }).catch(function (e) { content.innerHTML = '<div class="panel">' + esc(e.message) + '</div>'; });
+  };
   window.siteFx = function () {
     api("/api/v1/site/settings").then(function (d) {
       var f = d.effects || {}, w = canMgr(), h = FXL.map(function (x) {
