@@ -49,8 +49,13 @@ eq((await call('/api/images?product_id='+prod.id,{token:OWN})).data.items.length
 const rot=await call(`/api/v1/members/${vw.data.id}/rotate`,{method:'POST',token:OWN});eq(rot.status,200,'rotate');
 eq((await call('/api/products',{token:VW})).status,401,'old key dead after rotate');
 eq((await call('/api/products',{token:rot.data.key})).status,200,'new key works');
+// self-service key rotation (member replaces own key)
+const selfRot=await call('/api/v1/me/rotate-key',{method:'POST',token:STF});eq(selfRot.status,200,'self rotate');
+eq((await call('/api/products',{token:STF})).status,401,'old self key dead');
+const STF2=selfRot.data.key;eq((await call('/api/products',{token:STF2})).status,200,'new self key works');
+eq((await call('/api/v1/me/rotate-key',{method:'POST'})).status,403,'superadmin has no member record -> 403');
 eq((await call(`/api/v1/members/${stf.data.id}/revoke`,{method:'POST',token:OWN})).status,200,'revoke');
-eq((await call('/api/products',{token:STF})).status,401,'revoked key dead');
+eq((await call('/api/products',{token:STF2})).status,401,'revoked key dead');
 // super admin still works everywhere
 eq((await call('/api/products',{store:S2})).status,200,'super admin reads any store');
 console.log('MEMBERS_E2E PASS');
