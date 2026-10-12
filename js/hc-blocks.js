@@ -30,6 +30,10 @@
     ".hcb-s-l h1{font-size:clamp(40px,6.5vw,84px)}.hcb-s-l h2{font-size:clamp(30px,4.2vw,56px)}.hcb-s-l .hcb-card{min-height:230px;padding:30px}.hcb-s-l .hcb-card b{font-size:22px}.hcb-s-l .hcb-card span{font-size:15px}.hcb-s-l .hcb-lead{font-size:18px}.hcb-s-l .hcb-card img{margin:-30px -30px 18px;width:calc(100% + 60px)}" +
     ".hcb-s-s .hcb-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.hcb-s-l .hcb-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}.hcb-s-s .hcb-gal{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.hcb-s-l .hcb-gal{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}" +
     ".hcb-grid[data-c],.hcb-gal[data-c],.hcb-links[data-c],.hcb-list[data-c]{grid-template-columns:repeat(var(--c),minmax(0,1fr))}@media(max-width:700px){.hcb-grid[data-c],.hcb-gal[data-c],.hcb-links[data-c],.hcb-list[data-c]{grid-template-columns:repeat(2,minmax(0,1fr))}}" +
+    ".hcb-card{border-radius:16px;border-color:rgba(213,168,63,.22);min-height:90px;padding:16px;transition:all .22s}.hcb-card:hover{transform:translateY(-2px);border-color:rgba(213,168,63,.55);box-shadow:0 8px 22px rgba(0,0,0,.25)}.hcb-card b{font-weight:500;font-size:15px;letter-spacing:.03em}" +
+    ".hcb-card img{border-radius:12px 12px 0 0}" +
+    ".hcb-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;background:none;border:0}.hcb-links a{background:rgba(213,168,63,.07);border:1px solid rgba(213,168,63,.28);border-radius:999px;padding:12px 18px;font-weight:500;font-size:13px;letter-spacing:.06em;text-transform:uppercase;transition:all .2s}.hcb-links a:hover{background:rgba(213,168,63,.16);border-color:rgba(213,168,63,.6)}" +
+    ".hcb-head{border-bottom-color:rgba(213,168,63,.18)}.hcb-head h2{font-weight:400;letter-spacing:.03em}.hcb-cta{border-radius:18px;margin:0 4%}" +
     "@media(max-width:520px){.hcb-b{padding:22px 5%}.hcb-hero.hcb-b{padding:0}.hcb-hero .hcb-t{padding:24px 5% 6px}}";
 
   var LINK_OK = /^(https?:\/\/[^\s<>"']+|\/[^\s<>"':]*|#[\w-]*|mailto:[^\s<>"']+|tel:\+?[\d\s.-]+|[A-Za-z0-9_\-./]+(\?[^\s<>"']*)?(#[\w-]*)?)$/;
