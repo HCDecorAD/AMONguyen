@@ -8,6 +8,8 @@ function lw(){return window.AMO_LW}
 function money(n){return lw().money(n)}
 function cart(){try{var x=JSON.parse(localStorage.getItem("AMO_CART")||"[]");return Array.isArray(x)?x:[]}catch(e){return[]}}
 function saveCart(c){try{localStorage.setItem("AMO_CART",JSON.stringify(c))}catch(e){}lw().refreshCart()}
+function setPrice(cur,base){var e=$("pPrice");e.replaceChildren();if(!(cur>0)){e.textContent="Liên hệ AMO để được tư vấn";return}e.appendChild(document.createTextNode(money(cur)));if(base>cur){var o=document.createElement("s");o.className="old";o.textContent=money(base);e.appendChild(o);var f=document.createElement("span");f.className="off";f.textContent="-"+Math.round((1-cur/base)*100)+"%";e.appendChild(f)}}
+function toast(t){var d=document.getElementById("lwToast");if(!d){d=document.createElement("div");d.id="lwToast";d.setAttribute("role","status");document.body.appendChild(d)}d.textContent=t;clearTimeout(toast.t);toast.t=setTimeout(function(){d.remove()},7000)}
 function say(t){$("pMsg").textContent=t}
 function fail(){
   $("pName").textContent="Không tìm thấy sản phẩm";
@@ -26,13 +28,13 @@ function render(){
   $("pCat").textContent=product.cat||"AMO NGUYỄN";
   $("pName").textContent=product.name;
   $("pDesc").textContent=product.desc||"";
-  $("pPrice").textContent=product.price>0?money(product.price):"Liên hệ AMO để được tư vấn";
+  setPrice(product.price,product.compare);
   $("pZalo").setAttribute("aria-label","Hỏi shop về "+product.name);
   $("pZalo").onclick=function(){
     var sz=selected&&selected.size?" - size "+selected.size:"";
     var msg="Chào shop, mình muốn hỏi về sản phẩm: "+product.name+sz+"\n"+location.href.split("#")[0];
     try{if(navigator.clipboard)navigator.clipboard.writeText(msg)}catch(e){}
-    say("Đã sao chép link sản phẩm. Trong Zalo, dán (giữ ô chat > Dán) để gửi cho shop.");
+    toast("Đã sao chép link sản phẩm. Trong Zalo, bấm giữ ô chat > Dán rồi Gửi để shop xem đúng sản phẩm.");say("Đã sao chép link sản phẩm - dán vào Zalo để gửi shop.");
   };
   gallery(product.images||[]);
   var box=$("pOpts");box.replaceChildren();
@@ -44,7 +46,7 @@ function render(){
     box.replaceChildren();
     product.variants.filter(function(v){return !cols.length||v.color===curColor}).forEach(function(v){
       var b=document.createElement("button");b.type="button";b.textContent=v.size;b.disabled=v.available<=0;b.setAttribute("aria-pressed",String(selected===v));b.dataset.id=v.id;
-      b.onclick=function(){selected=v;if(v.price>0)$("pPrice").textContent=money(v.price);Array.prototype.forEach.call(box.children,function(x){x.setAttribute("aria-pressed",String(x===b))});say("")};
+      b.onclick=function(){selected=v;if(v.price>0)setPrice(v.price,v.base);Array.prototype.forEach.call(box.children,function(x){x.setAttribute("aria-pressed",String(x===b))});say("")};
       box.appendChild(b)});
   }
   if(cols.length&&cbox){cols.forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c;b.setAttribute("aria-pressed",String(c===curColor));
@@ -73,8 +75,8 @@ function fromDemo(d){
     variants:d.sizes.map(function(s){return{id:d.id+"-"+s,sku:d.id.toUpperCase()+"-"+s,size:s,available:d.available}})};
 }
 function fromEngine(w){
-  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),material:w.material||"",origin:w.origin||"",badge:w.badge||"",images:(w.images||[]).map(function(i){return typeof i==="string"?i:i&&i.url}).filter(Boolean),demo:false,
-    variants:(w.variants||[]).map(function(v){return{id:v.id,sku:v.sku,size:v.size||v.color||"Free",color:v.color||"",price:Number(v.price||0),available:Number(v.available||0)}})};
+  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),compare:Number(w.compare||0),material:w.material||"",origin:w.origin||"",badge:w.badge||"",images:(w.images||[]).map(function(i){return typeof i==="string"?i:i&&i.url}).filter(Boolean),demo:false,
+    variants:(w.variants||[]).map(function(v){return{id:v.id,sku:v.sku,size:v.size||v.color||"Free",color:v.color||"",base:Number(v.base_price||0),price:Number(v.price||0),available:Number(v.available||0)}})};
 }
 function start(){
   if(!window.AMO_LW){setTimeout(start,40);return}

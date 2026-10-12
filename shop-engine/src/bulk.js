@@ -72,7 +72,7 @@ export async function handleBulk(req, env, store, H, A) {
       .bind(pid, store.id, bid, cid, p.name, p.slug, p.desc, p.status, p.price, p.sp, p.material || null, p.origin || null, p.badge || null, p.tags || null));
     for (const v of p.vars) {
       const vid = id("var");
-      b.push(env.DB.prepare("INSERT INTO variants(id,store_id,product_id,sku,size,color,price,status,attributes_json) VALUES(?,?,?,?,?,?,?,'active','{}')").bind(vid, store.id, pid, v.sku, v.size || null, v.color || null, p.price),
+      b.push(env.DB.prepare("INSERT INTO variants(id,store_id,product_id,sku,size,color,price,sale_price,status,attributes_json) VALUES(?,?,?,?,?,?,?,?,'active','{}')").bind(vid, store.id, pid, v.sku, v.size || null, v.color || null, p.price, p.sp),
         env.DB.prepare("INSERT INTO inventory_levels(store_id,location_id,variant_id,on_hand,reserved,incoming) VALUES(?,?,?,?,0,0)").bind(store.id, loc, vid, p.stock));
     }
     p.images.forEach((u, k) => b.push(env.DB.prepare("INSERT INTO product_images(id,store_id,product_id,url,alt,sort_order) VALUES(?,?,?,?,?,?)").bind(id("img"), store.id, pid, u, p.name, k)));

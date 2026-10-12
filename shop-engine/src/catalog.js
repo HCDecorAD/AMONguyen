@@ -4,6 +4,7 @@
 const CAP = 20;
 const abs = (origin, u) => { u = String(u || ""); return u.startsWith("/") ? origin + u : u; };
 const eff = (p, v) => (v?.sale_price ?? v?.price ?? p.sale_price ?? p.price ?? 0);
+const baseP = (p, v) => (v?.price ?? p.price ?? 0);
 
 export async function handleCatalog(req, env, store, H) {
   const u = new URL(req.url), path = u.pathname;
@@ -26,9 +27,11 @@ export async function handleCatalog(req, env, store, H) {
     const items = prods.map((p) => {
       const vs = by.get(p.id) || [], ok = vs.filter((v) => v.avail > 0);
       const prices = (ok.length ? ok : vs).map((v) => eff(p, v)).filter((x) => x > 0);
+      const pool = (ok.length ? ok : vs).filter((v) => eff(p, v) > 0).sort((a, b) => eff(p, a) - eff(p, b)), top = pool[0];
+      const cmp = top ? baseP(p, top) : (p.price || 0), cur = top ? eff(p, top) : eff(p, null);
       return {
         id: p.id, slug: p.slug, name: p.name, cat: p.cat || "", cat_slug: p.cat_slug || "", brand: p.brand || "", brand_slug: p.brand_slug || "",
-        price: prices.length ? Math.min(...prices) : eff(p, null), image: abs(origin, p.image),
+        price: top ? cur : eff(p, null), compare: cmp > cur ? cmp : 0, image: abs(origin, p.image),
         badge: p.badge || "", colors: [...new Set(ok.map((v) => String(v.color || "").trim()).filter(Boolean))], available: ok.length ? 1 : 0, sizes: [...new Set(ok.map((v) => String(v.size || "").trim()).filter(Boolean))],
       };
     });
@@ -47,5 +50,5 @@ export async function handleCatalog(req, env, store, H) {
     "COALESCE((SELECT SUM(l.on_hand-l.reserved) FROM inventory_levels l WHERE l.store_id=v.store_id AND l.variant_id=v.id),0) avail " +
     "FROM variants v WHERE v.store_id=? AND v.product_id=? AND v.status='active' ORDER BY v.size,v.sku").bind(store.id, p.id).all()).results
     .map((v) => ({ id: v.id, sku: v.sku, size: v.size || "", color: v.color || "", price: eff(p, v), base_price: v.price ?? p.price, available: Math.max(0, Math.min(CAP, v.avail)) }));
-  return pub({ id: p.id, slug: p.slug, name: p.name, description: p.description || "", cat: p.cat || "", brand: p.brand || "", material: p.material || "", origin: p.origin || "", badge: p.badge || "", tags: p.tags || "", price: eff(p, null), images, variants });
+  return pub({ id: p.id, slug: p.slug, name: p.name, description: p.description || "", cat: p.cat || "", brand: p.brand || "", material: p.material || "", origin: p.origin || "", badge: p.badge || "", tags: p.tags || "", price: eff(p, null), compare: (p.price || 0) > eff(p, null) ? p.price : 0, images, variants });
 }

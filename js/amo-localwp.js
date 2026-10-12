@@ -86,7 +86,8 @@ function card(p){
   var a=el("a","lw-card");a.href=ROOT+"product.html?p="+encodeURIComponent(p.slug||p.id||"");
   var im=el("div","im");if(p.image){var i=el("img");i.src=p.image;i.alt=p.name||"";i.loading="lazy";im.appendChild(i)}else im.textContent="Hình ảnh đang cập nhật";
   a.appendChild(im);a.appendChild(el("div","ct",p.cat||""));a.appendChild(el("div","nm",p.name||""));
-  if(p.price)a.appendChild(el("div","pr",money(p.price)));
+  if(p.price){var pr=el("div","pr",money(p.price));if(p.compare>p.price){var o=el("s","old",money(p.compare));pr.appendChild(o);pr.appendChild(el("span","off","-"+Math.round((1-p.price/p.compare)*100)+"%"))}a.appendChild(pr)}
+  if(p.badge){a.appendChild(el("span","lw-badge",p.badge))}
   var bt=el("div","bts"),g=el("span","bt","Giỏ hàng"),m=el("span","bt bt2","Mua ngay");g.dataset.vi="Giỏ hàng";g.dataset.en="Add to cart";m.dataset.vi="Mua ngay";m.dataset.en="Buy now";
   m.onclick=function(e){e.preventDefault();e.stopPropagation();location.href=a.href+"&buy=1"};bt.appendChild(g);bt.appendChild(m);a.appendChild(bt);return a;
 }
@@ -96,7 +97,7 @@ function load(cb){
   var done=false;function fin(l){if(done)return;done=true;cb(l)}
   setTimeout(function(){fin(DEMO)},6000);
   fetch(ENGINE+"/api/public/products?store="+STORE).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){
-    var out=(d&&d.items||[]).map(function(p){return{id:p.id,slug:p.slug,name:p.name,cat:p.cat||"",price:Number(p.price||0),image:p.image||"",available:p.available?1:0,brand:p.brand||"",sizes:p.sizes||[]}});
+    var out=(d&&d.items||[]).map(function(p){return{id:p.id,slug:p.slug,name:p.name,cat:p.cat||"",price:Number(p.price||0),compare:Number(p.compare||0),badge:p.badge||"",image:p.image||"",available:p.available?1:0,brand:p.brand||"",sizes:p.sizes||[]}});
     fin(out.length?out:DEMO);
   }).catch(function(){fin(DEMO)});
 }
