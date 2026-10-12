@@ -425,8 +425,8 @@ html[data-skin="tet"] .sk-fall i{text-shadow:none}
 /* icon trang trí tiêu đề, nút, thẻ */
 html[data-skin="noel"] body .amo-new-title:before,html[data-skin="noel"] .lw-cat-main h3:before,html[data-skin="noel"] body .amo-h2:before{content:"❄ ";color:#9fd8ff}
 html[data-skin="tet"] body .amo-new-title:before,html[data-skin="tet"] .lw-cat-main h3:before,html[data-skin="tet"] body .amo-h2:before{content:"🌼 "}
-html[data-skin="noel"] .lw-card .bt:before,html[data-skin="noel"] .lw-buy .go:before{content:"🎁 "}
-html[data-skin="tet"] .lw-card .bt:before,html[data-skin="tet"] .lw-buy .go:before{content:"🧧 "}
+html[data-skin="noel"] .lw-buy .go:before{content:"🎁 "}
+html[data-skin="tet"] .lw-buy .go:before{content:"🧧 "}
 html[data-skin="noel"] .lw-card,html[data-skin="tet"] .lw-card{position:relative}
 html[data-skin="noel"] .lw-card:after{content:"🎄";position:absolute;top:6px;left:6px;font-size:15px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 html[data-skin="tet"] .lw-card:after{content:"🌸";position:absolute;top:6px;left:6px;font-size:15px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
@@ -435,3 +435,7 @@ html[data-skin="tet"] .lw-footer{border-top:3px double #f5c518}
 html[data-skin="noel"] .lw-footer:before{content:"🎄 ❄ 🎁 ❄ 🎄";display:block;text-align:center;padding-top:10px;letter-spacing:.4em}
 html[data-skin="tet"] .lw-footer:before{content:"🧧 🌼 🏮 🌼 🧧";display:block;text-align:center;padding-top:10px;letter-spacing:.4em}
 @media(prefers-reduced-motion:reduce){.sk-lan,.sk-fall i,html[data-skin="noel"] .lw-header::after{animation:none!important}}
+
+/* nút trên thẻ sản phẩm: không viết hoa/giãn chữ để không bị cắt */
+html[data-skin] .lw-card .bts .bt{text-transform:none;letter-spacing:0;font-size:12.5px;min-width:0;padding:10px 2px;border-radius:0}
+@media(max-width:600px){html[data-skin] .lw-card .bts .bt{font-size:11.5px;padding:8px 2px}}
