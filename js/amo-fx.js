@@ -35,8 +35,8 @@
     var hd = document.querySelector(".lw-header"), ex = document.querySelector(".sk-bar");
     if (S && ex && ex.dataset.k === k && (!hd || hd.querySelector(".sk-lan"))) return;
     document.querySelectorAll(".sk-fall,.sk-bar,.sk-lan").forEach(function (e) { e.remove(); });
-    if (!S) return;
-    var bar = document.createElement("div"); bar.className = "sk-bar"; bar.dataset.k = k; bar.textContent = S.bar; b.insertBefore(bar, b.firstChild);
+    if (!S) { r.style.removeProperty("--sk-h"); return; }
+    var bar = document.createElement("div"); bar.className = "sk-bar"; bar.dataset.k = k; bar.textContent = S.bar; b.insertBefore(bar, b.firstChild); r.style.setProperty("--sk-h", bar.offsetHeight + "px");
     var h = document.querySelector(".lw-header");
     if (h) ["l", "r"].forEach(function (c) { var e = document.createElement("span"); e.className = "sk-lan " + c; e.textContent = S.lamps; e.setAttribute("aria-hidden", "true"); h.appendChild(e); });
     var f = (cur || DEF); if (reduce || f.on === false || f.pulse === false && f.shine === false && f.reveal === false) return;
