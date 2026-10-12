@@ -288,3 +288,20 @@ main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
  .lw-card .lw-badge{font-size:10px!important;padding:2px 8px!important;top:8px!important;left:8px!important}
 }
 @media(max-width:560px){.lw-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+/* ==== Thuong hieu: pill nho, mem, anh kim ==== */
+body .amo-new-brands{display:flex!important;flex-wrap:wrap;justify-content:center;gap:10px!important;background:none!important;border:0!important}
+body .amo-new-brands a{flex:0 0 auto;padding:9px 20px!important;border-radius:999px;font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#f3d98b!important;border:1px solid rgba(213,168,63,.45);background:linear-gradient(120deg,rgba(213,168,63,.10) 0%,rgba(255,236,170,.22) 40%,rgba(213,168,63,.08) 70%,rgba(255,236,170,.16) 100%)!important;background-size:220% 100%;box-shadow:0 0 0 1px rgba(0,0,0,.4) inset,0 2px 10px rgba(213,168,63,.12);transition:background-position .6s,box-shadow .3s,transform .2s;text-decoration:none}
+body .amo-new-brands a:hover,body .amo-new-brands a:active{background-position:100% 0;box-shadow:0 0 14px rgba(240,200,90,.35);transform:translateY(-1px)}
+@media(max-width:520px){body .amo-new-brands{grid-template-columns:none!important}body .amo-new-brands a{padding:8px 16px!important;font-size:12px}}
+
+/* ==== Nut mua tren trang san pham ==== */
+.lw-buy{display:grid;grid-template-columns:78px 1fr 56px;gap:10px;align-items:stretch}.lw-buy #pAdd{grid-column:2/4}
+.lw-buy #pAdd{min-width:0}
+.lw-buy #pBuy{grid-column:1/3;display:block}.lw-buy .zalo{grid-column:3}
+@media(min-width:821px){.lw-buy{grid-template-columns:78px 1fr 1fr 56px}.lw-buy #pAdd,.lw-buy #pBuy,.lw-buy .zalo{grid-column:auto}}
+.lw-buy .zalo{display:grid;place-items:center;width:56px;height:56px;padding:0!important;border:0!important;border-radius:50%;background:#0068ff;box-shadow:0 4px 14px rgba(0,104,255,.45);position:relative;justify-self:end}
+.lw-buy .zalo b{color:#fff;font-size:14px;font-weight:700;letter-spacing:0}
+.lw-buy .zalo:active{transform:scale(.94)}
+/* ==== Checkout: SL khong xuong dong ==== */
+.lw-co .it .nm small{display:block;line-height:1.5}.lw-co .it .nm small i{font-style:normal;white-space:nowrap;color:var(--lw-gold-2);font-weight:600;margin-left:2px}
