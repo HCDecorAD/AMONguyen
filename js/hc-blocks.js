@@ -26,6 +26,10 @@
     ".hcb-vid{position:relative;aspect-ratio:16/9;background:#000}.hcb-vid iframe,.hcb-vid video{position:absolute;inset:0;width:100%;height:100%;border:0}" +
     ".hcb-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.hcb-list div{border-top:1px solid var(--hcb-accent);padding:16px 4px;opacity:.9}" +
     ".hcb-cta{border-top:1px solid var(--hcb-line);background:rgba(127,127,127,.09);padding:60px 5%}" +
+    ".hcb-s-s h1{font-size:clamp(24px,3.4vw,40px)}.hcb-s-s h2{font-size:clamp(18px,2vw,26px)}.hcb-s-s .hcb-card{min-height:90px;padding:14px}.hcb-s-s .hcb-card b{font-size:14px}.hcb-s-s .hcb-card span{font-size:12px}.hcb-s-s .hcb-lead{font-size:14px}.hcb-s-s .hcb-hero-img,.hcb-s-s.hcb-hero img{max-height:34vh;object-fit:cover}.hcb-s-s .hcb-fig{max-width:380px;margin:0 auto}.hcb-s-s .hcb-gal img{aspect-ratio:1}" +
+    ".hcb-s-l h1{font-size:clamp(40px,6.5vw,84px)}.hcb-s-l h2{font-size:clamp(30px,4.2vw,56px)}.hcb-s-l .hcb-card{min-height:230px;padding:30px}.hcb-s-l .hcb-card b{font-size:22px}.hcb-s-l .hcb-card span{font-size:15px}.hcb-s-l .hcb-lead{font-size:18px}.hcb-s-l .hcb-card img{margin:-30px -30px 18px;width:calc(100% + 60px)}" +
+    ".hcb-s-s .hcb-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.hcb-s-l .hcb-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}.hcb-s-s .hcb-gal{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.hcb-s-l .hcb-gal{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}" +
+    ".hcb-grid[data-c],.hcb-gal[data-c],.hcb-links[data-c],.hcb-list[data-c]{grid-template-columns:repeat(var(--c),minmax(0,1fr))}@media(max-width:700px){.hcb-grid[data-c],.hcb-gal[data-c],.hcb-links[data-c],.hcb-list[data-c]{grid-template-columns:repeat(min(var(--c),2),minmax(0,1fr))}}" +
     "@media(max-width:520px){.hcb-b{padding:22px 5%}.hcb-hero.hcb-b{padding:0}.hcb-hero .hcb-t{padding:24px 5% 6px}}";
 
   var LINK_OK = /^(https?:\/\/[^\s<>"']+|\/[^\s<>"':]*|#[\w-]*|mailto:[^\s<>"']+|tel:\+?[\d\s.-]+|[A-Za-z0-9_\-./]+(\?[^\s<>"']*)?(#[\w-]*)?)$/;
@@ -107,7 +111,16 @@
     var root = el("div", "hcb"); root.setAttribute("data-hcb", "1");
     (Array.isArray(blocks) ? blocks : []).forEach(function (b) {
       if (!b || b.enabled === false || !R[b.type]) return;
-      try { var n = R[b.type](b.props || {}); if (n) { n.setAttribute("data-block", b.id || ""); root.appendChild(n); } } catch (e) { /* skip bad block */ }
+      try {
+        var pr = b.props || {}, n = R[b.type](pr);
+        if (n) {
+          n.setAttribute("data-block", b.id || "");
+          if (pr.size === "s" || pr.size === "l") n.className += " hcb-s-" + pr.size;
+          var c = Number(pr.cols);
+          if (c >= 2 && c <= 6) { var g = n.querySelector(".hcb-grid,.hcb-gal,.hcb-links,.hcb-list"); if (g) { g.setAttribute("data-c", String(c)); g.style.setProperty("--c", String(c)); } }
+          root.appendChild(n);
+        }
+      } catch (e) { /* skip bad block */ }
     });
     if (target) { while (target.firstChild) target.removeChild(target.firstChild); target.appendChild(root); }
     return root;

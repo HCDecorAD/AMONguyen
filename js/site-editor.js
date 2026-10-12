@@ -1,4 +1,4 @@
-/* "Nội dung website" — owner-facing block editor for shop-admin.html.
+/* "Giao diện website" — owner-facing block editor for shop-admin.html.
    Relies on shop-admin globals: api, act, esc, content, setnav, openBox, closeBox, canW, canMgr, STORE, ME, table. */
 (function () {
   "use strict";
@@ -41,14 +41,14 @@
   window.hcUpload = async function (file) { var d = await compress(file); var r = await api("/api/v1/media", { method: "POST", body: JSON.stringify({ name: file.name, data: d }) }); return r.url; };
   window.siteUpload = function (input, key) {
     var f = input.files && input.files[0]; if (!f) return;
-    act(async function () { var u = await hcUpload(f); FORM.props[key] = u; var b = ED.blocks.find(function (x) { return x.id === FORM.id; }); formDraw(b.type); });
+    act(async function () { var u = await hcUpload(f); var pt = key.split("."), o = FORM.props; for (var q = 0; q < pt.length - 1; q++) o = o[pt[q]]; o[pt[pt.length - 1]] = u; var b = ED.blocks.find(function (x) { return x.id === FORM.id; }); formDraw(b.type); });
   };
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function nid() { return "b" + Math.random().toString(36).slice(2, 9); }
   function blank(type) {
     var p = {}; (FIELDS[type] || []).forEach(function (f) { p[f[0]] = f[2] === "align" ? "left" : ""; });
-    if (ITEMS[type]) p[ITEMS[type].key] = []; return { id: nid(), type: type, enabled: true, props: p };
+    p.size = "m"; if (ITEMS[type]) p[ITEMS[type].key] = []; return { id: nid(), type: type, enabled: true, props: p };
   }
   function summary(b) {
     var p = b.props || {}; var s = p.title || p.eyebrow || p.kicker || p.caption || p.alt || p.url || p.image || p.buttonLabel || "";
@@ -78,7 +78,7 @@
   function viewUrl(slug) { var b = siteBase(); if (!b) return ""; return slug === "home" ? b : b + "p.html?slug=" + encodeURIComponent(slug); }
 
   window.siteView = function () {
-    setnav("site", "Nội dung website");
+    setnav("site", "Giao diện website");
     act(async function () {
       var r = await Promise.all([api("/api/v1/site/pages"), api("/api/stores").catch(function () { return { items: [] }; })]);
       window.__SITE_STORES = r[1].items || [];
@@ -101,7 +101,7 @@
     act(async function () {
       var d = await api("/api/v1/site/pages/" + encodeURIComponent(slug));
       ED = { slug: slug, title: d.title || (slug === "home" ? "Trang chủ" : slug), blocks: d.exists ? d.draft : [], version: d.version || 0, published: !!d.published, dirty: false };
-      setnav("site", "Nội dung website"); siteDraw();
+      setnav("site", "Giao diện website"); siteDraw();
     });
   };
   function mark() { ED.dirty = true; var s = document.getElementById("sdirty"); if (s) s.hidden = false; drawPreview(); }
@@ -109,23 +109,25 @@
   function siteDraw() {
     var w = canW(), u = viewUrl(ED.slug);
     content.innerHTML = '<div class="panel"><div class="actions"><h3>' + esc(ED.title) + ' <span class="muted sm">(' + esc(ED.slug) + ')</span></h3><span class="w"><button onclick="siteView()">← Danh sách trang</button></span></div>' +
-      '<div class="actions" style="flex-wrap:wrap;gap:8px"><span id="sdirty" class="pill y" ' + (ED.dirty ? "" : "hidden") + '>Chưa lưu nháp</span>' +
-      (w ? '<input id="stitle" value="' + esc(ED.title) + '" placeholder="Tên trang" style="max-width:220px" oninput="ED_title(this.value)"> <button class="primary" onclick="siteSave()">Lưu nháp</button>' : "") +
-      (canMgr() ? ' <button onclick="sitePublish()">Xuất bản</button>' : "") + (canMgr() && ED.published ? ' <button onclick="siteUnpublish()">Gỡ xuất bản</button>' : "") +
+      '<div class="actions" style="flex-wrap:wrap;gap:8px"><span id="sdirty" class="pill y" ' + (ED.dirty ? "" : "hidden") + '>Có thay đổi chưa đăng</span>' +
+      (w ? '<input id="stitle" value="' + esc(ED.title) + '" placeholder="Tên trang" style="max-width:220px" oninput="ED_title(this.value)"> <button onclick="siteSave()">Lưu tạm</button>' : "") +
+      (canMgr() ? ' <button class="primary" onclick="sitePublish()">Đăng lên web</button>' : "") + (canMgr() && ED.published ? ' <button onclick="siteUnpublish()">Gỡ xuất bản</button>' : "") +
       ' <button onclick="siteVersions()">Lịch sử</button>' + (u ? ' <a href="' + esc(u) + '" target="_blank" rel="noopener"><button>Mở trang ↗</button></a>' : "") + '</div>' +
-      (canMgr() ? "" : '<p class="muted sm">Bạn có thể soạn nháp. Cần quyền quản lý (manager) trở lên để xuất bản.</p>') + '</div>' +
+      '<p class="muted sm" style="margin:8px 0 0"><b>Cách làm:</b> ① Bấm vào vùng cần sửa ở khung <b>Xem trước</b> (hoặc nút <b>Sửa</b> bên trái) → ② chỉnh chữ, ảnh, kích cỡ rồi bấm <b>Xong</b> → ③ bấm <b>Đăng lên web</b>. Khách thấy ngay.</p>' + (canMgr() ? "" : '<p class="muted sm">Bạn có thể soạn nháp. Cần quyền quản lý (manager) trở lên để xuất bản.</p>') + '</div>' +
       '<div class="siteGrid"><div class="panel"><div class="actions"><h3>Các khối</h3>' + (w ? '<span><select id="sadd"><option value="">+ Thêm khối…</option>' + Object.keys(TYPE_NAME).map(function (t) { return '<option value="' + t + '">' + esc(TYPE_NAME[t]) + '</option>'; }).join("") + '</select></span>' : "") + '</div>' +
       '<div id="sblocks"></div>' + (w && ED.slug === "home" && !ED.blocks.length ? '<button onclick="siteSeed()">Nạp mẫu từ trang chủ hiện tại</button>' : "") + '</div>' +
       '<div class="panel"><div class="actions"><h3>Xem trước</h3><span class="muted sm">Đúng như khách sẽ thấy</span></div><div id="sprev" class="sprev"></div></div></div>';
     if (!document.getElementById("sitecss")) { var st = document.createElement("style"); st.id = "sitecss"; st.textContent =
       "[hidden]{display:none!important}.siteGrid{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:14px;align-items:start}@media(max-width:1000px){.siteGrid{grid-template-columns:1fr}}" +
       ".sb{display:flex;align-items:center;gap:8px;border:1px solid #27303a;border-radius:10px;padding:8px 10px;margin:8px 0;background:#0f141a}.sb.off{opacity:.5}.sb.over{border-color:#246bfe}.sb .dg{cursor:grab;font-size:18px;color:#7f8c9b;padding:0 4px;user-select:none;touch-action:none}.sb .tx{flex:1;min-width:0}.sb .tx b{display:block}.sb .tx span{display:block;color:#8d9aa8;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sb button{padding:5px 8px}" +
+      ".seg{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0}.seg button{min-width:56px;padding:9px 14px;font-size:14px}.seg button.on{background:#246bfe;color:#fff}.sprev [data-block]{cursor:pointer;outline:2px solid transparent;outline-offset:-2px;transition:outline-color .15s}.sprev [data-block]:hover{outline-color:#246bfe}" +
       ".sprev{background:#0d0c0a;color:#f7f1e4;border:1px solid #27303a;border-radius:10px;max-height:78vh;overflow:auto;--amog:#d5a83f}.sit{border:1px dashed #34404d;border-radius:8px;padding:8px;margin:6px 0}"; document.head.appendChild(st); }
     var add = document.getElementById("sadd"); if (add) add.onchange = function () { if (!add.value) return; var b = blank(add.value); ED.blocks.push(b); add.value = ""; mark(); drawBlocks(); siteBlock(b.id); };
     drawBlocks(); drawPreview();
   }
   window.ED_title = function (v) { ED.title = v; ED.dirty = true; var s = document.getElementById("sdirty"); if (s) s.hidden = false; };
-  function drawPreview() { var p = document.getElementById("sprev"); if (p && window.HCBlocks) { HCBlocks.render(ED.blocks, p); if (!ED.blocks.some(function (b) { return b.enabled; })) p.innerHTML = '<p class="muted" style="padding:20px">Chưa có khối nào đang bật.</p>'; } }
+  function drawPreview() { var p = document.getElementById("sprev"); if (p && window.HCBlocks) { HCBlocks.render(ED.blocks, p);
+    if (canW()) { p.title = "Bấm vào vùng muốn sửa"; p.onclick = function (e) { var n = e.target.closest ? e.target.closest("[data-block]") : null; if (n) { e.preventDefault(); siteBlock(n.getAttribute("data-block")); } }; } if (!ED.blocks.some(function (b) { return b.enabled; })) p.innerHTML = '<p class="muted" style="padding:20px">Chưa có khối nào đang bật.</p>'; } }
   function drawBlocks() {
     var host = document.getElementById("sblocks"), w = canW(); if (!host) return;
     if (!ED.blocks.length) { host.innerHTML = '<p class="muted">Trang trống. Thêm khối từ danh sách phía trên.</p>'; return; }
@@ -156,6 +158,12 @@
   function formDraw(type) {
     var w = canW(), it = ITEMS[type], p = FORM.props, dis = w ? "" : " disabled";
     var h = '<h3>' + esc(TYPE_NAME[type]) + '</h3>';
+    var sz = p.size || "m";
+    h += '<label>Kích cỡ khối này</label><div class="seg">' + [["s", "Nhỏ"], ["m", "Vừa"], ["l", "Lớn"]].map(function (o) { return '<button type="button" class="' + (sz === o[0] ? "on" : "") + '" onclick="siteSeg(\'size\',\'' + o[0] + '\',\'' + type + '\')"' + dis + '>' + o[1] + '</button>'; }).join("") + '</div><p class="muted sm" style="margin:4px 0 0">Chọn Nhỏ / Vừa / Lớn: chữ, ảnh và các ô đổi theo. Xem ngay ở khung bên phải sau khi bấm Xong.</p>';
+    if (["cards", "gallery", "links", "list"].indexOf(type) >= 0) {
+      var cl = Number(p.cols) || 0;
+      h += '<label>Số ô trên một hàng (máy tính)</label><div class="seg">' + [[0, "Tự động"], [2, "2"], [3, "3"], [4, "4"], [5, "5"], [6, "6"]].map(function (o) { return '<button type="button" class="' + (cl === o[0] ? "on" : "") + '" onclick="siteSeg(\'cols\',' + o[0] + ',\'' + type + '\')"' + dis + '>' + o[1] + '</button>'; }).join("") + '</div><p class="muted sm" style="margin:4px 0 0">Trên điện thoại web tự xếp tối đa 2 ô một hàng.</p>';
+    }
     (FIELDS[type] || []).forEach(function (f) {
       var k = f[0], v = p[k] == null ? "" : p[k]; h += '<label>' + esc(f[1]) + '</label>';
       if (f[2] === "area") h += '<textarea rows="4" data-k="' + k + '" oninput="siteSet(this)"' + dis + '>' + esc(v) + '</textarea>';
@@ -167,7 +175,10 @@
       h += '<h4>' + esc(it.label) + ' (' + (p[it.key] || []).length + ')</h4>';
       (p[it.key] || []).forEach(function (row, i) {
         h += '<div class="sit">';
-        if (it.fields) it.fields.forEach(function (f) { h += '<input placeholder="' + esc(f[1]) + '" data-k="' + it.key + '.' + i + '.' + f[0] + '" value="' + esc(row[f[0]] || "") + '" oninput="siteSet(this)"' + dis + '>'; });
+        if (it.fields) it.fields.forEach(function (f) {
+          h += '<input placeholder="' + esc(f[1]) + '" data-k="' + it.key + '.' + i + '.' + f[0] + '" value="' + esc(row[f[0]] || "") + '" oninput="siteSet(this)"' + dis + '>';
+          if (w && /^(image|url)$/.test(f[0]) && /^Ảnh|^Link ảnh/.test(f[1])) h += '<input type="file" accept="image/jpeg,image/png,image/webp" onchange="siteUpload(this,\'' + it.key + '.' + i + '.' + f[0] + '\')">';
+        });
         else h += '<input placeholder="Nội dung" data-k="' + it.key + '.' + i + '" value="' + esc(row) + '" oninput="siteSet(this)"' + dis + '>';
         if (w) h += '<button onclick="siteItem(\'' + type + '\',' + i + ',-1)">↑</button> <button onclick="siteItem(\'' + type + '\',' + i + ',1)">↓</button> <button onclick="siteItem(\'' + type + '\',' + i + ',0)">Xoá</button>';
         h += '</div>';
@@ -177,6 +188,7 @@
     h += '<div class="actions" style="margin-top:14px"><button onclick="closeBox()">Đóng</button>' + (w ? '<button class="primary" onclick="siteApply(\'' + type + '\')">Xong</button>' : "") + '</div>';
     openBox(h);
   }
+  window.siteSeg = function (k, v, type) { FORM.props[k] = v; formDraw(type); };
   window.siteSet = function (el) {
     var path = el.dataset.k.split("."), o = FORM.props; for (var i = 0; i < path.length - 1; i++) o = o[path[i]]; o[path[path.length - 1]] = el.value;
   };

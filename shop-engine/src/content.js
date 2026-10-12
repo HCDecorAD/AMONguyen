@@ -37,6 +37,8 @@ function cleanBlock(b, mkId) {
     case "list": Object.assign(out, { title: str(p.title, 120), linkLabel: str(p.linkLabel, 40), linkUrl: link(p.linkUrl), items: items(p.items, 20, (x) => str(typeof x === "string" ? x : x?.text, 200)).filter(Boolean) }); break;
     case "cta": Object.assign(out, { title: str(p.title, 160), text: str(p.text, 400), buttonLabel: str(p.buttonLabel, 40), buttonUrl: link(p.buttonUrl) }); break;
   }
+  out.size = ["s", "m", "l"].includes(p.size) ? p.size : "m";
+  if (["cards", "gallery", "links", "list"].includes(b.type)) { const c = Number(p.cols); out.cols = [2, 3, 4, 5, 6].includes(c) ? c : 0; }
   return { id: str(b.id, 40).replace(/[^\w-]/g, "") || mkId("blk"), type: b.type, enabled: b.enabled !== false, props: out };
 }
 export function cleanBlocks(blocks, mkId) {
