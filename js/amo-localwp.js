@@ -102,6 +102,7 @@ function load(cb){
   }).catch(function(){fin(DEMO)});
 }
 window.AMO_LW={sizes:SIZES,inRange:inRange,card:card,demo:DEMO,money:money,apply:apply,engine:ENGINE,store:STORE,load:load,root:ROOT,el:el,refreshCart:refreshCart,lang:function(){return lang}};
+try{var fxs=document.createElement("script");fxs.src=ROOT+"js/amo-fx.js?v=20261012";fxs.defer=true;document.head.appendChild(fxs)}catch(e){}
 
 function home(){
   var gs=document.querySelectorAll("#lwHomeGrid,[data-hcb-products]");if(!gs.length)return;
