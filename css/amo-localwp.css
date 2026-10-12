@@ -397,7 +397,8 @@ html[data-skin="noel"][data-theme="light"]{--lw-bg:#f5f9f3;--lw-panel:#fdfffb;--
 html[data-skin="tet"]{--lw-bg:#1a0506;--lw-panel:#260909;--lw-card:#2e0d0d;--lw-field:#330f0f;--lw-line:#6a1f1f;--lw-gold:#f5c518;--lw-gold-2:#ffe08a;--lw-gold-ink:#5a0a0a;--lw-text:#fff3dc;--lw-soft:#f1dcb8;--lw-mute:#c9aa86;--lw-hdr:#4a0a0c;--lw-gr:245,197,24}
 html[data-skin="tet"][data-theme="light"]{--lw-bg:#fff5e1;--lw-panel:#fffcf2;--lw-card:#fff;--lw-field:#fff;--lw-line:#efd29a;--lw-gold:#c4161c;--lw-gold-2:#a30f14;--lw-gold-ink:#fff;--lw-text:#3a0d0d;--lw-soft:#5a2a22;--lw-mute:#85594a;--lw-hdr:#fffcf2;--lw-gr:196,22,28}
 /* dải chúc mừng */
-.sk-bar{text-align:center;font-size:12.5px;letter-spacing:.06em;padding:6px 10px;font-weight:600;position:relative;z-index:61}
+.sk-bar{text-align:center;font-size:12.5px;line-height:18px;letter-spacing:.06em;padding:6px 10px;font-weight:600;position:sticky;top:0;z-index:70}
+html[data-skin="noel"] .lw-header,html[data-skin="tet"] .lw-header{top:var(--sk-h,30px)}
 html[data-skin="noel"] .sk-bar{background:linear-gradient(90deg,#8f1a27,#c8283a,#8f1a27);color:#fff}
 html[data-skin="tet"] .sk-bar{background:linear-gradient(90deg,#8a0b10,#c4161c,#8a0b10);color:#ffe08a}
 /* dây đèn / viền đỏ-vàng dưới header */
