@@ -35,7 +35,7 @@ var sub=c.reduce(function(a,x){return a+Number(x.price)*Number(x.qty)},0),disc=0
 function el(t,cls,txt){var e=document.createElement(t);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
 function drawItems(){var box=$("items");box.replaceChildren();c.forEach(function(x){
  var r=el("div","it"),im=el("div","im");if(x.image){var i=el("img");i.src=x.image;i.alt="";im.appendChild(i)}
- var nm=el("div","nm"),a=el("b",null,x.name||"Sản phẩm AMO"),b=el("small",null,"Size "+(x.size||x.sku||"")+" · SL "+Number(x.qty));nm.append(a,b);
+ var nm=el("div","nm"),a=el("b",null,x.name||"Sản phẩm AMO"),b=el("small",null,"Size "+(x.size||x.sku||""));var q=el("i",null,"× "+Number(x.qty));b.append(" · ",q);nm.append(a,b);
  r.append(im,nm,el("div","pr",money(Number(x.price)*Number(x.qty))));box.appendChild(r)})}
 function draw(){var total=Math.max(0,sub-disc);
  $("tSub").textContent=money(sub);$("rDisc").hidden=!(disc>0);$("tDisc").textContent="- "+money(disc);$("tDiscL").textContent="Giảm giá"+(code?" ("+code+")":"");

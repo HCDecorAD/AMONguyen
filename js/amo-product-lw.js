@@ -33,8 +33,8 @@ function render(){
   $("pZalo").onclick=function(){
     var sz=selected&&selected.size?" - size "+selected.size:"";
     var msg="Chào shop, mình muốn hỏi về sản phẩm: "+product.name+sz+"\n"+location.href.split("#")[0];
-    try{if(navigator.clipboard)navigator.clipboard.writeText(msg)}catch(e){}
-    toast("Đã sao chép link sản phẩm. Trong Zalo, bấm giữ ô chat > Dán rồi Gửi để shop xem đúng sản phẩm.");say("Đã sao chép link sản phẩm - dán vào Zalo để gửi shop.");
+    var ok=false;try{if(navigator.clipboard){navigator.clipboard.writeText(msg);ok=true}}catch(e){}if(!ok){try{var ta=document.createElement("textarea");ta.value=msg;ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove()}catch(e){}}
+    toast("Đã sao chép link sản phẩm. Mở Zalo rồi Dán (Ctrl+V) và Gửi.");say("Đã sao chép link sản phẩm - dán vào Zalo để gửi shop.");
   };
   gallery(product.images||[]);
   var box=$("pOpts");box.replaceChildren();
