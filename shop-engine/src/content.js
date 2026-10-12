@@ -82,8 +82,11 @@ export async function handleContent(req, env, store, H, auth) {
   }
   if (!act && m === "POST") {
     const d = await input(req), blocks = cleanBlocks(d.blocks, id), title = str(d.title, 120) || slug;
-    await env.DB.prepare("INSERT INTO site_pages(id,store_id,slug,title,draft_json,updated_at,updated_by) VALUES(?,?,?,?,?,?,?) ON CONFLICT(store_id,slug) DO UPDATE SET title=excluded.title,draft_json=excluded.draft_json,updated_at=excluded.updated_at,updated_by=excluded.updated_by").bind(id("page"), store.id, slug, title, JSON.stringify(blocks), nowIso(), who || null).run();
-    return json(req, { ok: true, blocks });
+    const cur = await row();
+    if (cur && d.base && cur.updated_at !== d.base) return json(req, { error: "stale", message: "Trang vừa được người khác sửa. Hãy tải lại trang để lấy bản mới nhất." }, 409);
+    const ts = nowIso();
+    await env.DB.prepare("INSERT INTO site_pages(id,store_id,slug,title,draft_json,updated_at,updated_by) VALUES(?,?,?,?,?,?,?) ON CONFLICT(store_id,slug) DO UPDATE SET title=excluded.title,draft_json=excluded.draft_json,updated_at=excluded.updated_at,updated_by=excluded.updated_by").bind(id("page"), store.id, slug, title, JSON.stringify(blocks), ts, who || null).run();
+    return json(req, { ok: true, blocks, updated_at: ts });
   }
   if (act === "versions" && m === "GET") {
     return json(req, { items: (await env.DB.prepare("SELECT version,title,note,created_by,created_at FROM site_page_versions WHERE store_id=? AND slug=? ORDER BY version DESC LIMIT ?").bind(store.id, slug, KEEP_VERSIONS).all()).results });
