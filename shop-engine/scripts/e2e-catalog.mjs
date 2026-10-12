@@ -40,4 +40,21 @@ const bk=await call('/api/products/bulk',{method:'POST',body:{items:[{name:bn,br
 eq(bk.status,201,'bulk create');eq(bk.data.summary.variants,6,'3 sizes x 2 colors');
 const BD=await pub('/api/public/product?store=store_amo&slug='+bk.data.created[0].slug);eq(BD.data.variants.length,6,'bulk variants public');eq(BD.data.material,'Da bò','material');eq(BD.data.badge,'Hot','badge');eq(BD.data.brand,'Bally','brand set');eq(BD.data.cat,'Giày Loafer','category set');
 eq(BD.data.variants.every(v=>v.color&&v.available===3),true,'colors + stock');
+
+// quen mat khau (khong email): khach gui yeu cau -> shop tao link -> khach dat lai
+const em='reset'+u+'@test.vn';
+const rg=await call('/api/c/register',{method:'POST',token:null,body:{name:'Reset Test',email:em,password:'matkhau-cu-1',consent:true}});eq(rg.status,201,'register for reset');
+const fg=await call('/api/c/forgot',{method:'POST',token:null,body:{login:em}});eq(fg.status,200,'forgot ok');
+const fg2=await call('/api/c/forgot',{method:'POST',token:null,body:{login:'khong-co-'+u+'@x.vn'}});eq(fg2.data.message,fg.data.message,'forgot does not reveal account');
+const lst=await call('/api/v1/customers?q='+encodeURIComponent(em));const cu=lst.data.items.find(x=>x.email===em);eq(!!cu.reset_requested_at,true,'reset request flagged');
+eq((await call('/api/v1/customers/'+cu.id+'/reset-link',{method:'POST',token:null})).status,401,'reset-link needs admin');
+const rl=await call('/api/v1/customers/'+cu.id+'/reset-link',{method:'POST'});eq(rl.status,200,'reset-link');
+eq((await call('/api/c/reset',{method:'POST',token:null,body:{token:rl.data.token,password:'short'}})).status,400,'reset rejects short pw');
+eq((await call('/api/c/reset',{method:'POST',token:null,body:{token:rl.data.token,password:'matkhau-moi-2'}})).status,200,'reset ok');
+eq((await call('/api/c/reset',{method:'POST',token:null,body:{token:rl.data.token,password:'matkhau-moi-3'}})).status,400,'reset token single use');
+eq((await call('/api/c/login',{method:'POST',token:null,body:{login:em,password:'matkhau-cu-1'}})).status,401,'old pw rejected');
+eq((await call('/api/c/login',{method:'POST',token:null,body:{login:em,password:'matkhau-moi-2'}})).status,200,'new pw works');
+// gia KM: bulk dat sale cho bien the, danh sach hien compare
+const bs=await call('/api/products/bulk',{method:'POST',body:{items:[{name:'Sale '+u,price:2000000,sale_price:1500000,sizes:'40',stock:2,status:'active'}]}});
+const sl=(await pub('/api/public/products?store=store_amo')).data.items.find(x=>x.name==='Sale '+u);eq(sl.price,1500000,'sale price shown');eq(sl.compare,2000000,'compare (gia goc) shown');
 console.log('CATALOG_E2E PASS');

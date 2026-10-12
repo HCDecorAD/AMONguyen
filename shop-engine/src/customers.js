@@ -138,6 +138,27 @@ export async function handleCustomers(req, env, store, H, auth) {
       return json(req, { ok: true, token, customer: publicProfile(await env.DB.prepare("SELECT * FROM customers WHERE id=?").bind(cid).first()) }, 201);
     }
 
+    if (path === "/api/c/forgot" && m === "POST") {
+      const d = await input(req), login = clean(d.login).toLowerCase(), email = normEmail(login), phone = email ? "" : normPhone(login);
+      const msg = "Đã ghi nhận yêu cầu. Shop sẽ liên hệ qua Zalo/điện thoại để gửi đường dẫn đặt lại mật khẩu. Bạn cũng có thể nhắn Zalo shop để được hỗ trợ nhanh.";
+      if (!email && !phone) return json(req, { ok: true, message: msg });
+      const c = await env.DB.prepare(`SELECT id,reset_requested_at FROM customers WHERE store_id=? AND status='active' AND ${email ? "email=?" : "phone=?"} AND (password_hash IS NOT NULL OR google_sub IS NOT NULL) LIMIT 1`).bind(store.id, email || phone).first();
+      if (c && (!c.reset_requested_at || c.reset_requested_at < plusIso(-60e3))) await env.DB.prepare("UPDATE customers SET reset_requested_at=? WHERE id=?").bind(nowIso(), c.id).run();
+      return json(req, { ok: true, message: msg });
+    }
+    if (path === "/api/c/reset" && m === "POST") {
+      const d = await input(req), tok = clean(d.token), pw = String(d.password || "");
+      if (!tok || pw.length < 8 || pw.length > 128) return bad("Mật khẩu từ 8 đến 128 ký tự");
+      const th = await sha(tok), r = await env.DB.prepare("SELECT customer_id FROM customer_resets WHERE token_hash=? AND store_id=? AND used_at IS NULL AND expires_at>?").bind(th, store.id, nowIso()).first();
+      if (!r) return bad("Đường dẫn đã hết hạn hoặc đã dùng. Vui lòng nhờ shop gửi lại.", 400);
+      const salt = newSalt(), hash = await pbkdf2(pw, salt);
+      await env.DB.batch([
+        env.DB.prepare("UPDATE customers SET password_hash=?,password_salt=?,fail_count=0,locked_until=NULL,reset_requested_at=NULL WHERE id=? AND store_id=?").bind(hash, salt, r.customer_id, store.id),
+        env.DB.prepare("UPDATE customer_resets SET used_at=? WHERE token_hash=?").bind(nowIso(), th),
+        env.DB.prepare("DELETE FROM customer_sessions WHERE customer_id=?").bind(r.customer_id),
+      ]);
+      return json(req, { ok: true });
+    }
     if (path === "/api/c/login" && m === "POST") {
       const d = await input(req), login = clean(d.login).toLowerCase(), pw = String(d.password || "");
       const email = normEmail(login), phone = email ? "" : normPhone(login);
@@ -286,13 +307,25 @@ export async function handleCustomers(req, env, store, H, auth) {
     if (lvl < 2) return deny();
     const q = clean(u.searchParams.get("q")).slice(0, 60), lim = Math.min(500, parseInt(u.searchParams.get("limit") || "200", 10) || 200);
     const like = "%" + q.replace(/[%_]/g, "") + "%";
-    const rows = (await env.DB.prepare(`SELECT c.id,c.name,c.email,c.phone,c.address,c.status,c.tier_override,c.created_at,c.last_login_at,c.last_seen_at,c.source,c.lead_at,(c.password_hash IS NOT NULL OR c.google_sub IS NOT NULL) has_account,
+    const rows = (await env.DB.prepare(`SELECT c.id,c.name,c.email,c.phone,c.address,c.status,c.tier_override,c.created_at,c.last_login_at,c.last_seen_at,c.reset_requested_at,c.source,c.lead_at,(c.password_hash IS NOT NULL OR c.google_sub IS NOT NULL) has_account,
       COALESCE((SELECT SUM(total) FROM orders o WHERE o.customer_id=c.id AND o.status='completed'),0) spent,
       (SELECT COUNT(*) FROM orders o WHERE o.customer_id=c.id) orders,
       (SELECT COUNT(*) FROM customer_events e WHERE e.customer_id=c.id AND e.type='visit') visits
       FROM customers c WHERE c.store_id=? AND c.status<>'deleted' AND (?='' OR c.name LIKE ? OR c.email LIKE ? OR c.phone LIKE ?) ORDER BY COALESCE(c.last_seen_at,c.created_at) DESC LIMIT ?`).bind(store.id, q, like, like, like, lim).all()).results;
     const tiers = await loadTiers(env, store);
     return json(req, { items: rows.map((r) => ({ ...r, tier: tierFor(tiers, r.spent, r.tier_override).name })) });
+  }
+  const rl = path.match(/^\/api\/v1\/customers\/([^/]+)\/reset-link$/);
+  if (rl && m === "POST") {
+    if (lvl < 2) return deny();
+    const c = await env.DB.prepare("SELECT id FROM customers WHERE id=? AND store_id=? AND status='active'").bind(rl[1], store.id).first();
+    if (!c) return json(req, { error: "not found" }, 404);
+    const tok = "rs_" + b64u(crypto.getRandomValues(new Uint8Array(24)));
+    await env.DB.batch([
+      env.DB.prepare("DELETE FROM customer_resets WHERE customer_id=?").bind(c.id),
+      env.DB.prepare("INSERT INTO customer_resets(token_hash,store_id,customer_id,expires_at) VALUES(?,?,?,?)").bind(await sha(tok), store.id, c.id, plusIso(24 * 36e5)),
+    ]);
+    return json(req, { ok: true, token: tok, expires_hours: 24 });
   }
   const cm = path.match(/^\/api\/v1\/customers\/([^/]+)$/);
   if (cm && m === "GET") {

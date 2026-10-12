@@ -235,3 +235,17 @@ main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 .lw-card .bts .bt2{background:transparent;color:var(--lw-gold);border:1px solid var(--lw-gold)}
 .lw-buy .go.alt{background:transparent;color:var(--lw-gold);border:1px solid var(--lw-gold)}
 .lw-card .bts .bt{white-space:nowrap;padding:10px 4px;font-size:12.5px}
+
+.lw-card{position:relative}
+.lw-card .pr .old{margin-left:8px;font-weight:400;font-size:.82em;opacity:.6}
+.lw-card .pr .off,.price .off{margin-left:6px;font-size:11px;font-weight:700;background:#c0392b;color:#fff;padding:2px 6px;border-radius:3px;vertical-align:1px}
+.lw-badge{position:absolute;top:12px;left:12px;background:var(--lw-gold);color:var(--lw-gold-ink);font-size:11px;font-weight:800;padding:3px 9px;letter-spacing:.04em}
+.price .old{margin-left:10px;font-size:.6em;font-weight:400;opacity:.6}
+@keyframes lwWiggle{0%,86%,100%{transform:rotate(0)}88%{transform:rotate(-14deg)}91%{transform:rotate(12deg)}94%{transform:rotate(-8deg)}97%{transform:rotate(5deg)}}
+.lw-float a{animation:lwWiggle 4s ease-in-out infinite;transform-origin:50% 60%}
+.lw-float a.fb{animation-delay:.6s}
+.lw-float a:hover{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.lw-float a{animation:none}}
+#lwToast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;border:1px solid var(--lw-gold);padding:12px 16px;z-index:100000;max-width:min(92vw,420px);font-size:14px;line-height:1.4;box-shadow:0 6px 24px #0008}
+
+.lw-card .pr{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}.lw-card .pr .old{margin-left:0;white-space:nowrap}.lw-card .pr .off{margin-left:0}

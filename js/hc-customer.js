@@ -26,7 +26,9 @@
     return o;
   })();
   const srcLabel = () => utm.utm_source || utm.ref || "direct";
-  const token = () => ls.get(K.tok) || "";
+  const ss = { get: (k) => { try { return sessionStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch {} }, del: (k) => { try { sessionStorage.removeItem(k); } catch {} } };
+  const remember = () => ls.get("HCC_REMEMBER") !== "0";
+  const token = () => ls.get(K.tok) || ss.get(K.tok) || "";
   async function call(path, { method = "GET", body } = {}) {
     const h = { "x-store-id": STORE };
     if (body) h["content-type"] = "application/json";
@@ -36,16 +38,20 @@
     if (!r.ok) { const e = new Error(d.error || "Lỗi " + r.status); e.status = r.status; throw e; }
     return d;
   }
-  const keep = (d) => { if (d.token) ls.set(K.tok, d.token); return d; };
+  const keep = (d) => { if (d.token) { if (remember()) { ls.set(K.tok, d.token); ss.del(K.tok); } else { ss.set(K.tok, d.token); ls.del(K.tok); } } return d; };
   const HCC = {
     api: API, store: STORE, visitorId: vid,
     loggedIn: () => !!token(),
+    setRemember: (on) => ls.set("HCC_REMEMBER", on ? "1" : "0"),
+    getRemember: remember,
+    forgot: (login) => call("/api/c/forgot", { method: "POST", body: { login } }),
+    reset: (token, password) => call("/api/c/reset", { method: "POST", body: { token, password } }),
     config: () => call("/api/c/config"),
     register: (f) => call("/api/c/register", { method: "POST", body: { ...f, visitor_id: vid } }).then(keep),
     login: (login, password) => call("/api/c/login", { method: "POST", body: { login, password, visitor_id: vid } }).then(keep),
     google: (credential) => call("/api/c/google", { method: "POST", body: { credential, visitor_id: vid } }).then(keep),
-    logout: async () => { try { await call("/api/c/logout", { method: "POST" }); } catch {} ls.del(K.tok); },
-    me: () => call("/api/c/me").catch((e) => { if (e.status === 401) ls.del(K.tok); throw e; }),
+    logout: async () => { try { await call("/api/c/logout", { method: "POST" }); } catch {} ls.del(K.tok); ss.del(K.tok); },
+    me: () => call("/api/c/me").catch((e) => { if (e.status === 401) { ls.del(K.tok); ss.del(K.tok); } throw e; }),
     update: (f) => call("/api/c/me", { method: "PATCH", body: f }),
     remove: () => call("/api/c/me/delete", { method: "POST" }).then((d) => { ls.del(K.tok); return d; }),
     quote: (subtotal, code) => call("/api/c/coupon?subtotal=" + encodeURIComponent(subtotal) + "&code=" + encodeURIComponent(code || "")),
