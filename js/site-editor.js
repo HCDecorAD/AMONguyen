@@ -87,8 +87,8 @@
         '<p class="muted sm">Mỗi trang gồm các khối xếp chồng. Kéo thả hoặc dùng nút ↑ ↓ để đổi thứ tự. Chỉnh sửa lưu ở dạng <b>nháp</b>; khách chỉ thấy khi bấm <b>Xuất bản</b>. Trang chưa xuất bản sẽ hiện nội dung cũ của website.</p>' +
         htable(rows, [["Trang", function (x) { return esc(x.title || x.slug); }], ["Địa chỉ", function (x) { return esc(x.slug === "home" ? "Trang chủ" : "p.html?slug=" + x.slug); }],
           ["Trạng thái", function (x) { return x.published ? '<span class="pill g">Đã xuất bản v' + x.version + '</span>' + (x.unpublished_changes ? ' <span class="pill y">Có thay đổi chưa xuất bản</span>' : "") : (x.empty ? '<span class="pill">Đang dùng nội dung cũ</span>' : '<span class="pill y">Nháp</span>'); }],
-          ["Cập nhật", function (x) { return esc((x.updated_at || "").slice(0, 16) || "—"); }]], function (x) { return '<button onclick="siteEdit(\'' + esc(x.slug) + '\')">' + (canW() ? "Sửa" : "Xem") + '</button>'; }) + '</div>' + '<div class="panel" id="fxPanel" style="margin-top:14px"><div class="actions"><h3>✨ Hiệu ứng sinh động</h3></div><p class="muted sm">Hiệu ứng nhẹ giúp website bớt tĩnh, thu hút khách. Bật/tắt từng loại, lưu ngay, khách thấy sau vài giây. Khách đã bật chế độ "giảm chuyển động" trên điện thoại sẽ không thấy hiệu ứng.</p><div id="fxBody" class="muted sm">Đang tải…</div></div>';
-      siteFx();
+          ["Cập nhật", function (x) { return esc((x.updated_at || "").slice(0, 16) || "—"); }]], function (x) { return '<button onclick="siteEdit(\'' + esc(x.slug) + '\')">' + (canW() ? "Sửa" : "Xem") + '</button>'; }) + '</div>' + '<div class="panel" id="skPanel" style="margin-top:14px"><div class="actions"><h3>🎨 Giao diện website</h3></div><p class="muted sm">Chọn phong cách cho toàn bộ website. Bấm chọn là áp dụng ngay, khách thấy sau vài giây. Khách vẫn tự chuyển Sáng/Tối được.</p><div id="skBody" class="muted sm">Đang tải…</div></div><div class="panel" id="fxPanel" style="margin-top:14px"><div class="actions"><h3>✨ Hiệu ứng sinh động</h3></div><p class="muted sm">Hiệu ứng nhẹ giúp website bớt tĩnh, thu hút khách. Bật/tắt từng loại, lưu ngay, khách thấy sau vài giây. Khách đã bật chế độ "giảm chuyển động" trên điện thoại sẽ không thấy hiệu ứng.</p><div id="fxBody" class="muted sm">Đang tải…</div></div>';
+      siteFx(); siteSkin();
     });
   };
 
@@ -102,6 +102,23 @@
       b.innerHTML = h + (w ? "" : '<p class="muted sm">Cần quyền quản lý (manager) để thay đổi.</p>') + '<p id="fxMsg" class="muted sm"></p>';
       if (!document.getElementById("fxcss")) { var st = document.createElement("style"); st.id = "fxcss"; st.textContent = ".fxr{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid #222c36;cursor:pointer}.fxr:first-child{border-top:0}.fxr input{width:22px;height:22px;margin:2px 0 0;accent-color:#246bfe}.fxr b{display:block;font-size:15px;color:#e8eef5}.fxr small{display:block;color:#8d9aa8;font-size:12.5px;margin-top:2px}"; document.head.appendChild(st); }
     }).catch(function () { var b = document.getElementById("fxBody"); if (b) b.textContent = "Chưa tải được cài đặt hiệu ứng."; });
+  };
+  var SKL = [["noir", "Noir Gold", "Đen & vàng kim – mặc định", "#0b0b0b", "#d4a933"], ["ivory", "Ivory Maison", "Kem ấm & đồng champagne", "#f7f1e7", "#a9794a"], ["emerald", "Emerald Club", "Xanh ngọc thẫm & vàng nhạt", "#06110d", "#c9ab62"], ["burgundy", "Burgundy Atelier", "Đỏ rượu vang & hồng vàng", "#12080a", "#d7a58f"]];
+  window.siteSkin = function () {
+    api("/api/v1/site/settings").then(function (d) {
+      var cur = d.skin || "noir", w = canMgr(), b = document.getElementById("skBody"); if (!b) return;
+      b.innerHTML = '<div class="skg">' + SKL.map(function (x) {
+        return '<button type="button" class="skc' + (x[0] === cur ? " on" : "") + '" data-s="' + x[0] + '"' + (w ? "" : " disabled") + ' onclick="siteSkinSave(\'' + x[0] + '\')"><i style="background:' + x[3] + '"><u style="background:' + x[4] + '"></u><u style="background:' + x[4] + ';width:34%;opacity:.5"></u></i><b>' + esc(x[1]) + '</b><small>' + esc(x[2]) + '</small></button>';
+      }).join("") + '</div>' + (w ? "" : '<p class="muted sm">Cần quyền quản lý (manager) để thay đổi.</p>') + '<p id="skMsg" class="muted sm"></p>';
+      if (!document.getElementById("skcss")) { var st = document.createElement("style"); st.id = "skcss"; st.textContent = ".skg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.skc{text-align:left;background:#111a23;border:2px solid #222c36;border-radius:10px;padding:8px;color:#e8eef5;cursor:pointer;font:inherit}.skc.on{border-color:#246bfe;box-shadow:0 0 0 2px rgba(36,107,254,.35)}.skc i{display:block;height:54px;border-radius:6px;border:1px solid #2c3946;padding:10px;margin-bottom:8px}.skc u{display:block;height:6px;width:60%;border-radius:3px;margin-bottom:7px}.skc b{display:block;font-size:14px}.skc small{display:block;color:#8d9aa8;font-size:12px;margin-top:2px}"; document.head.appendChild(st); }
+    }).catch(function () { var b = document.getElementById("skBody"); if (b) b.textContent = "Chưa tải được cài đặt giao diện."; });
+  };
+  window.siteSkinSave = function (k) {
+    var m = document.getElementById("skMsg"); if (m) m.textContent = "Đang lưu…";
+    api("/api/v1/site/settings", { method: "POST", body: JSON.stringify({ skin: k }) }).then(function () {
+      document.querySelectorAll("#skBody .skc").forEach(function (c) { c.classList.toggle("on", c.getAttribute("data-s") === k); });
+      var m2 = document.getElementById("skMsg"); if (m2) m2.textContent = "✓ Đã áp dụng. Khách thấy sau vài giây (mở lại trang Trang thật để xem).";
+    }).catch(function (e) { var m3 = document.getElementById("skMsg"); if (m3) m3.textContent = "Lỗi: " + e.message; });
   };
   window.siteFxSave = function () {
     var o = {}; document.querySelectorAll("#fxBody input[data-k]").forEach(function (i) { o[i.getAttribute("data-k")] = i.checked; });
