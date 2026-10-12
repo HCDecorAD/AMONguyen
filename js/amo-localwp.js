@@ -87,7 +87,8 @@ function card(p){
   var im=el("div","im");if(p.image){var i=el("img");i.src=p.image;i.alt=p.name||"";i.loading="lazy";im.appendChild(i)}else im.textContent="Hình ảnh đang cập nhật";
   a.appendChild(im);a.appendChild(el("div","ct",p.cat||""));a.appendChild(el("div","nm",p.name||""));
   if(p.price)a.appendChild(el("div","pr",money(p.price)));
-  var bt=el("div","bt","Chọn tùy chọn");bt.dataset.vi="Chọn tùy chọn";bt.dataset.en="Select options";a.appendChild(bt);return a;
+  var bt=el("div","bts"),g=el("span","bt","Giỏ hàng"),m=el("span","bt bt2","Mua ngay");g.dataset.vi="Giỏ hàng";g.dataset.en="Add to cart";m.dataset.vi="Mua ngay";m.dataset.en="Buy now";
+  m.onclick=function(e){e.preventDefault();e.stopPropagation();location.href=a.href+"&buy=1"};bt.appendChild(g);bt.appendChild(m);a.appendChild(bt);return a;
 }
 function inRange(label,v){var m=String(label).replace(/\s/g,"").match(/^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/),n=parseFloat(v);if(m)return n>=parseFloat(m[1])&&n<=parseFloat(m[2]);return String(label)===String(v)}
 function attr(p,re){var o=[];(p.attributes||[]).forEach(function(a){if(re.test(a.name||""))(a.terms||[]).forEach(function(t){o.push(t.name)})});return o}

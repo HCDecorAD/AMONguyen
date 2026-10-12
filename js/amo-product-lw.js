@@ -55,9 +55,10 @@ function render(){
   if(product.badge)$("pCat").textContent=(product.cat||"AMO NGUYỄN")+" · "+product.badge;
   if(product.demo)$("pNote").textContent="Đây là sản phẩm mẫu để xem giao diện. Shop sẽ cập nhật hình ảnh, giá và tồn kho thật khi đăng hàng. Chưa thể đặt hàng sản phẩm mẫu.";
   if(!product.variants.length){$("pAdd").disabled=true;say("Vui lòng liên hệ AMO để biết tình trạng hàng.")}
+  if(/[?&]buy=1/.test(location.search)){var ob=$("pOpts");if(ob&&ob.scrollIntoView)ob.scrollIntoView({block:"center"});if(!selected)say("Chọn size rồi bấm Mua ngay.")}
   lw().apply();
 }
-function add(){
+function add(go){
   if(!selected)return say("Vui lòng chọn size.");
   var q=Math.max(1,Math.min(20,Number($("pQty").value)||1));
   if(q>selected.available)return say("Số lượng vượt tồn kho (còn "+selected.available+").");
@@ -65,7 +66,7 @@ function add(){
   var c=cart(),x=c.find(function(i){return i.variant_id===selected.id});
   if(x)x.qty=Math.min(selected.available,Number(x.qty||0)+q);
   else c.push({variant_id:selected.id,product_id:product.id,name:product.name,sku:selected.sku,size:selected.size+(selected.color?" · "+selected.color:""),price:up,image:(product.images||[])[0]||"",qty:q,demo:!!product.demo});
-  saveCart(c);say("Đã thêm vào giỏ hàng.");
+  saveCart(c);if(go===true){location.href="checkout.html";return}say("Đã thêm vào giỏ hàng.");
 }
 function fromDemo(d){
   return{id:d.id,name:d.name,cat:d.cat,price:d.price,desc:d.desc,images:d.images,demo:true,
@@ -77,7 +78,7 @@ function fromEngine(w){
 }
 function start(){
   if(!window.AMO_LW){setTimeout(start,40);return}
-  $("pAdd").onclick=add;
+  $("pAdd").onclick=function(){add()};$("pBuy").onclick=function(){add(true)};
   if(!key)return fail();
   var d=lw().demo.filter(function(x){return x.slug===key})[0];
   if(d){product=fromDemo(d);return render()}
