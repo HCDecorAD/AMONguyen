@@ -63,11 +63,11 @@
     if (D.banner === "off" || HCC.loggedIn() || ls.get(K.con) !== null) return;
     const b = document.createElement("div");
     b.setAttribute("role", "dialog");
-    b.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:99999;max-width:560px;margin:auto;background:#111;color:#fff;padding:14px 16px;font:14px/1.45 system-ui,sans-serif;display:flex;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 6px 24px rgba(0,0,0,.3)";
+    b.style.cssText = "position:fixed;left:10px;bottom:10px;z-index:99999;width:min(300px,calc(100vw - 80px));background:rgba(17,17,17,.94);color:#fff;padding:8px 10px;font:12px/1.35 system-ui,sans-serif;display:flex;gap:6px 8px;align-items:center;flex-wrap:wrap;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3)";
     const t = document.createElement("span");
-    t.style.flex = "1 1 240px";
-    t.textContent = "Chúng tôi ghi nhận lượt xem trang để cải thiện trải nghiệm. Bạn đồng ý chứ?";
-    const mk = (label, v, primary) => { const x = document.createElement("button"); x.textContent = label; x.style.cssText = "border:1px solid #fff;padding:8px 14px;cursor:pointer;background:" + (primary ? "#fff" : "transparent") + ";color:" + (primary ? "#111" : "#fff"); x.onclick = () => { HCC.setConsent(v); b.remove(); }; return x; };
+    t.style.flex = "1 1 100%";
+    t.textContent = "Cho phép ghi nhận lượt xem trang để cải thiện trải nghiệm?";
+    const mk = (label, v, primary) => { const x = document.createElement("button"); x.textContent = label; x.style.cssText = "border:1px solid #fff;padding:4px 10px;font-size:12px;cursor:pointer;background:" + (primary ? "#fff" : "transparent") + ";color:" + (primary ? "#111" : "#fff"); x.onclick = () => { HCC.setConsent(v); b.remove(); }; return x; };
     b.append(t, mk("Từ chối", false, false), mk("Đồng ý", true, true));
     document.body.appendChild(b);
   }
