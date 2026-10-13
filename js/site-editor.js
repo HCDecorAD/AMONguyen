@@ -65,7 +65,7 @@
       { id: nid(), type: "links", enabled: true, props: { title: "Giày Sneaker → chọn size", note: "", items: sz } },
       { id: nid(), type: "cards", enabled: true, props: { title: "Danh mục", linkLabel: "Xem tất cả →", linkUrl: "shop.html", cols: 3, size: "s", items: [cat("Giày công sở", "shop.html?cat=cong-so"), cat("Dép", "shop.html?cat=dep"), cat("Áo + Áo khoác", "shop.html?cat=ao"), cat("Túi xách", "shop.html?cat=tui-xach"), cat("Quần", "shop.html?cat=quan"), cat("Thắt lưng + Phụ kiện khác", "shop.html?cat=phu-kien")] } },
       { id: nid(), type: "products", enabled: true, props: { title: "", linkLabel: "", linkUrl: "", limit: 8 } },
-      { id: nid(), type: "links", enabled: true, props: { title: "", note: "", items: [{ label: "LV", url: "shop.html?brand=LV" }, { label: "GUCCI", url: "shop.html?brand=GUCCI" }, { label: "SALVATORE FERRAGAMO", url: "shop.html?brand=Salvatore%20Ferragamo" }, { label: "BALLY", url: "shop.html?brand=BALLY" }, { label: "KHÁC", url: "shop.html?brand=KHAC" }] } },
+      { id: nid(), type: "links", enabled: true, props: { title: "", note: "", items: [{ label: "GUCCI", url: "shop.html?brand=Gucci" }, { label: "LV", url: "shop.html?brand=LV" }, { label: "SALVATORE FERRAGAMO", url: "shop.html?brand=Salvatore%20Ferragamo" }, { label: "BALLY", url: "shop.html?brand=Bally" }, { label: "DIOR", url: "shop.html?brand=Dior" }, { label: "KHÁC", url: "shop.html?brand=KHAC" }] } },
       { id: nid(), type: "list", enabled: true, props: { title: "", linkLabel: "Xem chính sách bán hàng →", linkUrl: "policy.html", items: ["Thử chân khi nhận hàng", "Đổi size / đổi mẫu theo điều kiện và hàng còn sẵn", "Miễn phí ship toàn quốc theo chính sách áp dụng", "Quy định cọc / giữ hàng"] } }
     ];
   }
