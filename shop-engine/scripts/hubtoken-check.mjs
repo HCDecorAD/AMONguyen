@@ -1,0 +1,20 @@
+// Kiểm tra token HUB: chạy bằng node. Không gọi mạng, không dùng secret thật.
+import assert from "node:assert/strict";
+import {verifyHubToken} from "../src/hubtoken.mjs";
+const SECRET="test-only-secret-0123456789abcdefghij";
+const NOW=1_800_000_000;
+const b64u=s=>Buffer.from(s).toString("base64url");
+const hexHmac=async(p,secret)=>{const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(secret),{name:"HMAC",hash:"SHA-256"},false,["sign"]);return [...new Uint8Array(await crypto.subtle.sign("HMAC",k,new TextEncoder().encode(p)))].map(x=>x.toString(16).padStart(2,"0")).join("")};
+const mk=async(obj,secret=SECRET)=>{const p=b64u(JSON.stringify(obj));return "hub1."+p+"."+await hexHmac(p,secret)};
+const good={sub:"user:nv_amo",role:"staff",store:"store_amo",iat:NOW,exp:NOW+3600,v:1};
+assert.deepEqual(await verifyHubToken(await mk(good),SECRET,NOW+5),{sub:"user:nv_amo",role:"staff",store_id:"store_amo"});
+assert.equal((await verifyHubToken(await mk({...good,role:"viewer",sub:"user:kh"}),SECRET,NOW)).role,"viewer");
+assert.equal(await verifyHubToken(await mk(good),SECRET,NOW+3600),null,"expired");
+assert.equal(await verifyHubToken(await mk(good,"other-secret-xxxxxxxxxxxxxxxxxxxx"),SECRET,NOW),null,"wrong secret");
+assert.equal(await verifyHubToken(await mk({...good,store:"store_other"}),SECRET,NOW),null,"other store");
+assert.equal(await verifyHubToken(await mk({...good,role:"owner"}),SECRET,NOW),null,"owner role not allowed");
+assert.equal(await verifyHubToken(await mk({...good,v:2}),SECRET,NOW),null,"bad version");
+assert.equal(await verifyHubToken("mem_abc.def",SECRET,NOW),null,"member key is not hub token");
+assert.equal(await verifyHubToken(await mk(good)+"x",SECRET,NOW),null,"tampered");
+assert.equal(await verifyHubToken("hub1.garbage",SECRET,NOW),null,"garbage");
+console.log("hubtoken-check: all tests passed");

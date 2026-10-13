@@ -1,3 +1,4 @@
+import {verifyHubToken} from "./hubtoken.mjs";
 import {handleContent} from "./content.js";
 import {handleMedia,serveMedia} from "./media.js";
 import {handleCatalog} from "./catalog.js";
@@ -17,7 +18,7 @@ async function resolveStore(req,env){let key=req.headers.get("x-store-id")||new 
 const sha=async v=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)))].map(x=>x.toString(16).padStart(2,"0")).join("");
 const rnd=()=>{const b=crypto.getRandomValues(new Uint8Array(24));return btoa(String.fromCharCode(...b)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")};
 const ROLES={viewer:1,staff:2,manager:3,owner:4};
-async function memberAuth(req,env){const t=(req.headers.get("authorization")||"").replace(/^Bearer\s+/,"");if(!/^mem_[a-z0-9]+\.[A-Za-z0-9_-]{20,}$/.test(t))return null;const [mid,sec]=t.split(".");const m=await env.DB.prepare("SELECT id,store_id,email,name,role,key_hash FROM store_members WHERE id=? AND active=1").bind(mid).first();if(!m||!m.key_hash)return null;return (await sha(sec))===m.key_hash?m:null}
+async function memberAuth(req,env){const t=(req.headers.get("authorization")||"").replace(/^Bearer\s+/,"");if(t.startsWith("hub1.")){const hs=env?.HUB_SHOP_SECRET?.value??env?.HUB_SHOP_SECRET;const d=await verifyHubToken(t,hs);return d?{id:"hub:"+d.sub,store_id:d.store_id,email:d.sub,name:d.sub,role:d.role,key_hash:"hub"}:null}if(!/^mem_[a-z0-9]+\.[A-Za-z0-9_-]{20,}$/.test(t))return null;const [mid,sec]=t.split(".");const m=await env.DB.prepare("SELECT id,store_id,email,name,role,key_hash FROM store_members WHERE id=? AND active=1").bind(mid).first();if(!m||!m.key_hash)return null;return (await sha(sec))===m.key_hash?m:null}
 async function productDetail(env,store,key){const p=await env.DB.prepare("SELECT * FROM products WHERE store_id=? AND (id=? OR slug=?) AND status='active'").bind(store.id,key,key).first();if(!p)return null;const variants=(await env.DB.prepare("SELECT v.*,COALESCE(SUM(l.on_hand-l.reserved),0) available FROM variants v LEFT JOIN inventory_levels l ON l.variant_id=v.id AND l.store_id=v.store_id WHERE v.store_id=? AND v.product_id=? AND v.status='active' GROUP BY v.id ORDER BY v.size,v.color,v.sku").bind(store.id,p.id).all()).results;const images=(await env.DB.prepare("SELECT id,url,alt,sort_order FROM product_images WHERE store_id=? AND product_id=? ORDER BY sort_order,id").bind(store.id,p.id).all()).results;return {...p,variants,images}}
 export default {async fetch(req,env){
  const u=new URL(req.url),path=u.pathname;if(req.method==="OPTIONS")return new Response(null,{headers:cors(req)});
