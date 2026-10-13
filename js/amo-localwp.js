@@ -91,7 +91,7 @@ function card(p){
   var bt=el("div","bts"),g=el("span","bt","Giỏ hàng"),m=el("span","bt bt2","Mua ngay");g.dataset.vi="Giỏ hàng";g.dataset.en="Add to cart";m.dataset.vi="Mua ngay";m.dataset.en="Buy now";
   m.onclick=function(e){e.preventDefault();e.stopPropagation();location.href=a.href+"&buy=1"};bt.appendChild(g);bt.appendChild(m);a.appendChild(bt);return a;
 }
-function inRange(label,v){var m=String(label).replace(/\s/g,"").match(/^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/),n=parseFloat(v);if(m)return n>=parseFloat(m[1])&&n<=parseFloat(m[2]);return String(label)===String(v)}
+function inRange(label,v){var R=/^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/,L=String(label).replace(/\s/g,""),m=L.match(R),n=parseFloat(v);if(m)return n>=parseFloat(m[1])&&n<=parseFloat(m[2]);var mv=String(v).replace(/\s/g,"").match(R);if(mv&&/^\d+(?:\.\d+)?$/.test(L)){var x=parseFloat(L);return x>=parseFloat(mv[1])&&x<=parseFloat(mv[2])}return String(label)===String(v)}
 function attr(p,re){var o=[];(p.attributes||[]).forEach(function(a){if(re.test(a.name||""))(a.terms||[]).forEach(function(t){o.push(t.name)})});return o}
 function load(cb){
   var done=false;function fin(l){if(done)return;done=true;cb(l)}
