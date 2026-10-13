@@ -52,22 +52,28 @@ export async function handleBulk(req, env, store, H, A) {
       desc: clean(x.description), material: clean(x.material), origin: clean(x.origin), badge, tags: list(x.tags).join(", "),
       status: clean(x.status) === "draft" ? "draft" : "active", images: list(String(x.images ?? "").replace(/\s+/g, "\n")).filter((u) => /^https?:\/\//.test(u) || u.startsWith("/")).slice(0, 8) });
   });
+  // Thương hiệu và danh mục chỉ nhận giá trị đã có trong hệ thống (không tự tạo mới, tránh trùng kiểu "Lv"/"LV").
+  // "Khác" hoặc để trống = không gắn thương hiệu.
+  const known = { brands: new Map(), categories: new Map() };
+  for (const t of Object.keys(known)) (await env.DB.prepare("SELECT id,slug FROM " + t + " WHERE store_id=?").bind(store.id).all()).results.forEach((r) => known[t].set(r.slug, r.id));
+  for (const p of plan) {
+    p.bid = null; p.cid = null;
+    if (p.brand && slug(p.brand) !== "khac") {
+      p.bid = known.brands.get(slug(p.brand)) || null;
+      if (!p.bid) errs.push({ row: p.row, error: "Thương hiệu \"" + p.brand + "\" không có trong danh sách (chọn: Gucci, LV, Salvatore Ferragamo, Bally, Dior, Khác)" });
+    }
+    if (p.cat) {
+      p.cid = known.categories.get(slug(p.cat)) || null;
+      if (!p.cid) errs.push({ row: p.row, error: "Danh mục \"" + p.cat + "\" không có trong danh sách" });
+    }
+  }
   if (errs.length) return json(req, { ok: false, error: errs.map((e) => "Sản phẩm " + e.row + ": " + e.error).join("; "), errors: errs }, 422);
   const summary = { products: plan.length, variants: plan.reduce((a, p) => a + p.vars.length, 0) };
   if (d.dry) return json(req, { ok: true, dry: true, summary });
 
-  const loc = "loc_" + code.toLowerCase() + "_main", cache = { brand: new Map(), cat: new Map() }, created = [];
-  const ensure = async (table, key, nm) => {
-    if (!nm) return null;
-    const sl = slug(nm), ck = table + sl;
-    if (cache[key].has(ck)) return cache[key].get(ck);
-    let r = await env.DB.prepare("SELECT id FROM " + table + " WHERE store_id=? AND slug=?").bind(store.id, sl).first();
-    if (!r) { const nid = id(table === "brands" ? "brand" : "cat"); await env.DB.prepare("INSERT INTO " + table + "(id,store_id,name,slug) VALUES(?,?,?,?)").bind(nid, store.id, nm, sl).run(); r = { id: nid }; }
-    cache[key].set(ck, r.id);
-    return r.id;
-  };
+  const loc = "loc_" + code.toLowerCase() + "_main", created = [];
   for (const p of plan) {
-    const pid = id("prd"), bid = await ensure("brands", "brand", p.brand), cid = await ensure("categories", "cat", p.cat), b = [];
+    const pid = id("prd"), bid = p.bid, cid = p.cid, b = [];
     b.push(env.DB.prepare("INSERT INTO products(id,store_id,brand_id,category_id,name,slug,description,status,price,sale_price,material,origin,badge,tags) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
       .bind(pid, store.id, bid, cid, p.name, p.slug, p.desc, p.status, p.price, p.sp, p.material || null, p.origin || null, p.badge || null, p.tags || null));
     for (const v of p.vars) {
