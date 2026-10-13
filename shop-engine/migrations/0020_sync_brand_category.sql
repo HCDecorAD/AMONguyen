@@ -7,10 +7,10 @@ INSERT OR IGNORE INTO brands(id,store_id,name,slug) VALUES
 ('brand_dior','store_amo','Dior','dior');
 
 INSERT OR IGNORE INTO categories(id,store_id,name,slug) VALUES
-('cat_sneaker','store_amo','Giày Sneaker','sneaker'),
-('cat_cong_so','store_amo','Giày công sở','cong-so'),
+('cat_sneaker','store_amo','Giày Sneaker','giay-sneaker'),
+('cat_cong_so','store_amo','Giày công sở','giay-cong-so'),
 ('cat_dep','store_amo','Dép','dep'),
-('cat_ao','store_amo','Áo + Áo khoác','ao'),
+('cat_ao','store_amo','Áo + Áo khoác','ao-ao-khoac'),
 ('cat_tui_xach','store_amo','Túi xách','tui-xach'),
 ('cat_quan','store_amo','Quần','quan'),
 ('cat_that_lung','store_amo','Thắt lưng + Phụ kiện','that-lung-phu-kien');

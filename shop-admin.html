@@ -22,7 +22,7 @@ async function api(p,opt={}){const h={"content-type":"application/json"};if(STOR
 function login(msg){root.innerHTML='<div class="login"><h2>HC Shop Manager</h2><p class="muted">Đăng nhập quản lý cửa hàng</p>'+(msg?'<div class="warn">'+esc(msg)+'</div>':'')+'<label>Mã truy cập</label><input id="tok" type="password" autofocus placeholder="mem_… hoặc mã quản trị" onkeydown="if(event.key===\'Enter\')doLogin()"><label class="rem"><input type="checkbox" id="rem" checked> Ghi nhớ trên thiết bị này (tự đăng nhập lần sau)</label><button class="primary" onclick="doLogin()">Đăng nhập</button><p class="muted sm">Chủ shop nhận mã truy cập từ người quản trị. Không chia sẻ mã này. Chỉ bật ghi nhớ trên thiết bị của bạn.</p></div>'}
 async function doLogin(){TOKEN=tok.value.trim();ME=null;try{ME=await api("/api/auth/me");sessionStorage.HC_SHOP_TOKEN=TOKEN;if(ME.kind==="member"){STORE=ME.store.id}sessionStorage.HC_STORE=STORE;if(document.getElementById("rem")?.checked!==false){LS.set("HC_SHOP_TOKEN",TOKEN);LS.set("HC_STORE",STORE)}app()}catch(e){TOKEN="";ME=null;sessionStorage.removeItem("HC_SHOP_TOKEN");LS.del("HC_SHOP_TOKEN");login(e.message)}}
 function logout(){TOKEN="";ME=null;STORE="";sessionStorage.removeItem("HC_SHOP_TOKEN");sessionStorage.removeItem("HC_STORE");LS.del("HC_SHOP_TOKEN");LS.del("HC_STORE");login()}
-const NAV=[["dashboard","Tổng quan"],["products","Sản phẩm & Media"],["inventory","Kho hàng"],["csv","Nhập / Xuất CSV"],["bulk","Sửa hàng loạt"],["orders","Đơn hàng"],["site","Giao diện website"],["customers","Khách hàng"],["stats","Thống kê truy cập"],["promotions","Khuyến mãi"],["reports","Báo cáo"],["team","Thành viên"],["account","Tài khoản & bảo mật"],["help","Hướng dẫn"]];
+const NAV=[["dashboard","Tổng quan"],["products","Sản phẩm & Media"],["newproduct","Nhập sản phẩm mới"],["inventory","Kho hàng"],["csv","Nhập / Xuất CSV"],["bulk","Sửa hàng loạt"],["orders","Đơn hàng"],["site","Giao diện website"],["customers","Khách hàng"],["stats","Thống kê truy cập"],["promotions","Khuyến mãi"],["reports","Báo cáo"],["team","Thành viên"],["account","Tài khoản & bảo mật"],["help","Hướng dẫn"]];
 async function app(){
  document.body.classList.toggle("ro",!canW());
  const nav=NAV.filter(x=>(x[0]!=="team"||canMgr())&&(x[0]!=="account"||!isSuper()));
@@ -38,8 +38,9 @@ function toggleMenu(){const o=document.body.classList.toggle("menu-open");const 
 function menuClose(){document.body.classList.remove("menu-open");const f=document.getElementById("menuFab");if(f)f.textContent="☰ Menu"}
 async function view(v){menuClose();document.body.classList.remove("side-off");try{
  if(v==="dashboard"){setnav(v,"Tổng quan");const d=await api("/api/dashboard");content.innerHTML='<div class="cards">'+[["Tổng tồn",d.total_stock],["Sắp hết",d.low_stock],["Hết hàng",d.out_stock],["Đơn mới",d.new_orders],["Tổng đơn",d.orders],["Doanh thu",money(d.revenue)]].map(x=>'<div class="card"><span class="muted">'+x[0]+'</span><b>'+x[1]+'</b></div>').join("")+'</div><div class="panel"><b class="ok">● Hệ thống đang hoạt động</b><p>Sản phẩm → Hình ảnh → SKU → Kho → Đơn hàng → Khách hàng → Báo cáo</p><p class="muted">Mẹo: dùng <b>Nhập / Xuất CSV</b> để thêm nhiều sản phẩm cùng lúc, <b>Sửa hàng loạt</b> để đổi giá và tồn kho nhanh.</p></div>'}
- if(v==="products"){setnav(v,"Sản phẩm & Media");const d=await api("/api/products"+(window.PVALL?"?archived=1":""));PM=Object.fromEntries((d.items||[]).map(x=>[x.id,x.name]));content.innerHTML='<div class="panel"><div class="actions"><h3>Sản phẩm ('+(d.items||[]).length+')</h3><label style="margin:0" class="sm"><input type="checkbox" style="width:auto" '+(window.PVALL?"checked":"")+' onchange="window.PVALL=this.checked;view(\'products\')"> Xem cả SP đã ẩn</label><span class="w"><button onclick="view(\'csv\')">Nhập CSV</button> <button class="primary" onclick="productForm()">+ Sản phẩm</button></span></div>'+(canW()?'<div class="actions w" style="margin:8px 0"><label style="margin:0"><input type="checkbox" style="width:auto" onchange="document.querySelectorAll(\'.pk\').forEach(x=>x.checked=this.checked)"> Chọn tất cả</label><span><button onclick="prodBulk(\'active\')">Hiện đã chọn</button> <button class="danger" onclick="prodBulk(\'archived\')">Ẩn đã chọn</button></span></div>':"")+table(d.items||[],[["Ảnh",r=>r.image?"🖼":"—"],["Tên",r=>r.name],["Trạng thái",r=>r.status],["Giá",r=>money(r.price)],["Sale",r=>r.sale_price?money(r.sale_price):"—"]],r=>'<span class="w"><input type="checkbox" class="pk" style="width:auto" data-id="'+esc(r.id)+'"> <button onclick="editForm(\''+r.id+'\')">Sửa</button> <button onclick="variantForm(\''+r.id+'\')">+ SKU</button> <button onclick="mediaForm(\''+r.id+'\')">+ Media</button> <button class="danger" onclick="archive(\''+r.id+'\')">Ẩn</button></span>')+'</div>'}
+ if(v==="products"){setnav(v,"Sản phẩm & Media");const d=await api("/api/products"+(window.PVALL?"?archived=1":""));PM=Object.fromEntries((d.items||[]).map(x=>[x.id,x.name]));content.innerHTML='<div class="panel"><div class="actions"><h3>Sản phẩm ('+(d.items||[]).length+')</h3><label style="margin:0" class="sm"><input type="checkbox" style="width:auto" '+(window.PVALL?"checked":"")+' onchange="window.PVALL=this.checked;view(\'products\')"> Xem cả SP đã ẩn</label><span class="w"><button onclick="view(\'csv\')">Nhập CSV</button> <button class="primary" onclick="view(\'newproduct\')">+ Sản phẩm</button></span></div>'+(canW()?'<div class="actions w" style="margin:8px 0"><label style="margin:0"><input type="checkbox" style="width:auto" onchange="document.querySelectorAll(\'.pk\').forEach(x=>x.checked=this.checked)"> Chọn tất cả</label><span><button onclick="prodBulk(\'active\')">Hiện đã chọn</button> <button class="danger" onclick="prodBulk(\'archived\')">Ẩn đã chọn</button></span></div>':"")+table(d.items||[],[["Ảnh",r=>r.image?"🖼":"—"],["Tên",r=>r.name],["Trạng thái",r=>r.status],["Giá",r=>money(r.price)],["Sale",r=>r.sale_price?money(r.sale_price):"—"]],r=>'<span class="w"><input type="checkbox" class="pk" style="width:auto" data-id="'+esc(r.id)+'"> <button onclick="editForm(\''+r.id+'\')">Sửa</button> <button onclick="variantForm(\''+r.id+'\')">+ SKU</button> <button onclick="mediaForm(\''+r.id+'\')">+ Media</button> <button class="danger" onclick="archive(\''+r.id+'\')">Ẩn</button></span>')+'</div>'}
  if(v==="inventory"){setnav(v,"Kho hàng");const d=await api("/api/inventory");IM=Object.fromEntries((d.items||[]).map(x=>[x.variant_id,x.sku]));content.innerHTML='<div class="panel"><div class="actions"><h3>Kho hàng</h3><span class="w"><button onclick="view(\'bulk\')">Sửa hàng loạt</button></span></div>'+table(d.items||[],[["SKU",r=>r.sku],["Sản phẩm",r=>r.name],["Size",r=>r.size],["Màu",r=>r.color],["Tồn",r=>r.on_hand],["Giữ",r=>r.reserved],["Có thể bán",r=>r.available]],r=>'<span class="w"><button onclick="stockForm(\''+r.variant_id+'\')">Điều chỉnh</button></span>')+'</div>'}
+ if(v==="newproduct")return newProductView();
  if(v==="csv")return csvView();
  if(v==="bulk")return bulkView();
  if(v==="team")return teamView();
@@ -111,6 +112,55 @@ const TEMPLATE_HEAD=["Name","Brand","Category","Regular price","Sale price","Siz
 function mapRows(table,mode){const head=(table[0]||[]).map(h=>ALIAS[norm(h)]||null),out=[];for(const r of table.slice(1)){const o={};head.forEach((k,i)=>{if(k&&r[i]!=null&&String(r[i]).trim()!=="")o[k]=String(r[i]).trim()});if(!Object.keys(o).length)continue;if(mode==="products")out.push({sku:o.sku,name:o.name,selling_price:o.price,sale_price:o.sale_price,on_hand:o.stock,images:o.images,description:o.description,published:o.published,brand:o.brand,category:o.category,sizes:o.sizes,colors:o.colors,material:o.material,origin:o.origin,badge:o.badge,tags:o.tags});else if(mode==="price")out.push({sku:o.sku,price:o.price});else out.push({sku:o.sku,qty:o.stock})}return {head,rows:out}}
 const MODES={products:["Thêm sản phẩm mới (đưa vào bảng nhập nhanh ở trên)","File/ô dán cần cột Name và Regular price; có thể thêm Brand, Category, Size, Color, Stock, Material, Origin, Badge, Tags, Images. Size/Color ngăn cách bằng dấu | hoặc dấu phẩy."],price:["Cập nhật giá theo SKU","Cần cột SKU và Regular price."],inventory:["Cập nhật tồn kho theo SKU","Cần cột SKU và Stock (số tồn mới, không phải số cộng thêm)."]};
 let CSVROWS=null;
+
+let NPSRC=[];
+async function npCompress(file){
+  const img=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=r.result};r.onerror=rej;r.readAsDataURL(file)});
+  const k=Math.min(1,1200/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  let q=0.82,d=c.toDataURL("image/jpeg",q);while(d.length>950000&&q>0.5){q-=0.1;d=c.toDataURL("image/jpeg",q)}
+  return d;
+}
+async function npUpload(file){const d=await npCompress(file);const r=await api("/api/v1/media",{method:"POST",body:JSON.stringify({name:file.name,data:d})});return r.url}
+async function newProductView(){
+  setnav("newproduct","Nhập sản phẩm mới");
+  if(!canW()){content.innerHTML='<div class="panel"><p class="muted">Tài khoản này chỉ xem, không nhập được sản phẩm.</p></div>';return}
+  await loadTax();
+  const d=await api("/api/products");NPSRC=d.items||[];
+  content.innerHTML='<div class="panel" id="npPanel"><div class="actions"><h3>➕ Nhập sản phẩm mới</h3><span class="muted sm">Điền một lần, rồi bấm Lưu nháp hoặc Đăng lên web.</span></div>'
+  +'<label>Mẫu có sẵn (tùy chọn: chép thương hiệu, danh mục, giá, chất liệu từ 1 sản phẩm)</label><select id="np_tpl" onchange="npApplyTpl()"><option value="">— Bắt đầu trống —</option>'+NPSRC.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("")+'</select>'
+  +'<div class="row"><div><label>Tên sản phẩm *</label><input id="np_name"></div><div><label>Thương hiệu</label><select id="np_brand">'+brandOpts(TAX.brands,"")+'</select></div></div>'
+  +'<div class="row"><div><label>Danh mục</label><select id="np_cat">'+catOpts(TAX.categories,"")+'</select></div><div><label>Nhãn</label><select id="np_badge">'+["","Mới","Hot","Sale","Bán chạy"].map(x=>'<option value="'+x+'">'+(x||"Không")+'</option>').join("")+'</select></div></div>'
+  +'<label>Size (tick các size có bán)</label><div id="np_sizes" style="display:flex;flex-wrap:wrap;gap:8px">'+SIZE_OPTS.map(x=>'<label style="display:inline-flex;gap:4px;align-items:center;margin:0"><input type="checkbox" class="np_sz" value="'+x+'" style="width:auto"> '+x+'</label>').join("")+'</div>'
+  +'<div class="row"><div><label>Màu (cách nhau bằng dấu phẩy)</label><input id="np_color" placeholder="Đen, Nâu"></div><div><label>Tồn kho mỗi size/màu</label><input id="np_stock" type="number" min="0" value="1"></div></div>'
+  +'<div class="row"><div><label>Giá bán *</label><input id="np_price" type="number" min="1"></div><div><label>Giá sale</label><input id="np_sale" type="number" min="0"></div></div>'
+  +'<div class="row"><div><label>Chất liệu</label><input id="np_material"></div><div><label>Xuất xứ</label><input id="np_origin"></div></div>'
+  +'<label>Mô tả</label><textarea id="np_desc"></textarea>'
+  +'<label>Ảnh (chọn nhiều ảnh từ máy)</label><input id="np_files" type="file" accept="image/*" multiple>'
+  +'<label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea>'
+  +'<div class="actions" style="margin-top:14px"><button onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
+  +'<div id="np_msg" style="margin-top:10px"></div></div>';
+}
+function npApplyTpl(){const p=NPSRC.find(x=>x.id===np_tpl.value);if(!p)return;np_brand.value=p.brand_id||"";np_cat.value=p.category_id||"";np_price.value=p.price||"";np_sale.value=p.sale_price??"";np_material.value=p.material||"";np_origin.value=p.origin||"";np_badge.value=p.badge||"";np_desc.value=p.description||""}
+function npErr(m){np_msg.innerHTML='<div class="warn"><b>Cần sửa:</b> '+esc(m).replace(/; /g,"<br>")+'</div>'}
+async function npSubmit(status){
+  const name=np_name.value.trim(),price=+np_price.value,sale=np_sale.value===""?null:+np_sale.value;
+  if(!name)return npErr("Chưa nhập tên sản phẩm");
+  if(!(price>0))return npErr("Giá bán phải lớn hơn 0");
+  const bid=np_brand.value,cid=np_cat.value;
+  const brandName=bid?((TAX.brands.find(x=>x.id===bid)||{}).name||""):""; // "Khác" = không gắn thương hiệu
+  const catName=cid?((TAX.categories.find(x=>x.id===cid)||{}).name||""):"";
+  const sizes=[...document.querySelectorAll(".np_sz:checked")].map(x=>x.value);
+  np_msg.innerHTML='<p class="muted">Đang lưu…</p>';
+  try{
+    const urls=np_urls.value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+    for(const f of [...(np_files.files||[])])urls.push(await npUpload(f));
+    const item={name,brand:brandName,category:catName,price,sale_price:sale,sizes,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,material:np_material.value,origin:np_origin.value,badge:np_badge.value,status};
+    const r=await api("/api/products/bulk",{method:"POST",body:JSON.stringify({dry:false,items:[item]})});
+    await newProductView();
+    np_msg.innerHTML='<div class="panel ok">✔ Đã lưu “'+esc(name)+'” ('+r.summary.variants+' biến thể) — '+(status==="active"?"đã đăng lên web":"đang ở trạng thái nháp")+'.</div>';
+  }catch(e){npErr(e.message)}
+}
 async function csvView(){setnav("csv","Nhập / Xuất CSV");
  content.innerHTML=(canW()?nbPanel():"")+'<div class="panel"><h3>Xuất dữ liệu</h3><p class="muted">Tải toàn bộ sản phẩm hiện có ra file CSV (mở được bằng Excel / Google Sheets).</p><button onclick="exportCSV()">Tải CSV sản phẩm</button> <a class="btn" href="assets/mau-san-pham.xlsx" download style="display:inline-block;padding:8px 12px;background:#246bfe;color:#fff;border-radius:8px;text-decoration:none">Tải file Excel mẫu (có ô xổ xuống)</a> <button onclick="download(\'mau-san-pham.csv\',toCSV(TEMPLATE_HEAD,[[\'Giày Loafer da AMO\',\'Bally\',\'Loafer\',\'2500000\',\'2200000\',\'39-39.5|40-40.5\',\'Đen|Nâu\',\'3\',\'Da bò\',\'Việt Nam\',\'Hot\',\'\',\'Mô tả ngắn\'],[\'Giày Oxford da AMO\',\'AMO Nguyễn\',\'Oxford\',\'2900000\',\'\',\'41-41.5|42-42.5|43-43.5\',\'Nâu đậm\',\'2\',\'Da bò\',\'Việt Nam\',\'\',\'\',\'\']]))">Tải file mẫu</button></div>'
  +(canW()?'<div class="panel"><h3>Nhập từ CSV</h3><label>Kiểu nhập</label><select id="cmode" onchange="csvHint()">'+Object.entries(MODES).map(([k,v])=>'<option value="'+k+'">'+v[0]+'</option>').join("")+'</select><p class="muted sm" id="chint"></p><label>Chọn file CSV hoặc Excel (.xlsx)</label><input type="file" id="cfile" accept=".csv,.xlsx,.xls,text/csv,text/plain" onchange="csvLoad(this.files[0])"><label>…hoặc dán nội dung CSV (dòng đầu là tiêu đề)</label><textarea id="ctext" rows="5" oninput="csvParseText()"></textarea><div id="cprev"></div></div>':'')
