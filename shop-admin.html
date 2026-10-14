@@ -12,7 +12,7 @@ body.menu-open .side{display:block!important;position:fixed;inset:0;z-index:35;o
  .modal{place-items:stretch}.modal .box{width:100vw;max-width:none;height:100dvh;max-height:100dvh;border-radius:0;padding:14px 14px 0;border:0}
  input,select,textarea{font-size:16px}}
 @media(orientation:landscape) and (max-height:560px){.main{padding-top:56px}.modal .box{width:min(720px,96vw);height:auto;max-height:96dvh;border-radius:14px;padding:16px 16px 0}}
-.rem{display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13px;color:#9fb0c2}.rem input{width:auto;margin:0}</style></head><body><div id="root"></div><div class="modal" id="modal"><div class="box" id="box"></div></div><script>var __v=Date.now();["js/hc-blocks.js","js/site-editor.js"].forEach(function(u){document.write("<scr"+"ipt src=\""+u+"?v="+__v+"\"></scr"+"ipt>")})</script><script>
+.rem{display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13px;color:#9fb0c2}.rem input{width:auto;margin:0}<style>.np-wrap .np-sec{font-weight:700;color:#9fb0c2;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin:18px 0 6px;border-top:1px solid #2a3548;padding-top:12px}.np-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}.np-grid>div{min-width:0}.np-grid label{margin-top:0}.np-sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px}.np-chip{display:flex;align-items:center;gap:6px;margin:0;padding:8px 10px;border:1px solid #2a3548;border-radius:10px;cursor:pointer;font-size:14px;background:#0b0e12}.np-chip input{width:auto;margin:0}.np-chip:has(input:checked){border-color:#246bfe;background:#14233f}.np-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px;position:sticky;bottom:0;background:#11161d;padding:10px 0}@media(max-width:640px){.np-grid{grid-template-columns:1fr}.np-sizes{grid-template-columns:repeat(3,1fr)}}</style></head><body><div id="root"></div><div class="modal" id="modal"><div class="box" id="box"></div></div><script>var __v=Date.now();["js/hc-blocks.js","js/site-editor.js"].forEach(function(u){document.write("<scr"+"ipt src=\""+u+"?v="+__v+"\"></scr"+"ipt>")})</script><script>
 const API="https://hc-shop-engine.huycuongonline.workers.dev";
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};let STORE=sessionStorage.HC_STORE||LS.get("HC_STORE")||"",TOKEN=sessionStorage.HC_SHOP_TOKEN||LS.get("HC_SHOP_TOKEN")||"",ME=null;
 const RANK={viewer:1,staff:2,manager:3,owner:4,super:9};
@@ -60,7 +60,7 @@ function openBox(x){box.innerHTML=x;modal.classList.add("on");document.body.clas
 const act=async(fn)=>{try{await fn()}catch(e){alert(e.message)}};
 function storeForm(){openBox('<h3>Thêm Store</h3><label>Mã Store</label><input id="sc" placeholder="STORE2"><label>Tên Store</label><input id="sn"><label>Domain</label><input id="sd"><button onclick="closeBox()">Hủy</button> <button class="primary" onclick="saveStore()">Tạo Store</button>')}
 function saveStore(){act(async()=>{const d=await api("/api/stores",{method:"POST",body:JSON.stringify({code:sc.value,name:sn.value,domain:sd.value})});STORE=d.id;sessionStorage.HC_STORE=STORE;closeBox();await loadStores();view("dashboard")})}
-const SIZE_OPTS=["37","37.5","38","38.5","37-37.5","38-38.5","39-39.5","40-40.5","41-41.5","42-42.5","43-43.5","44-44.5","45-45.5"];
+const SIZE_OPTS=["37","37.5","38","38.5","39-39.5","40-40.5","41-41.5","42-42.5","43-43.5","44-44.5","45-45.5"];
 const sizeOpts=(cur)=>'<option value="">— Chọn size —</option>'+SIZE_OPTS.map(x=>'<option value="'+x+'"'+(String(cur??"")===x?' selected':'')+'>'+x+'</option>').join("");
 const brandOpts=(items,cur)=>'<option value="">Khác (không thương hiệu)</option>'+(items||[]).map(x=>'<option value="'+esc(x.id)+'"'+(cur===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("");
 const catOpts=(items,cur)=>'<option value="">— Chọn danh mục —</option>'+(items||[]).map(x=>'<option value="'+esc(x.id)+'"'+(cur===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("");
@@ -130,19 +130,26 @@ async function newProductView(){
   if(!canW()){content.innerHTML='<div class="panel"><p class="muted">Tài khoản này chỉ xem, không nhập được sản phẩm.</p></div>';return}
   await loadTax();
   const d=await api("/api/products");NPSRC=d.items||[];
-  content.innerHTML='<div class="panel" id="npPanel"><div class="actions"><h3>➕ Nhập sản phẩm mới</h3><span class="muted sm">Điền một lần, rồi bấm Lưu nháp hoặc Đăng lên web.</span></div>'
-  +'<label>Mẫu có sẵn (tùy chọn: chép thương hiệu, danh mục, giá, chất liệu từ 1 sản phẩm)</label><select id="np_tpl" onchange="npApplyTpl()"><option value="">— Bắt đầu trống —</option>'+NPSRC.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("")+'</select>'
-  +'<div class="row"><div><label>Tên sản phẩm *</label><input id="np_name"></div><div><label>Thương hiệu</label><select id="np_brand">'+brandOpts(TAX.brands,"")+'</select></div></div>'
-  +'<div class="row"><div><label>Danh mục</label><select id="np_cat">'+catOpts(TAX.categories,"")+'</select></div><div><label>Nhãn</label><select id="np_badge">'+["","Mới","Hot","Sale","Bán chạy"].map(x=>'<option value="'+x+'">'+(x||"Không")+'</option>').join("")+'</select></div></div>'
-  +'<div class="row"><div><label>Màu (cách nhau bằng dấu phẩy)</label><input id="np_color" placeholder="Đen, Nâu"></div><div><label>Tồn kho mỗi size/màu</label><input id="np_stock" type="number" min="0" value="1"></div></div>'
-  +'<div class="row"><div><label>Giá bán *</label><input id="np_price" type="number" min="1"></div><div><label>Giá sale</label><input id="np_sale" type="number" min="0"></div></div>'
-  +'<label>Mô tả</label><textarea id="np_desc"></textarea>'
-  +'<label>Ảnh (chọn nhiều ảnh từ máy)</label><input id="np_files" type="file" accept="image/*" multiple>'
-  +'<label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea>'
-  +'<div class="actions" style="margin-top:14px"><button onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
+  const sec=(t)=>'<div class="np-sec">'+t+'</div>';
+  content.innerHTML='<div class="panel np-wrap" id="npPanel">'
+  +'<div class="actions"><h3>➕ Nhập sản phẩm mới</h3></div>'
+  +'<label>Chép từ sản phẩm có sẵn (tùy chọn)</label><select id="np_tpl" onchange="npApplyTpl()"><option value="">— Bắt đầu trống —</option>'+NPSRC.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("")+'</select>'
+  +sec('Thông tin')
+  +'<div class="np-grid"><div><label>Tên sản phẩm *</label><input id="np_name"></div><div><label>Thương hiệu</label><select id="np_brand">'+brandOpts(TAX.brands,"")+'</select></div>'
+  +'<div><label>Danh mục</label><select id="np_cat">'+catOpts(TAX.categories,"")+'</select></div><div><label>Nhãn</label><select id="np_badge">'+["","Mới","Hot","Sale","Bán chạy"].map(x=>'<option value="'+x+'">'+(x||"Không")+'</option>').join("")+'</select></div></div>'
+  +sec('Size & màu')
+  +'<div class="np-sizes">'+SIZE_OPTS.map(x=>'<label class="np-chip"><input type="checkbox" class="np_sz" value="'+x+'"><span>'+x+'</span></label>').join("")+'</div>'
+  +'<div class="np-grid"><div><label>Màu (cách nhau bằng dấu phẩy)</label><input id="np_color" placeholder="Đen, Nâu"></div><div><label>Tồn kho mỗi size/màu</label><input id="np_stock" type="number" min="0" value="1"></div></div>'
+  +sec('Giá & chi tiết')
+  +'<div class="np-grid"><div><label>Giá bán *</label><input id="np_price" type="number" min="1"></div><div><label>Giá sale</label><input id="np_sale" type="number" min="0"></div>'
+  +'<div><label>Chất liệu</label><input id="np_material"></div><div><label>Xuất xứ</label><input id="np_origin"></div></div>'
+  +'<label>Mô tả</label><textarea id="np_desc" rows="3"></textarea>'
+  +sec('Ảnh')
+  +'<div class="np-grid"><div><label>Chọn ảnh từ máy (nhiều ảnh)</label><input id="np_files" type="file" accept="image/*" multiple></div><div><label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea></div></div>'
+  +'<div class="np-actions"><button onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
   +'<div id="np_msg" style="margin-top:10px"></div></div>';
 }
-function npApplyTpl(){const p=NPSRC.find(x=>x.id===np_tpl.value);if(!p)return;np_brand.value=p.brand_id||"";np_cat.value=p.category_id||"";np_price.value=p.price||"";np_sale.value=p.sale_price??"";np_badge.value=p.badge||"";np_desc.value=p.description||""}
+function npApplyTpl(){const p=NPSRC.find(x=>x.id===np_tpl.value);if(!p)return;np_brand.value=p.brand_id||"";np_cat.value=p.category_id||"";np_price.value=p.price||"";np_sale.value=p.sale_price??"";np_material.value=p.material||"";np_origin.value=p.origin||"";np_badge.value=p.badge||"";np_desc.value=p.description||""}
 function npErr(m){np_msg.innerHTML='<div class="warn"><b>Cần sửa:</b> '+esc(m).replace(/; /g,"<br>")+'</div>'}
 async function npSubmit(status){
   const name=np_name.value.trim(),price=+np_price.value,sale=np_sale.value===""?null:+np_sale.value;
@@ -151,11 +158,12 @@ async function npSubmit(status){
   const bid=np_brand.value,cid=np_cat.value;
   const brandName=bid?((TAX.brands.find(x=>x.id===bid)||{}).name||""):""; // "Khác" = không gắn thương hiệu
   const catName=cid?((TAX.categories.find(x=>x.id===cid)||{}).name||""):"";
+  const sizes=[...document.querySelectorAll(".np_sz:checked")].map(x=>x.value);
   np_msg.innerHTML='<p class="muted">Đang lưu…</p>';
   try{
     const urls=np_urls.value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
     for(const f of [...(np_files.files||[])])urls.push(await npUpload(f));
-    const item={name,brand:brandName,category:catName,price,sale_price:sale,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,badge:np_badge.value,status};
+    const item={name,brand:brandName,category:catName,price,sale_price:sale,sizes,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,material:np_material.value,origin:np_origin.value,badge:np_badge.value,status};
     const r=await api("/api/products/bulk",{method:"POST",body:JSON.stringify({dry:false,items:[item]})});
     await newProductView();
     np_msg.innerHTML='<div class="panel ok">✔ Đã lưu “'+esc(name)+'” ('+r.summary.variants+' biến thể) — '+(status==="active"?"đã đăng lên web":"đang ở trạng thái nháp")+'.</div>';
