@@ -131,17 +131,15 @@ async function newProductView(){
   +'<label>Mẫu có sẵn (tùy chọn: chép thương hiệu, danh mục, giá, chất liệu từ 1 sản phẩm)</label><select id="np_tpl" onchange="npApplyTpl()"><option value="">— Bắt đầu trống —</option>'+NPSRC.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("")+'</select>'
   +'<div class="row"><div><label>Tên sản phẩm *</label><input id="np_name"></div><div><label>Thương hiệu</label><select id="np_brand">'+brandOpts(TAX.brands,"")+'</select></div></div>'
   +'<div class="row"><div><label>Danh mục</label><select id="np_cat">'+catOpts(TAX.categories,"")+'</select></div><div><label>Nhãn</label><select id="np_badge">'+["","Mới","Hot","Sale","Bán chạy"].map(x=>'<option value="'+x+'">'+(x||"Không")+'</option>').join("")+'</select></div></div>'
-  +'<label>Size (tick các size có bán)</label><div id="np_sizes" style="display:flex;flex-wrap:wrap;gap:8px">'+SIZE_OPTS.map(x=>'<label style="display:inline-flex;gap:4px;align-items:center;margin:0"><input type="checkbox" class="np_sz" value="'+x+'" style="width:auto"> '+x+'</label>').join("")+'</div>'
   +'<div class="row"><div><label>Màu (cách nhau bằng dấu phẩy)</label><input id="np_color" placeholder="Đen, Nâu"></div><div><label>Tồn kho mỗi size/màu</label><input id="np_stock" type="number" min="0" value="1"></div></div>'
   +'<div class="row"><div><label>Giá bán *</label><input id="np_price" type="number" min="1"></div><div><label>Giá sale</label><input id="np_sale" type="number" min="0"></div></div>'
-  +'<div class="row"><div><label>Chất liệu</label><input id="np_material"></div><div><label>Xuất xứ</label><input id="np_origin"></div></div>'
   +'<label>Mô tả</label><textarea id="np_desc"></textarea>'
   +'<label>Ảnh (chọn nhiều ảnh từ máy)</label><input id="np_files" type="file" accept="image/*" multiple>'
   +'<label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea>'
   +'<div class="actions" style="margin-top:14px"><button onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
   +'<div id="np_msg" style="margin-top:10px"></div></div>';
 }
-function npApplyTpl(){const p=NPSRC.find(x=>x.id===np_tpl.value);if(!p)return;np_brand.value=p.brand_id||"";np_cat.value=p.category_id||"";np_price.value=p.price||"";np_sale.value=p.sale_price??"";np_material.value=p.material||"";np_origin.value=p.origin||"";np_badge.value=p.badge||"";np_desc.value=p.description||""}
+function npApplyTpl(){const p=NPSRC.find(x=>x.id===np_tpl.value);if(!p)return;np_brand.value=p.brand_id||"";np_cat.value=p.category_id||"";np_price.value=p.price||"";np_sale.value=p.sale_price??"";np_badge.value=p.badge||"";np_desc.value=p.description||""}
 function npErr(m){np_msg.innerHTML='<div class="warn"><b>Cần sửa:</b> '+esc(m).replace(/; /g,"<br>")+'</div>'}
 async function npSubmit(status){
   const name=np_name.value.trim(),price=+np_price.value,sale=np_sale.value===""?null:+np_sale.value;
@@ -150,12 +148,11 @@ async function npSubmit(status){
   const bid=np_brand.value,cid=np_cat.value;
   const brandName=bid?((TAX.brands.find(x=>x.id===bid)||{}).name||""):""; // "Khác" = không gắn thương hiệu
   const catName=cid?((TAX.categories.find(x=>x.id===cid)||{}).name||""):"";
-  const sizes=[...document.querySelectorAll(".np_sz:checked")].map(x=>x.value);
   np_msg.innerHTML='<p class="muted">Đang lưu…</p>';
   try{
     const urls=np_urls.value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
     for(const f of [...(np_files.files||[])])urls.push(await npUpload(f));
-    const item={name,brand:brandName,category:catName,price,sale_price:sale,sizes,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,material:np_material.value,origin:np_origin.value,badge:np_badge.value,status};
+    const item={name,brand:brandName,category:catName,price,sale_price:sale,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,badge:np_badge.value,status};
     const r=await api("/api/products/bulk",{method:"POST",body:JSON.stringify({dry:false,items:[item]})});
     await newProductView();
     np_msg.innerHTML='<div class="panel ok">✔ Đã lưu “'+esc(name)+'” ('+r.summary.variants+' biến thể) — '+(status==="active"?"đã đăng lên web":"đang ở trạng thái nháp")+'.</div>';
