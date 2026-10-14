@@ -253,7 +253,7 @@ main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 /* ===== Mem mai, sang: danh muc, size, thuong hieu ===== */
 .lw-cat-main{border:1px solid rgba(var(--lw-gr),.22);border-radius:18px;padding:16px 18px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0))}
 .lw-cat-main h3{font-weight:500;letter-spacing:.04em;font-size:16px}
-.lw-sizes{gap:8px}
+.lw-sizes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
 .lw-sizes a{border:1px solid rgba(var(--lw-gr),.35);border-radius:999px;padding:6px 13px;text-decoration:none;font-size:12px;letter-spacing:.02em;color:var(--lw-soft);background:rgba(var(--lw-gr),.05);transition:all .2s}
 .lw-sizes a:hover{background:rgba(var(--lw-gr),.16);color:var(--lw-text);border-color:var(--lw-gold)}
 .lw-cat-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
