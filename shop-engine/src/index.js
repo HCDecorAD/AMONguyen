@@ -1,4 +1,5 @@
 import {verifyHubToken} from "./hubtoken.mjs";
+import {signHubAdminToken,HUB_STAFF_URL} from "./hubadmin.mjs";
 import {handleContent} from "./content.js";
 import {handleMedia,serveMedia} from "./media.js";
 import {handleCatalog} from "./catalog.js";
@@ -24,6 +25,8 @@ export default {async fetch(req,env){
  const u=new URL(req.url),path=u.pathname;if(req.method==="OPTIONS")return new Response(null,{headers:cors(req)});
  try{{const mr=await serveMedia(req,env);if(mr)return mr}const store=await resolveStore(req,env);if(!store&&path!=="/api/health")return json(req,{error:"store not found"},404);
   if(path==="/api/health")return json(req,{ok:true,app:"HC Shop Engine",version:3});
+  // Owner/manager quản lý ID/Pass nhân viên cửa hàng AMO: chuyển tiếp sang HUB bằng token quản trị ký phía server.
+  if(path==="/api/v1/store-users"&&(req.method==="GET"||req.method==="POST")){if(!await needMgr(req,env)||!own)return json(req,{error:"unauthorized"},401);const secret=env.HUB_SHOP_SECRET?.value??env.HUB_SHOP_SECRET;if(!secret)return json(req,{error:"unavailable"},503);const tok=await signHubAdminToken({sub:"member:"+own.id,role:own.role},secret);const init={method:req.method,headers:{authorization:"Bearer "+tok,"content-type":"application/json"}};if(req.method!=="GET")init.body=await req.text();const r=await fetch(HUB_STAFF_URL,init);return json(req,await r.json().catch(()=>({error:"upstream"})),r.status)}
   const sup=await isAdmin(req,env),mem=sup?null:await memberAuth(req,env),own=mem&&mem.store_id===store.id?mem:null,lvl=sup?9:(own?ROLES[own.role]||0:0);
   const need=n=>async()=>lvl>=n,needAdmin=async r=>lvl>=(r.method==="GET"?1:2),needMgr=need(3),needOwner=need(4);
   {const r=await handleCustomers(req,env,store,{json,clean,id,input},{lvl,sup,own});if(r)return r}
