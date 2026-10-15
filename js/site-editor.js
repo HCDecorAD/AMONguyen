@@ -1,4 +1,4 @@
-/* "Giao diện website" — owner-facing block editor for shop-admin.html.
+/* "Giao diện website" — owner-facing block editor for the shop admin page.
    Relies on shop-admin globals: api, act, esc, content, setnav, openBox, closeBox, canW, canMgr, STORE, ME, table. */
 (function () {
   "use strict";
