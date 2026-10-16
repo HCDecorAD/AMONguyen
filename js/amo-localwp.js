@@ -4,7 +4,7 @@
 var LS="hc-amo-lang",lang="vi";
 try{lang=localStorage.getItem(LS)==="en"?"en":"vi"}catch(e){}
 var ROOT=(function(){var s=document.currentScript||document.querySelector('script[src*="amo-localwp.js"]');var u=s?s.getAttribute("src"):"js/amo-localwp.js";return u.replace(/js\/amo-localwp\.js.*$/,"")})();
-var NAV=[["index.html","Trang chủ","Home"],["shop.html","Sản phẩm","Products"],["story.html","Giới thiệu","About"],["policy.html","Chính sách","Policy"],["contact.html","Liên hệ","Contact"]];
+var NAV=[["index.html","Trang chủ","Home"],["shop.html","Sản phẩm","Products"],["journal/","JOURNAL","JOURNAL"],["story.html","Giới thiệu","About"],["policy.html","Chính sách","Policy"],["contact.html","Liên hệ","Contact"]];
 var path=(location.pathname.split("/").pop()||"index.html");
 var ENGINE="https://hc-shop-engine.huycuongonline.workers.dev",STORE="store_amo";
 var SOC=[["https://www.facebook.com/profile.php?id=100083708970226", "Facebook Fanpage", "M13.5 22v-9h3l.5-3h-3.5V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7v3h3v9h3.5z"], ["https://www.facebook.com/nguyen.amo.2024/", "Facebook AMO", "M13.5 22v-9h3l.5-3h-3.5V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7v3h3v9h3.5z"], ["https://www.tiktok.com/@amo_3651", "TikTok AMO 3651", "M16 3c.4 2.2 1.7 3.6 4 4v3c-1.6 0-3-.5-4-1.3V15a6 6 0 1 1-5-5.9v3.1a3 3 0 1 0 2 2.8V3h3z"], ["https://www.tiktok.com/@cuoi.moi.ngay365", "TikTok C\u01b0\u1eddi M\u1ed7i Ng\u00e0y 365", "M16 3c.4 2.2 1.7 3.6 4 4v3c-1.6 0-3-.5-4-1.3V15a6 6 0 1 1-5-5.9v3.1a3 3 0 1 0 2 2.8V3h3z"], ["https://www.youtube.com/@AMO-NGUYEN", "YouTube AMO NGUY\u1ec4N", "M23 7.2s-.2-1.7-.9-2.4c-.8-.9-1.8-.9-2.2-1C16.8 3.5 12 3.5 12 3.5s-4.8 0-7.9.3c-.4.1-1.4.1-2.2 1C1.2 5.5 1 7.2 1 7.2S.8 9.2.8 11.1v1.8c0 2 .2 3.9.2 3.9s.2 1.7.9 2.4c.8.9 1.9.9 2.4 1 1.8.2 7.7.3 7.7.3s4.8 0 7.9-.3c.4-.1 1.4-.1 2.2-1 .7-.7.9-2.4.9-2.4s.2-2 .2-3.9v-1.8c0-2-.2-3.9-.2-3.9zM9.7 15.3V8.5l6.2 3.4-6.2 3.4z"], ["https://zalo.me/84932680592", "Zalo AMO NGUY\u1ec4N", "M12 2C6.5 2 2 5.8 2 10.5c0 2.7 1.5 5.1 3.8 6.7L5 22l4.3-2.4c.9.2 1.8.4 2.7.4 5.5 0 10-3.8 10-8.5S17.5 2 12 2zm-5 7h5v2l-2.5 3H12v2H7v-2l2.5-3H7V9zm6 0h2v7h-2V9zm3 0h2v5h3v2h-5V9z"]];
@@ -21,7 +21,7 @@ function header(){
   var h=el("header","lw-header"),w=el("div","lw-head"),b=el("a","lw-brand");b.href=ROOT+"index.html";
   var im=el("img");im.src=ROOT+"assets/images/amo-logo-new.jpg";im.alt="AMO NGUYỄN";b.appendChild(im);b.appendChild(el("span",null,"AMO NGUYỄN"));
   var n=el("nav","lw-nav");n.setAttribute("aria-label","Menu chính");
-  NAV.forEach(function(x){var a=el("a",null,lang==="en"?x[2]:x[1]);a.href=ROOT+x[0];a.dataset.vi=x[1];a.dataset.en=x[2];if(path===x[0]||((path==="p.html"||path==="product.html")&&x[0]==="shop.html"))a.setAttribute("aria-current","page");n.appendChild(a)});
+  NAV.forEach(function(x){var a=el("a",null,lang==="en"?x[2]:x[1]);a.href=ROOT+x[0];a.dataset.vi=x[1];a.dataset.en=x[2];if(path===x[0]||(x[0]==="journal/"&&location.pathname.includes("/journal/"))||((path==="p.html"||path==="product.html")&&x[0]==="shop.html"))a.setAttribute("aria-current","page");n.appendChild(a)});
   var t=el("div","lw-tools");
   langBtn=el("button",null,lang==="en"?"VN":"EN");langBtn.type="button";langBtn.setAttribute("aria-label","Đổi ngôn ngữ / Switch language");
   langBtn.onclick=function(){lang=lang==="en"?"vi":"en";try{localStorage.setItem(LS,lang)}catch(e){}apply()};
