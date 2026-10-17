@@ -91,8 +91,16 @@ function card(p){
 function inRange(label,v){var R=/^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/,L=String(label).replace(/\s/g,""),m=L.match(R),n=parseFloat(v);if(m)return n>=parseFloat(m[1])&&n<=parseFloat(m[2]);var mv=String(v).replace(/\s/g,"").match(R);if(mv&&/^\d+(?:\.\d+)?$/.test(L)){var x=parseFloat(L);return x>=parseFloat(mv[1])&&x<=parseFloat(mv[2])}return String(label)===String(v)}
 function attr(p,re){var o=[];(p.attributes||[]).forEach(function(a){if(re.test(a.name||""))(a.terms||[]).forEach(function(t){o.push(t.name)})});return o}
 function inferBrand(p){
-  if(p.brand)return p.brand;
   var n=String(p.name||"").toLowerCase();
+  var byCode={
+    "2026-09-fb35":"Adidas","2026-09-fb45":"LV","2026-09-fb46":"Gucci",
+    "2026-09-fb47":"Balenciaga","2026-09-fb54":"Salvatore Ferragamo",
+    "2026-09-fb57":"Gucci","2026-10-fb34":"Gucci",
+    "2026-10-fb35":"Givenchy","2026-10-fb36":"Givenchy","2026-10-fb37":"Givenchy",
+    "2026-10-fb43":"Dolce & Gabbana","2026-10-fb51":"Adidas","2026-10-fb52":"Adidas"
+  };
+  for(var code in byCode)if(n.indexOf(code)>-1)return byCode[code];
+  if(p.brand)return p.brand;
   var brands=[
     ["louis vuitton","LV"],["salvatore ferragamo","Salvatore Ferragamo"],
     ["dolce & gabbana","Dolce & Gabbana"],["dolce and gabbana","Dolce & Gabbana"],
