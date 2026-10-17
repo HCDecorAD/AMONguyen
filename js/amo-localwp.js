@@ -90,10 +90,23 @@ function card(p){
 }
 function inRange(label,v){var R=/^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/,L=String(label).replace(/\s/g,""),m=L.match(R),n=parseFloat(v);if(m)return n>=parseFloat(m[1])&&n<=parseFloat(m[2]);var mv=String(v).replace(/\s/g,"").match(R);if(mv&&/^\d+(?:\.\d+)?$/.test(L)){var x=parseFloat(L);return x>=parseFloat(mv[1])&&x<=parseFloat(mv[2])}return String(label)===String(v)}
 function attr(p,re){var o=[];(p.attributes||[]).forEach(function(a){if(re.test(a.name||""))(a.terms||[]).forEach(function(t){o.push(t.name)})});return o}
+function inferBrand(p){
+  if(p.brand)return p.brand;
+  var n=String(p.name||"").toLowerCase();
+  var brands=[
+    ["louis vuitton","LV"],["salvatore ferragamo","Salvatore Ferragamo"],
+    ["dolce & gabbana","Dolce & Gabbana"],["dolce and gabbana","Dolce & Gabbana"],
+    ["balenciaga","Balenciaga"],["burberry","Burberry"],["givenchy","Givenchy"],
+    ["adidas","Adidas"],["prada","Prada"],["nike","Nike"],
+    ["gucci","Gucci"],["dior","Dior"],["bally","Bally"]
+  ];
+  for(var i=0;i<brands.length;i++)if(n.indexOf(brands[i][0])>-1)return brands[i][1];
+  return "";
+}
 function load(cb){
   var done=false;function fin(l){if(done)return;done=true;cb(l)}
   fetch(ENGINE+"/api/public/products?store="+STORE).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){
-    var out=(d&&d.items||[]).map(function(p){return{id:p.id,slug:p.slug,name:p.name,cat:p.cat||"",price:Number(p.price||0),compare:Number(p.compare||0),badge:p.badge||"",image:p.image||"",available:p.available?1:0,brand:p.brand||"",sizes:p.sizes||[]}});
+    var out=(d&&d.items||[]).map(function(p){var x={id:p.id,slug:p.slug,name:p.name,cat:p.cat||"",price:Number(p.price||0),compare:Number(p.compare||0),badge:p.badge||"",image:p.image||"",available:p.available?1:0,brand:p.brand||"",sizes:p.sizes||[]};x.brand=inferBrand(x);return x});
     fin(out);
   }).catch(function(){fin([])});
 }
