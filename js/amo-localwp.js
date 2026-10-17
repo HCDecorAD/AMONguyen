@@ -93,19 +93,19 @@ function attr(p,re){var o=[];(p.attributes||[]).forEach(function(a){if(re.test(a
 function inferBrand(p){
   var n=String(p.name||"").toLowerCase();
   var byCode={
-    "2026-09-fb35":"Adidas","2026-09-fb45":"LV","2026-09-fb46":"Gucci",
-    "2026-09-fb47":"Balenciaga","2026-09-fb54":"Salvatore Ferragamo",
+    "2026-09-fb35":"Khác","2026-09-fb45":"LV","2026-09-fb46":"Gucci",
+    "2026-09-fb47":"Khác","2026-09-fb54":"Salvatore Ferragamo",
     "2026-09-fb57":"Gucci","2026-10-fb34":"Gucci",
-    "2026-10-fb35":"Givenchy","2026-10-fb36":"Givenchy","2026-10-fb37":"Givenchy",
-    "2026-10-fb43":"Dolce & Gabbana","2026-10-fb51":"Adidas","2026-10-fb52":"Adidas"
+    "2026-10-fb35":"Khác","2026-10-fb36":"Khác","2026-10-fb37":"Khác",
+    "2026-10-fb43":"Khác","2026-10-fb51":"Khác","2026-10-fb52":"Khác"
   };
   for(var code in byCode)if(n.indexOf(code)>-1)return byCode[code];
   if(p.brand)return p.brand;
   var brands=[
     ["louis vuitton","LV"],["salvatore ferragamo","Salvatore Ferragamo"],
-    ["dolce & gabbana","Dolce & Gabbana"],["dolce and gabbana","Dolce & Gabbana"],
-    ["balenciaga","Balenciaga"],["burberry","Burberry"],["givenchy","Givenchy"],
-    ["adidas","Adidas"],["prada","Prada"],["nike","Nike"],
+    ["dolce & gabbana","Khác"],["dolce and gabbana","Khác"],
+    ["balenciaga","Khác"],["burberry","Khác"],["givenchy","Khác"],
+    ["adidas","Khác"],["prada","Khác"],["nike","Khác"],
     ["gucci","Gucci"],["dior","Dior"],["bally","Bally"]
   ];
   for(var i=0;i<brands.length;i++)if(n.indexOf(brands[i][0])>-1)return brands[i][1];
