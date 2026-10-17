@@ -49,3 +49,31 @@ body.journal-category .tile:hover{border-color:var(--j-gold);transform:translate
   body.journal-article .article>p:not(:first-child),body.journal-article .article>ul,body.journal-article .article>ol{font-size:16px}
   body.journal-article .article>h2{font-size:27px!important}
 }
+
+/* Typography V3 — Vietnamese-safe editorial system */
+body.journal-home,body.journal-article,body.journal-category{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  font-kerning:normal;
+  text-rendering:optimizeLegibility;
+}
+body.journal-article .article>h1,
+body.journal-article .article>h2,
+body.journal-article .article>h3,
+body.journal-category h1{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif!important;
+  font-style:normal!important;
+  font-variant-ligatures:none;
+  font-kerning:normal;
+  text-rendering:optimizeLegibility;
+  letter-spacing:-.025em!important;
+}
+body.journal-article .article>h1{font-weight:600!important;line-height:1.08!important}
+body.journal-article .article>h2{font-weight:600!important;line-height:1.22!important}
+body.journal-article .article>h3{font-weight:600!important;line-height:1.3!important}
+body.journal-article .article>p:not(:first-child),
+body.journal-article .article>ul,
+body.journal-article .article>ol{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  line-height:1.82;
+  letter-spacing:.002em;
+}
