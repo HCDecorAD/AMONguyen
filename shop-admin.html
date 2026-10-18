@@ -46,11 +46,16 @@ body.menu-open .side{display:block!important;position:fixed;inset:0;z-index:35;o
 @media(max-width:900px){.np .np-layout{grid-template-columns:minmax(0,1fr)}}
 .np .np-card{border:1px solid #27303a;border-radius:10px;padding:16px;background:#131a22;margin-bottom:16px}
 .np .np-card h4{margin:0 0 14px;font-size:13px;font-weight:600;color:#c9d3df}
-.np .np-field{margin-bottom:14px;min-width:0}.np-field:last-child{margin-bottom:0}
-.np .np-field>label{display:block;font-size:12px;color:#8b98a8;margin:0 0 6px}
+.np .np-field{margin-bottom:10px;min-width:0}.np .np-field:last-child{margin-bottom:0}
+.np .np-field>label{display:block;font-size:12px;color:#8b98a8;margin:0 0 5px}
+.np .np-card input:not([type=checkbox]),.np .np-card select,.np .np-card textarea{padding:7px 10px;min-height:36px;font-size:13.5px;line-height:1.3}
+.np .np-card textarea{min-height:0;resize:vertical}
 .np .hint{font-size:12px;color:#6f7d8e;margin-top:6px}
-.np .np-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:600px){.np .np-row{grid-template-columns:minmax(0,1fr)}}
+.np .np-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.np .np-row3{grid-template-columns:1fr 1fr 1fr}
+.np .np-row4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:900px){.np .np-row4{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.np .np-row,.np .np-row3,.np .np-row4{grid-template-columns:minmax(0,1fr)}}
 .np .np-sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
 .np .np-chip{position:relative;display:block;cursor:pointer;margin:0;padding:0;border:0;background:none;border-radius:0;font-size:inherit}
 .np .np-chip:has(input:checked){border:0;background:none}
@@ -217,18 +222,16 @@ async function newProductView(){
   +'<div class="np-layout"><div class="np-main">'
   +card('Thông tin',
     '<div class="np-field"><label for="np_name">Tên sản phẩm *</label><input id="np_name" placeholder="Ví dụ: Giày loafer da bò"></div>'
-    +'<div class="np-row"><div class="np-field"><label for="np_sku">Mã SKU gốc</label><input id="np_sku" placeholder="Để trống sẽ tự tạo" oninput="npSkuPreview()"><div class="hint" id="np_skuprev">Mã biến thể sẽ có dạng: SKU-size-màu</div></div>'
-    +'<div class="np-field"><label for="np_badge">Nhãn</label><select id="np_badge">'+["","Mới","Hot","Sale","Bán chạy"].map(x=>'<option value="'+x+'">'+(x||"Không")+'</option>').join("")+'</select></div></div>'
-    +'<div class="np-field"><label for="np_desc">Mô tả</label><textarea id="np_desc" rows="6"></textarea></div>')
+    +'<div class="np-row np-row3"><div class="np-field"><label for="np_brand">Thương hiệu</label><select id="np_brand">'+brandOpts(TAX.brands,"")+'</select></div>'
+    +'<div class="np-field"><label for="np_cat">Danh mục</label><select id="np_cat">'+catOpts(TAX.categories,"")+'</select></div>'
+    +'<div class="np-field"><label for="np_badge">Nhãn</label><select id="np_badge">'+["","Mới","Hot","Sale","Bán chạy"].map(x=>'<option value="'+x+'">'+(x||"Không")+'</option>').join("")+'</select></div></div>')
   +card('Size, màu và giá',
     '<div class="np-field"><label>Size</label><div class="np-sizes">'+SIZE_OPTS.map(x=>'<label class="np-chip"><input type="checkbox" class="np_sz" value="'+x+'"><span>'+x+'</span></label>').join("")+'</div></div>'
-    +'<div class="np-row"><div class="np-field"><label for="np_color">Màu (cách nhau bằng dấu phẩy)</label><input id="np_color" placeholder="Đen, Nâu"></div><div class="np-field"><label for="np_stock">Tồn kho mỗi size/màu</label><input id="np_stock" type="number" min="0" value="1"></div></div>'
-    +'<div class="np-row"><div class="np-field"><label for="np_price">Giá bán *</label><input id="np_price" type="number" min="1"></div><div class="np-field"><label for="np_sale">Giá sale</label><input id="np_sale" type="number" min="0"></div></div>')
+    +'<div class="np-row np-row4"><div class="np-field"><label for="np_color">Màu</label><input id="np_color" placeholder="Đen, Nâu"></div><div class="np-field"><label for="np_stock">Tồn kho / size, màu</label><input id="np_stock" type="number" min="0" value="1"></div><div class="np-field"><label for="np_price">Giá bán *</label><input id="np_price" type="number" min="1"></div><div class="np-field"><label for="np_sale">Giá sale</label><input id="np_sale" type="number" min="0"></div></div>')
+  +card('Mô tả',
+    '<div class="np-field"><textarea id="np_desc" rows="5" aria-label="Mô tả sản phẩm"></textarea></div>')
   +'<div hidden><label>Chất liệu</label><input id="np_material"></div><div hidden><label>Xuất xứ</label><input id="np_origin"></div>'
   +'</div><aside class="np-side">'
-  +card('Thương hiệu & danh mục',
-    '<div class="np-field"><label for="np_brand">Thương hiệu</label><select id="np_brand">'+brandOpts(TAX.brands,"")+'</select></div>'
-    +'<div class="np-field"><label for="np_cat">Danh mục</label><select id="np_cat">'+catOpts(TAX.categories,"")+'</select></div>')
   +card('Ảnh',
     '<div class="np-pick"><button type="button" id="np_pickbtn" onclick="np_files.click()">Chọn ảnh</button><input id="np_files" type="file" accept="image/*" multiple tabindex="-1" onchange="npAddFiles(this)"></div><div id="np_count" class="np-count" aria-live="polite"></div>'
     +'<div class="np-field" style="margin-top:14px"><label for="np_urls">Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="3"></textarea></div>')
@@ -236,7 +239,6 @@ async function newProductView(){
   +'<div class="np-bar"><button class="ghost" onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
   +'<div id="np_msg" style="margin-top:10px"></div></div>';
 }
-function npSkuPreview(){const b=np_sku.value.trim().toUpperCase().replace(/\s+/g,"");const t=document.getElementById("np_skuprev");if(!t)return;t.textContent=b?"Mã biến thể sẽ có dạng: "+b+"-42-DEN":"Mã biến thể sẽ có dạng: SKU-size-màu"}
 
 function npApplyTpl(){const p=NPSRC.find(x=>x.id===np_tpl.value);if(!p)return;np_brand.value=p.brand_id||"";np_cat.value=p.category_id||"";np_price.value=p.price||"";np_sale.value=p.sale_price??"";np_material.value=p.material||"";np_origin.value=p.origin||"";np_badge.value=p.badge||"";np_desc.value=p.description||""}
 // Gom ảnh qua nhiều lần chọn: trên điện thoại nhiều trình duyệt thay thế lựa chọn cũ mỗi lần mở "Chọn tệp"
@@ -258,7 +260,7 @@ async function npSubmit(status){
   try{
     const urls=np_urls.value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
     for(const f of NPFILES)urls.push(await npUpload(f));
-    const item={name,sku:np_sku.value.trim(),brand:brandName,category:catName,price,sale_price:sale,sizes,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,material:np_material.value,origin:np_origin.value,badge:np_badge.value,status};
+    const item={name,sku:"",brand:brandName,category:catName,price,sale_price:sale,sizes,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,material:np_material.value,origin:np_origin.value,badge:np_badge.value,status};
     const r=await api("/api/products/bulk",{method:"POST",body:JSON.stringify({dry:false,items:[item]})});
     await newProductView();
     np_msg.innerHTML='<div class="panel ok">✔ Đã lưu “'+esc(name)+'” ('+r.summary.variants+' biến thể) — '+(status==="active"?"đã đăng lên web":"đang ở trạng thái nháp")+'.</div>';
