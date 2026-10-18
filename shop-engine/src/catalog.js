@@ -15,7 +15,7 @@ export async function handleCatalog(req, env, store, H) {
   if (path === "/api/public/products") {
     const prods = (await env.DB.prepare(
       "SELECT p.id,p.slug,p.name,p.price,p.sale_price,p.badge,c.name cat,c.slug cat_slug,b.name brand,b.slug brand_slug," +
-      "(SELECT url FROM product_images i WHERE i.product_id=p.id ORDER BY sort_order LIMIT 1) image " +
+      "(SELECT url FROM product_images i WHERE i.store_id=p.store_id AND i.product_id=p.id ORDER BY sort_order LIMIT 1) image " +
       "FROM products p LEFT JOIN categories c ON c.id=p.category_id LEFT JOIN brands b ON b.id=p.brand_id " +
       "WHERE p.store_id=? AND p.status='active' ORDER BY p.created_at DESC LIMIT 300").bind(store.id).all()).results;
     const vars = (await env.DB.prepare(
