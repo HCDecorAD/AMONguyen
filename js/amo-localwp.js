@@ -98,8 +98,12 @@ function lwFocus(i){
         if(df>60){sw+=df;sx+=df*x;sy+=df*y}
       }
       if(sw<=0)return;
-      var cx=Math.min(100,Math.max(0,Math.round(sx/sw/Math.max(1,W-1)*100)));
-      var cy=Math.min(100,Math.max(0,Math.round(sy/sw/Math.max(1,H-1)*100)));
+      /* object-fit:cover trong khung vuông: tính vị trí cắt để trọng tâm sản phẩm nằm đúng giữa khung */
+      var fx=sx/sw/Math.max(1,W-1),fy=sy/sw/Math.max(1,H-1);
+      var nw=i.naturalWidth,nh=i.naturalHeight,sc=Math.max(1/nw,1/nh);
+      var dw=nw*sc,dh=nh*sc;
+      function pos(f,d){if(Math.abs(1-d)<0.001)return 0.5;var p=(0.5-f*d)/(1-d);return Math.min(1,Math.max(0,p))}
+      var cx=Math.round(pos(fx,dw)*100),cy=Math.round(pos(fy,dh)*100);
       i.style.objectPosition=cx+"% "+cy+"%";
     }catch(e){}
   }
