@@ -236,3 +236,15 @@ body.journal-article .ja-cta-ico{width:20px;height:20px;flex:0 0 20px}
 body.journal-article .article figure.ja-fig{margin:48px 0;}
 body.journal-article .article figure.ja-fig img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:2px;box-shadow:0 30px 60px -36px #000,0 0 0 1px #2c261d;}
 body.journal-article .article figure.ja-fig figcaption{margin-top:12px;font:500 11px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8f8268;}
+
+/* Trang chủ Journal trên mobile: thẻ bài dạng hàng ngang (ảnh nhỏ bên trái, tiêu đề bên phải) để xem được nhiều bài trên một màn hình */
+@media(max-width:600px){
+  body.journal-home .featured-grid,body.journal-home .all-grid{gap:18px!important}
+  body.journal-home .story{display:grid!important;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:start}
+  body.journal-home .story-art,body.journal-home .featured-grid .story-art,body.journal-home .all-grid .story-art,body.journal-home .featured-grid .story:first-child .story-art{aspect-ratio:4/5!important;min-width:0}
+  body.journal-home .story-art .art-index{top:6px!important;left:6px!important;padding:3px 6px!important;font-size:9px!important}
+  body.journal-home .story-body{padding:0 0 0 2px;min-width:0}
+  body.journal-home .story-meta{font-size:9px!important;letter-spacing:.16em!important}
+  body.journal-home .story h3{font-size:16px!important;line-height:1.4!important;margin:8px 0 10px!important}
+  body.journal-home .story-more{padding-top:10px!important;font-size:11px!important}
+}
