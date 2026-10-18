@@ -146,6 +146,7 @@ async function newProductView(){
   await loadTax();
   const d=await api("/api/products");NPSRC=d.items||[];
   const sec=(t)=>'<div class="np-sec">'+t+'</div>';
+  NPFILES=[];
   content.innerHTML='<div class="panel np-wrap" id="npPanel">'
   +'<div class="actions"><h3>➕ Nhập sản phẩm mới</h3></div>'
   +'<label hidden>Chép từ sản phẩm có sẵn (tùy chọn)</label><select id="np_tpl" hidden onchange="npApplyTpl()"><option value="">— Bắt đầu trống —</option>'+NPSRC.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("")+'</select>'
@@ -160,12 +161,16 @@ async function newProductView(){
   +'<div hidden><label>Chất liệu</label><input id="np_material"></div><div hidden><label>Xuất xứ</label><input id="np_origin"></div></div>'
   +'<div class="np-full"><label>Mô tả</label><textarea id="np_desc" rows="2"></textarea></div>'
   +sec('Ảnh')
-  +'<div class="np-grid"><div class="np-full"><label>Chọn ảnh từ máy (nhiều ảnh)</label><input id="np_files" type="file" accept="image/*" multiple onchange="npPicked(this)"><div id="np_count" class="muted sm" aria-live="polite"></div></div><div class="np-full"><label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea></div></div>'
+  +'<div class="np-grid"><div class="np-full"><label>Chọn ảnh từ máy (nhiều ảnh)</label><input id="np_files" type="file" accept="image/*" multiple onchange="npAddFiles(this)"><div id="np_count" class="muted sm" aria-live="polite"></div></div><div class="np-full"><label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea></div></div>'
   +'<div class="np-actions"><button onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
   +'<div id="np_msg" style="margin-top:10px"></div></div>';
 }
 function npApplyTpl(){const p=NPSRC.find(x=>x.id===np_tpl.value);if(!p)return;np_brand.value=p.brand_id||"";np_cat.value=p.category_id||"";np_price.value=p.price||"";np_sale.value=p.sale_price??"";np_material.value=p.material||"";np_origin.value=p.origin||"";np_badge.value=p.badge||"";np_desc.value=p.description||""}
-function npPicked(i){const n=i.files?i.files.length:0;document.getElementById("np_count").textContent=n?"Đã chọn "+n+" ảnh":""}
+// Gom ảnh qua nhiều lần chọn: trên điện thoại nhiều trình duyệt thay thế lựa chọn cũ mỗi lần mở "Chọn tệp"
+var NPFILES=[];
+function npAddFiles(el){NPFILES=NPFILES.concat([...(el.files||[])]);el.value="";npShowFiles()}
+function npClearFiles(){NPFILES=[];np_files.value="";npShowFiles()}
+function npShowFiles(){const c=document.getElementById("np_count");if(c)c.innerHTML=NPFILES.length?"Đã chọn "+NPFILES.length+" ảnh · <a href='#' onclick='npClearFiles();return false'>Xóa danh sách</a>":""}
 function npErr(m){np_msg.innerHTML='<div class="warn"><b>Cần sửa:</b> '+esc(m).replace(/; /g,"<br>")+'</div>'}
 async function npSubmit(status){
   const name=np_name.value.trim(),price=+np_price.value,sale=np_sale.value===""?null:+np_sale.value;
@@ -178,7 +183,7 @@ async function npSubmit(status){
   np_msg.innerHTML='<p class="muted">Đang lưu…</p>';
   try{
     const urls=np_urls.value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
-    for(const f of [...(np_files.files||[])])urls.push(await npUpload(f));
+    for(const f of NPFILES)urls.push(await npUpload(f));
     const item={name,brand:brandName,category:catName,price,sale_price:sale,sizes,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,material:np_material.value,origin:np_origin.value,badge:np_badge.value,status};
     const r=await api("/api/products/bulk",{method:"POST",body:JSON.stringify({dry:false,items:[item]})});
     await newProductView();
