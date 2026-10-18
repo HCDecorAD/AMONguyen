@@ -37,6 +37,31 @@ body.menu-open .side{display:block!important;position:fixed;inset:0;z-index:35;o
 .cust-act button.ghost{background:transparent;border:1px solid #2f3a48;color:#c9d3df}
 .cust-act button.ghost:hover{border-color:#4a5868}
 .cust-empty{padding:40px;text-align:center;color:#8b98a8;border:1px dashed #2f3a48;border-radius:10px}
+
+/* Nhập sản phẩm mới — bố cục hai cột: nội dung bên trái, phân loại và ảnh bên phải */
+.np .np-head{margin-bottom:18px}
+.np .np-head h3{margin:0 0 4px;font-size:18px;font-weight:650;letter-spacing:-.01em}
+.np .np-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+.np .np-main,.np-side{display:flex;flex-direction:column;gap:0}
+@media(max-width:900px){.np .np-layout{grid-template-columns:minmax(0,1fr)}}
+.np .np-card{border:1px solid #27303a;border-radius:10px;padding:16px;background:#131a22;margin-bottom:16px}
+.np .np-card h4{margin:0 0 14px;font-size:13px;font-weight:600;color:#c9d3df}
+.np .np-field{margin-bottom:14px;min-width:0}.np-field:last-child{margin-bottom:0}
+.np .np-field>label{display:block;font-size:12px;color:#8b98a8;margin:0 0 6px}
+.np .hint{font-size:12px;color:#6f7d8e;margin-top:6px}
+.np .np-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.np .np-row{grid-template-columns:minmax(0,1fr)}}
+.np .np-sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.np .np-chip{position:relative;display:block;cursor:pointer;margin:0;padding:0;border:0;background:none;border-radius:0;font-size:inherit}
+.np .np-chip:has(input:checked){border:0;background:none}
+.np .np-chip input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.np .np-chip span{display:block;text-align:center;padding:9px 0;border:1px solid #2f3a48;border-radius:7px;color:#c9d3df;font-size:13px;font-variant-numeric:tabular-nums;background:#0f151c}
+.np .np-chip:hover span{border-color:#4a5868}
+.np .np-chip input:checked+span{background:#1b2c52;border-color:#246bfe;color:#fff}
+.np .np-chip input:focus-visible+span{outline:2px solid #6aa0ff;outline-offset:2px}
+.np .np-bar{position:sticky;bottom:0;z-index:5;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;background:#131a22;border-top:1px solid #27303a;padding:12px 0;margin-top:6px}
+.np .np-bar button{margin:0}
+.np .np-bar button.ghost{background:transparent;border:1px solid #2f3a48;color:#c9d3df}
 <style>.np-wrap{max-width:1100px}.np-wrap .np-sec{font-weight:700;color:#9fb0c2;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px;padding-top:10px;border-top:1px solid #2a3548}.np-wrap label{display:block;margin:0 0 4px;font-size:12px;color:#9fb0c2}.np-wrap input:not([type=checkbox]):not([type=file]),.np-wrap select,.np-wrap textarea{margin:0;padding:6px 9px;min-height:34px;font-size:14px}.np-wrap textarea{min-height:0}.np-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}.np-g3{grid-template-columns:repeat(3,minmax(0,1fr))}.np-r4{grid-template-columns:repeat(4,minmax(0,1fr))}.np-grid>div{min-width:0}.np-full{grid-column:1/-1}.np-sizes{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:4px;margin-bottom:8px}.np-chip{display:flex;align-items:center;justify-content:center;gap:3px;margin:0;padding:5px 2px;font-size:12px!important;border:1px solid #2a3548;border-radius:8px;cursor:pointer;background:#0b0e12}.np-chip input{width:auto;margin:0}.np-chip:has(input:checked){border-color:#246bfe;background:#14233f}.np-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:10px;position:sticky;bottom:0;background:#11161d;padding:8px 0}.np-wrap [hidden]{display:none!important}.np-pick{position:relative;display:inline-block}.np-pick input{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none}.np-count{margin-top:8px;font-size:13px;color:#dfe7f1}.np-count a{color:#7fb0ff}.np-flist{margin:6px 0 0;padding-left:20px}.np-flist li{margin:2px 0;word-break:break-all}@media(max-width:600px){.np-wrap{padding:12px!important;max-width:none}.np-g3,.np-r4{grid-template-columns:1fr 1fr}.np-sizes{grid-template-columns:repeat(6,minmax(0,1fr))!important}.np-wrap .np-sec{margin:12px 0 6px;padding-top:10px}.np-wrap label{margin:0 0 2px;font-size:11px}.np-wrap input:not([type=checkbox]):not([type=file]),.np-wrap select,.np-wrap textarea{padding:7px 8px;min-height:36px;font-size:14px}.np-grid{gap:6px 8px}.np-sizes{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.np-chip{padding:5px 2px;gap:2px}.np-actions{margin-top:10px}}@media(max-width:380px){.np-sizes{grid-template-columns:repeat(5,minmax(0,1fr))}}.acc{display:grid;gap:14px;max-width:560px}.acc-head{display:flex;align-items:center;gap:12px}.av{width:40px;height:40px;border-radius:50%;background:#14233f;color:#9fc0ff;display:grid;place-items:center;font-weight:700}.pw{position:relative;margin:6px 0 14px}.pw input{margin:0;padding-right:64px}.pw .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:#9fb0c3;font-size:13px;padding:6px 8px;min-height:auto}.pw .eye:hover{color:#fff}.hint{margin:-8px 0 12px}.acc-actions{margin-top:6px}input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{-webkit-text-fill-color:#fff;-webkit-box-shadow:0 0 0 1000px #0c1117 inset;caret-color:#fff;transition:background-color 9999s}</style></head><body><div id="root"></div><div class="modal" id="modal"><div class="box" id="box"></div></div><script>var __v=Date.now();["js/hc-blocks.js","js/site-editor.js"].forEach(function(u){document.write("<scr"+"ipt src=\""+u+"?v="+__v+"\"></scr"+"ipt>")})</script><script>
 const API="https://hc-shop-engine.huycuongonline.workers.dev";
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};let STORE=sessionStorage.HC_STORE||LS.get("HC_STORE")||"",TOKEN=sessionStorage.HC_SHOP_TOKEN||LS.get("HC_SHOP_TOKEN")||"",ME=null;
@@ -184,24 +209,35 @@ async function newProductView(){
   if(!canW()){content.innerHTML='<div class="panel"><p class="muted">Tài khoản này chỉ xem, không nhập được sản phẩm.</p></div>';return}
   await loadTax();
   const d=await api("/api/products");NPSRC=d.items||[];
-  const sec=(t)=>'<div class="np-sec">'+t+'</div>';
   NPFILES=[];
-  content.innerHTML='<div class="panel np-wrap" id="npPanel">'
-  +'<div class="actions"><h3>➕ Nhập sản phẩm mới</h3></div>'
+  const card=(t,body)=>'<section class="np-card"><h4>'+t+'</h4>'+body+'</section>';
+  content.innerHTML='<div class="panel np" id="npPanel">'
+  +'<div class="np-head"><h3>Nhập sản phẩm mới</h3><p class="muted sm">Điền thông tin, chọn size và màu. Hệ thống tự tạo mã biến thể và tồn kho.</p></div>'
   +'<label hidden>Chép từ sản phẩm có sẵn (tùy chọn)</label><select id="np_tpl" hidden onchange="npApplyTpl()"><option value="">— Bắt đầu trống —</option>'+NPSRC.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("")+'</select>'
-  +sec('Thông tin')
-  +'<div class="np-grid np-g3"><div class="np-full"><label>Tên sản phẩm *</label><input id="np_name"></div><div><label>Thương hiệu</label><select id="np_brand">'+brandOpts(TAX.brands,"")+'</select></div>'
-  +'<div><label>Danh mục</label><select id="np_cat">'+catOpts(TAX.categories,"")+'</select></div><div><label>Nhãn</label><select id="np_badge">'+["","Mới","Hot","Sale","Bán chạy"].map(x=>'<option value="'+x+'">'+(x||"Không")+'</option>').join("")+'</select></div></div>'
-  +sec('Size & màu')
-  +'<div class="np-sizes">'+SIZE_OPTS.map(x=>'<label class="np-chip"><input type="checkbox" class="np_sz" value="'+x+'"><span>'+x+'</span></label>').join("")+'</div>'
-  +'<div class="np-grid np-r4"><div><label>Màu (cách nhau bằng dấu phẩy)</label><input id="np_color" placeholder="Đen, Nâu"></div><div><label>Tồn kho mỗi size/màu</label><input id="np_stock" type="number" min="0" value="1"></div><div><label>Giá bán *</label><input id="np_price" type="number" min="1"></div><div><label>Giá sale</label><input id="np_sale" type="number" min="0"></div></div>'
+  +'<div class="np-layout"><div class="np-main">'
+  +card('Thông tin',
+    '<div class="np-field"><label for="np_name">Tên sản phẩm *</label><input id="np_name" placeholder="Ví dụ: Giày loafer da bò"></div>'
+    +'<div class="np-row"><div class="np-field"><label for="np_sku">Mã SKU gốc</label><input id="np_sku" placeholder="Để trống sẽ tự tạo" oninput="npSkuPreview()"><div class="hint" id="np_skuprev">Mã biến thể sẽ có dạng: SKU-size-màu</div></div>'
+    +'<div class="np-field"><label for="np_badge">Nhãn</label><select id="np_badge">'+["","Mới","Hot","Sale","Bán chạy"].map(x=>'<option value="'+x+'">'+(x||"Không")+'</option>').join("")+'</select></div></div>'
+    +'<div class="np-field"><label for="np_desc">Mô tả</label><textarea id="np_desc" rows="6"></textarea></div>')
+  +card('Size, màu và giá',
+    '<div class="np-field"><label>Size</label><div class="np-sizes">'+SIZE_OPTS.map(x=>'<label class="np-chip"><input type="checkbox" class="np_sz" value="'+x+'"><span>'+x+'</span></label>').join("")+'</div></div>'
+    +'<div class="np-row"><div class="np-field"><label for="np_color">Màu (cách nhau bằng dấu phẩy)</label><input id="np_color" placeholder="Đen, Nâu"></div><div class="np-field"><label for="np_stock">Tồn kho mỗi size/màu</label><input id="np_stock" type="number" min="0" value="1"></div></div>'
+    +'<div class="np-row"><div class="np-field"><label for="np_price">Giá bán *</label><input id="np_price" type="number" min="1"></div><div class="np-field"><label for="np_sale">Giá sale</label><input id="np_sale" type="number" min="0"></div></div>')
   +'<div hidden><label>Chất liệu</label><input id="np_material"></div><div hidden><label>Xuất xứ</label><input id="np_origin"></div>'
-  +'<div class="np-full"><label>Mô tả</label><textarea id="np_desc" rows="6" style="min-height:140px"></textarea></div>'
-  +sec('Ảnh')
-  +'<div class="np-grid"><div class="np-full"><label>Chọn ảnh từ máy (nhiều ảnh)</label><div class="np-pick"><button type="button" id="np_pickbtn" onclick="np_files.click()">Chọn ảnh</button><input id="np_files" type="file" accept="image/*" multiple tabindex="-1" onchange="npAddFiles(this)"></div><div id="np_count" class="np-count" aria-live="polite"></div></div><div class="np-full"><label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea></div></div>'
-  +'<div class="np-actions"><button onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
+  +'</div><aside class="np-side">'
+  +card('Thương hiệu & danh mục',
+    '<div class="np-field"><label for="np_brand">Thương hiệu</label><select id="np_brand">'+brandOpts(TAX.brands,"")+'</select></div>'
+    +'<div class="np-field"><label for="np_cat">Danh mục</label><select id="np_cat">'+catOpts(TAX.categories,"")+'</select></div>')
+  +card('Ảnh',
+    '<div class="np-pick"><button type="button" id="np_pickbtn" onclick="np_files.click()">Chọn ảnh</button><input id="np_files" type="file" accept="image/*" multiple tabindex="-1" onchange="npAddFiles(this)"></div><div id="np_count" class="np-count" aria-live="polite"></div>'
+    +'<div class="np-field" style="margin-top:14px"><label for="np_urls">Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="3"></textarea></div>')
+  +'</aside></div>'
+  +'<div class="np-bar"><button class="ghost" onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
   +'<div id="np_msg" style="margin-top:10px"></div></div>';
 }
+function npSkuPreview(){const b=np_sku.value.trim().toUpperCase().replace(/\s+/g,"");const t=document.getElementById("np_skuprev");if(!t)return;t.textContent=b?"Mã biến thể sẽ có dạng: "+b+"-42-DEN":"Mã biến thể sẽ có dạng: SKU-size-màu"}
+
 function npApplyTpl(){const p=NPSRC.find(x=>x.id===np_tpl.value);if(!p)return;np_brand.value=p.brand_id||"";np_cat.value=p.category_id||"";np_price.value=p.price||"";np_sale.value=p.sale_price??"";np_material.value=p.material||"";np_origin.value=p.origin||"";np_badge.value=p.badge||"";np_desc.value=p.description||""}
 // Gom ảnh qua nhiều lần chọn: trên điện thoại nhiều trình duyệt thay thế lựa chọn cũ mỗi lần mở "Chọn tệp"
 var NPFILES=[];
@@ -222,7 +258,7 @@ async function npSubmit(status){
   try{
     const urls=np_urls.value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
     for(const f of NPFILES)urls.push(await npUpload(f));
-    const item={name,brand:brandName,category:catName,price,sale_price:sale,sizes,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,material:np_material.value,origin:np_origin.value,badge:np_badge.value,status};
+    const item={name,sku:np_sku.value.trim(),brand:brandName,category:catName,price,sale_price:sale,sizes,colors:np_color.value,stock:np_stock.value===""?0:+np_stock.value,images:urls,description:np_desc.value,material:np_material.value,origin:np_origin.value,badge:np_badge.value,status};
     const r=await api("/api/products/bulk",{method:"POST",body:JSON.stringify({dry:false,items:[item]})});
     await newProductView();
     np_msg.innerHTML='<div class="panel ok">✔ Đã lưu “'+esc(name)+'” ('+r.summary.variants+' biến thể) — '+(status==="active"?"đã đăng lên web":"đang ở trạng thái nháp")+'.</div>';
