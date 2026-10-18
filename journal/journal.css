@@ -216,3 +216,18 @@ body.journal-article .ja-cta-actions a{display:inline-block;padding:12px 18px;bo
 body.journal-article .ja-cta-actions a:hover{background:var(--ja-gold);color:#0c0b0a}
 body.journal-article .ja-cta-actions a:focus-visible{outline:1px solid var(--ja-gold);outline-offset:3px}
 @media(max-width:600px){body.journal-article .ja-cta{margin-top:72px}body.journal-article .ja-cta-actions a{flex:1 1 100%;text-align:center}}
+/* Khối tư vấn: căn giữa và icon màu thương hiệu */
+body.journal-article .ja-cta{text-align:center}
+body.journal-article .ja-cta-text{margin-left:auto;margin-right:auto}
+body.journal-article .ja-cta-actions{justify-content:center}
+body.journal-article .ja-cta-actions a.ja-cta-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:188px;padding:13px 20px;border:1px solid #5a4a2e;background:rgba(255,255,255,.02);color:#f1e7d6;font-size:14px;letter-spacing:.02em;transition:border-color .25s,background .25s,transform .25s}
+body.journal-article .ja-cta-actions a.ja-cta-btn:hover{border-color:var(--ja-gold);background:rgba(212,181,122,.08);transform:translateY(-2px);color:#f1e7d6}
+body.journal-article .ja-cta-ico{width:20px;height:20px;flex:0 0 20px}
+@media(max-width:600px){body.journal-article .ja-cta-actions a.ja-cta-btn{flex:1 1 100%;min-width:0}}
+/* Trang chủ Journal trên điện thoại: căn giữa tiêu đề mục */
+@media(max-width:650px){
+  body.journal-home .section-head,body.journal-home .section-head>div{text-align:center}
+  body.journal-home .section-head{align-items:center}
+  body.journal-home .section-head p{white-space:normal}
+  body.journal-home .eyebrow{justify-content:center}
+}
