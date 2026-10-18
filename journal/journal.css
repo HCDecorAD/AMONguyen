@@ -118,10 +118,10 @@ body.journal-home .story:hover .story-more span{transform:translate(3px,-3px)}
 body.journal-home .story:focus-visible{outline:1px solid var(--jh-gold);outline-offset:8px}
 
 body.journal-home .all-grid{gap:clamp(40px,4.5vw,56px) clamp(18px,2.2vw,28px)!important}
-body.journal-home .all-grid .story-art{aspect-ratio:4/5!important}
+body.journal-home .all-grid .story-art{aspect-ratio:3/2!important}
 body.journal-home .all-grid .story h3{font-size:clamp(17px,1.5vw,20px)!important;line-height:1.45!important}
-body.journal-home .featured-grid .story-art{aspect-ratio:4/5!important}
-body.journal-home .featured-grid .story:first-child .story-art{aspect-ratio:4/3!important}
+body.journal-home .featured-grid .story-art{aspect-ratio:3/2!important}
+body.journal-home .featured-grid .story:first-child .story-art{aspect-ratio:3/2!important}
 
 body.journal-home .cta{background:radial-gradient(90% 120% at 50% 0%,#2a2116 0%,#151310 60%);border-top:1px solid #4a3c26}
 body.journal-home .cta h2{font-weight:500!important;font-size:clamp(28px,3.4vw,42px)!important;letter-spacing:-.03em}
