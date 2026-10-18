@@ -231,3 +231,8 @@ body.journal-article .ja-cta-ico{width:20px;height:20px;flex:0 0 20px}
   body.journal-home .section-head p{white-space:normal}
   body.journal-home .eyebrow{justify-content:center}
 }
+
+/* Ảnh minh họa trong thân bài */
+body.journal-article .article figure.ja-fig{margin:48px 0;}
+body.journal-article .article figure.ja-fig img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:2px;box-shadow:0 30px 60px -36px #000,0 0 0 1px #2c261d;}
+body.journal-article .article figure.ja-fig figcaption{margin-top:12px;font:500 11px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8f8268;}
