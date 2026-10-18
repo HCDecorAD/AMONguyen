@@ -83,7 +83,7 @@ function watch(){
    để ảnh cover khung vuông vẫn căn theo sản phẩm. Ảnh không đọc được pixel (khác origin) thì giữ căn giữa. */
 function card(p){
   var a=el("a","lw-card");a.href=ROOT+"product.html?p="+encodeURIComponent(p.slug||p.id||"");
-  var im=el("div","im");if(p.image){var i=el("img");i.src=p.image;i.alt=p.name||"";i.loading="lazy";im.appendChild(i)}else im.textContent="Hình ảnh đang cập nhật";
+  var im=el("div","im");if(p.image){var i=el("img"),pm=String(p.image).match(/#pos=([\d.]+),([\d.]+)/);i.src=String(p.image).split("#")[0];if(pm)i.style.objectPosition=pm[1]+"% "+pm[2]+"%";i.alt=p.name||"";i.loading="lazy";im.appendChild(i)}else im.textContent="Hình ảnh đang cập nhật";
   a.appendChild(im);a.appendChild(el("div","nm",p.name||""));
   if(p.price){var pr=el("div","pr",money(p.price));if(p.compare>p.price){var o=el("s","old",money(p.compare));pr.appendChild(o);pr.appendChild(el("span","off","-"+Math.round((1-p.price/p.compare)*100)+"%"))}a.appendChild(pr)}
   if(p.badge){a.appendChild(el("span","lw-badge",p.badge))}
