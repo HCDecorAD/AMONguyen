@@ -9,6 +9,7 @@ const mk=async(obj,secret=SECRET)=>{const p=b64u(JSON.stringify(obj));return "hu
 const good={sub:"user:nv_amo",role:"staff",store:"store_amo",iat:NOW,exp:NOW+3600,v:1};
 assert.deepEqual(await verifyHubToken(await mk(good),SECRET,NOW+5),{sub:"user:nv_amo",role:"staff",store_id:"store_amo"});
 assert.equal((await verifyHubToken(await mk({...good,role:"viewer",sub:"user:kh"}),SECRET,NOW)).role,"viewer");
+assert.equal((await verifyHubToken(await mk({...good,role:"manager",sub:"user:qlch"}),SECRET,NOW)).role,"manager");
 assert.equal(await verifyHubToken(await mk(good),SECRET,NOW+3600),null,"expired");
 assert.equal(await verifyHubToken(await mk(good,"other-secret-xxxxxxxxxxxxxxxxxxxx"),SECRET,NOW),null,"wrong secret");
 assert.equal(await verifyHubToken(await mk({...good,store:"store_other"}),SECRET,NOW),null,"other store");
