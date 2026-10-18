@@ -148,7 +148,6 @@ body.journal-home .cta a:hover{background:transparent;color:var(--jh-gold)}
   body.journal-home .section-head p{white-space:normal}
   body.journal-home .categories{gap:6px}
   body.journal-home .category{padding:9px 13px;font-size:11px}
-  body.journal-home .all-grid .story-art,body.journal-home .featured-grid .story-art,body.journal-home .featured-grid .story:first-child .story-art{aspect-ratio:4/5!important}
   body.journal-home .story-art .art-index{top:10px!important;left:10px!important}
 }
 body.journal-home section.content,body.journal-home .section-head,body.journal-home .section-head>div{text-align:left}
@@ -247,4 +246,7 @@ body.journal-article .article figure.ja-fig figcaption{margin-top:12px;font:500 
   body.journal-home .story-meta{font-size:9px!important;letter-spacing:.16em!important}
   body.journal-home .story h3{font-size:16px!important;line-height:1.4!important;margin:8px 0 10px!important}
   body.journal-home .story-more{padding-top:10px!important;font-size:11px!important}
+  body.journal-home .section-head{display:none!important}
+  body.journal-home .story-meta,body.journal-home .story-more{display:none!important}
+  body.journal-home .story h3{margin:0!important}
 }
