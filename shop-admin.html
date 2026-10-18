@@ -55,7 +55,7 @@ body.menu-open .side{display:block!important;position:fixed;inset:0;z-index:35;o
 .np .np-row3{grid-template-columns:1fr 1fr 1fr}
 .np .np-row4{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:900px){.np .np-row4{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.np .np-row{grid-template-columns:minmax(0,1fr)}.np .np-row3{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.np .np-row4{grid-template-columns:1fr 1fr;gap:10px}.np .np-head p,.np .np-field>label.np-hide-m{display:none}.np .np-card select{font-size:13px;padding-left:8px;padding-right:6px}}
+@media(max-width:600px){.np .np-row{grid-template-columns:minmax(0,1fr)}.np .np-row3{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.np .np-row4{grid-template-columns:1fr 1fr;gap:10px}.np .np-head p,.np .np-field>label.np-hide-m{display:none}.np .np-card select{font-size:13px;padding-left:8px;padding-right:6px}.np .np-card{padding:12px}.np .np-card h4{margin:0 0 8px}.np .np-row3 .np-field{margin-bottom:0}.np .np-row4{gap:0 8px}.np .np-row4 .np-field{margin-bottom:8px}.np .np-row4 .np-field:nth-child(n+3){margin-bottom:0}}
 .np .np-sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
 .np .np-chip{position:relative;display:block;cursor:pointer;margin:0;padding:0;border:0;background:none;border-radius:0;font-size:inherit}
 .np .np-chip:has(input:checked){border:0;background:none}
@@ -234,7 +234,7 @@ async function newProductView(){
   +'</div><aside class="np-side">'
   +card('Ảnh',
     '<div class="np-pick"><button type="button" id="np_pickbtn" onclick="np_files.click()">Chọn ảnh</button><input id="np_files" type="file" accept="image/*" multiple tabindex="-1" onchange="npAddFiles(this)"></div><div id="np_count" class="np-count" aria-live="polite"></div>'
-    +'<div class="np-field" style="margin-top:14px"><label for="np_urls" class="np-hide-m">Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="3" placeholder="Hoặc dán link ảnh, mỗi dòng 1 link"></textarea></div>','np-c-photo')
+    +'<div class="np-field" style="margin-top:8px"><label for="np_urls" class="np-hide-m">Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="3" placeholder="Hoặc dán link ảnh, mỗi dòng 1 link"></textarea></div>','np-c-photo')
   +'</aside></div>'
   +'<div class="np-bar"><button class="ghost" onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
   +'<div id="np_msg" style="margin-top:10px"></div></div>';
