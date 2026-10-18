@@ -72,7 +72,7 @@ function openBox(x){box.innerHTML=x;modal.classList.add("on");document.body.clas
 const act=async(fn)=>{try{await fn()}catch(e){alert(e.message)}};
 function storeForm(){openBox('<h3>Thêm Store</h3><label>Mã Store</label><input id="sc" placeholder="STORE2"><label>Tên Store</label><input id="sn"><label>Domain</label><input id="sd"><button onclick="closeBox()">Hủy</button> <button class="primary" onclick="saveStore()">Tạo Store</button>')}
 function saveStore(){act(async()=>{const d=await api("/api/stores",{method:"POST",body:JSON.stringify({code:sc.value,name:sn.value,domain:sd.value})});STORE=d.id;sessionStorage.HC_STORE=STORE;closeBox();await loadStores();view("dashboard")})}
-const SIZE_OPTS=["37","37.5","38","38.5","39-39.5","40-40.5","41-41.5","42-42.5","43-43.5","44-44.5","45-45.5"];
+const SIZE_OPTS=["37","37.5","38","38.5","39","39.5","40","40.5","41","41.5","42","42.5","43","43.5","44","44.5","45","45.5"];
 const sizeOpts=(cur)=>'<option value="">— Chọn size —</option>'+SIZE_OPTS.map(x=>'<option value="'+x+'"'+(String(cur??"")===x?' selected':'')+'>'+x+'</option>').join("");
 const brandOpts=(items,cur)=>'<option value="">Khác (không thương hiệu)</option>'+(items||[]).map(x=>'<option value="'+esc(x.id)+'"'+(cur===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("");
 const catOpts=(items,cur)=>'<option value="">— Chọn danh mục —</option>'+(items||[]).map(x=>'<option value="'+esc(x.id)+'"'+(cur===x.id?' selected':'')+'>'+esc(x.name)+'</option>').join("");
@@ -100,7 +100,7 @@ function orderStatus(id,st){const map={new:["confirmed","cancelled"],confirmed:[
 
 
 /* ---------- Nhập nhanh nhiều sản phẩm ---------- */
-const BZ=["37-37.5","38-38.5","39-39.5","40-40.5","41-41.5","42-42.5","43-43.5","44-44.5","45-45.5"];
+const BZ=["37","37.5","38","38.5","39","39.5","40","40.5","41","41.5","42","42.5","43","43.5","44","44.5","45","45.5"];
 const BC=[["Đen","#111"],["Nâu","#6b3f1f"],["Nâu đậm","#3b2314"],["Be","#d9c4a0"],["Trắng","#f2f2f2"],["Xám","#8a8a8a"],["Xanh navy","#1f2d5a"],["Đỏ rượu","#6d1a2a"],["Bò","#b0773c"]];
 const BB=["","Mới","Hot","Sale","Bán chạy"];
 let BR=[],BTAX={brands:[],categories:[]};
