@@ -79,10 +79,36 @@ function watch(){
   if(!mo)mo=new MutationObserver(function(){clearTimeout(moT);moT=setTimeout(function(){if(lang==="en")apply()},120)});
   var m=document.querySelector("main");if(m)mo.observe(m,{childList:true,subtree:true});
 }
+/* Ước lượng tâm vật thể trong ảnh (so với nền ở viền ảnh) rồi đặt object-position,
+   để ảnh cover khung vuông vẫn căn theo sản phẩm. Ảnh không đọc được pixel (khác origin) thì giữ căn giữa. */
+function lwFocus(i){
+  function go(){
+    try{
+      var S=48,W=S,H=Math.max(8,Math.round(S*i.naturalHeight/(i.naturalWidth||1)));
+      var c=document.createElement("canvas");c.width=W;c.height=H;
+      var g=c.getContext("2d");g.drawImage(i,0,0,W,H);
+      var d=g.getImageData(0,0,W,H).data,k,x,y,n=0,br=0,bg=0,bb=0;
+      function edge(x2,y2){k=(y2*W+x2)*4;br+=d[k];bg+=d[k+1];bb+=d[k+2];n++}
+      for(x=0;x<W;x++){edge(x,0);edge(x,H-1)}
+      for(y=1;y<H-1;y++){edge(0,y);edge(W-1,y)}
+      br/=n;bg/=n;bb/=n;
+      var sw=0,sx=0,sy=0;
+      for(y=0;y<H;y++)for(x=0;x<W;x++){
+        k=(y*W+x)*4;var df=Math.abs(d[k]-br)+Math.abs(d[k+1]-bg)+Math.abs(d[k+2]-bb);
+        if(df>60){sw+=df;sx+=df*x;sy+=df*y}
+      }
+      if(sw<=0)return;
+      var cx=Math.min(100,Math.max(0,Math.round(sx/sw/Math.max(1,W-1)*100)));
+      var cy=Math.min(100,Math.max(0,Math.round(sy/sw/Math.max(1,H-1)*100)));
+      i.style.objectPosition=cx+"% "+cy+"%";
+    }catch(e){}
+  }
+  if(i.complete&&i.naturalWidth)go();else i.addEventListener("load",go);
+}
 function card(p){
   var a=el("a","lw-card");a.href=ROOT+"product.html?p="+encodeURIComponent(p.slug||p.id||"");
-  var im=el("div","im");if(p.image){var i=el("img");i.src=p.image;i.alt=p.name||"";i.loading="lazy";im.appendChild(i)}else im.textContent="Hình ảnh đang cập nhật";
-  a.appendChild(im);a.appendChild(el("div","ct",p.cat||""));a.appendChild(el("div","nm",p.name||""));
+  var im=el("div","im");if(p.image){var i=el("img");i.src=p.image;i.alt=p.name||"";i.loading="lazy";im.appendChild(i);lwFocus(i)}else im.textContent="Hình ảnh đang cập nhật";
+  a.appendChild(im);a.appendChild(el("div","nm",p.name||""));
   if(p.price){var pr=el("div","pr",money(p.price));if(p.compare>p.price){var o=el("s","old",money(p.compare));pr.appendChild(o);pr.appendChild(el("span","off","-"+Math.round((1-p.price/p.compare)*100)+"%"))}a.appendChild(pr)}
   if(p.badge){a.appendChild(el("span","lw-badge",p.badge))}
   var bt=el("div","bts"),g=el("span","bt","Giỏ hàng"),m=el("span","bt bt2","Mua ngay");g.dataset.vi="Giỏ hàng";g.dataset.en="Add to cart";m.dataset.vi="Mua ngay";m.dataset.en="Buy now";
