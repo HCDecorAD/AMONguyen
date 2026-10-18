@@ -203,3 +203,6 @@ body.journal-article .article li::marker{color:var(--ja-gold)}
   body.journal-article .article>.hero{aspect-ratio:4/3;margin-bottom:44px}
 }
 @media (prefers-reduced-motion:reduce){body.journal-article:before{animation:none!important;transform:scaleX(1)}}
+/* Icon mục bài viết (SVG nội tuyến, nét vàng) */
+body.journal-article .article>h2 .ja-ico{display:inline-block;width:.78em;height:.78em;margin-right:.42em;vertical-align:-.08em;fill:none;stroke:var(--ja-gold);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+body.journal-article .article>h2:before{display:block}
