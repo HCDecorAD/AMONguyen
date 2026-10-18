@@ -160,7 +160,7 @@ async function newProductView(){
   +'<div hidden><label>Chất liệu</label><input id="np_material"></div><div hidden><label>Xuất xứ</label><input id="np_origin"></div></div>'
   +'<div class="np-full"><label>Mô tả</label><textarea id="np_desc" rows="2"></textarea></div>'
   +sec('Ảnh')
-  +'<div class="np-grid"><div class="np-full"><label>Chọn ảnh từ máy (nhiều ảnh)</label><input id="np_files" type="file" accept="image/*" multiple onchange="npPicked(this)"><div id="np_count" class="muted sm" aria-live="polite"></div></div><div class="np-full"><label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea></div></div>'
+  +'<div class="np-grid"><div class="np-full"><label>Chọn ảnh từ máy (nhiều ảnh)</label><input id="np_files" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif" multiple onchange="npPicked(this)"><div id="np_count" class="muted sm" aria-live="polite"></div></div><div class="np-full"><label>Hoặc dán link ảnh (mỗi dòng 1 link)</label><textarea id="np_urls" rows="2"></textarea></div></div>'
   +'<div class="np-actions"><button onclick="newProductView()">Làm lại</button><button onclick="npSubmit(&quot;draft&quot;)">Lưu nháp</button><button class="primary" onclick="npSubmit(&quot;active&quot;)">Đăng lên web</button></div>'
   +'<div id="np_msg" style="margin-top:10px"></div></div>';
 }
