@@ -3,7 +3,7 @@
 const enc=new TextEncoder();
 const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
 const fromB64u=s=>{const b=atob(s.replace(/-/g,"+").replace(/_/g,"/")+"===".slice((s.length+3)%4||4));return new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))};
-const ROLE_OK=["viewer","staff"];
+const ROLE_OK=["viewer","staff","manager"];
 export async function verifyHubToken(token,secret,now=Math.floor(Date.now()/1000)){
  try{
   if(typeof token!=="string"||!token.startsWith("hub1.")||!secret)return null;
