@@ -87,7 +87,7 @@ function card(p){
   var im=el("div","im");if(p.image){var i=el("img"),src=String(p.image),cm=src.match(/#crop=([\d.]+),([\d.]+),([\d.]+)/),pm=src.match(/#pos=([\d.]+),([\d.]+)/);i.src=src.split("#")[0];i.alt=p.name||"";i.loading="lazy";if(cm)lwCrop(i,+cm[1],+cm[2],+cm[3]);else if(pm)i.style.objectPosition=pm[1]+"% "+pm[2]+"%";im.appendChild(i)}else im.textContent="Hình ảnh đang cập nhật";
   a.appendChild(im);a.appendChild(el("div","nm",p.name||""));
   if(p.price){var pr=el("div","pr",money(p.price));if(p.compare>p.price){var o=el("s","old",money(p.compare));pr.appendChild(o);pr.appendChild(el("span","off","-"+Math.round((1-p.price/p.compare)*100)+"%"))}a.appendChild(pr)}
-  if(p.badge){im.appendChild(el("span","lw-badge",p.badge))}
+  if(p.badge){var bk={"Mới":"new","Hot":"hot","Sale":"sale","Bán chạy":"best"}[p.badge];im.appendChild(el("span","lw-badge"+(bk?" lw-b-"+bk:""),p.badge))}
   var bt=el("div","bts"),g=el("span","bt","Giỏ hàng"),m=el("span","bt bt2","Mua ngay");g.dataset.vi="Giỏ hàng";g.dataset.en="Add to cart";m.dataset.vi="Mua ngay";m.dataset.en="Buy now";
   m.onclick=function(e){e.preventDefault();e.stopPropagation();location.href=a.href+"&buy=1"};bt.appendChild(g);bt.appendChild(m);a.appendChild(bt);return a;
 }
