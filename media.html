@@ -101,7 +101,8 @@
           ttOpen.href = url; ttOpen.target = "_blank"; ttOpen.rel = "noopener";
           item.appendChild(ttOpen);
         } else if (yt || se) {
-          var box = el("div", "md-embed" + (yt ? " md-wide" : ""));
+          var shorts = /youtube\.com\/shorts\//.test(url);
+          var box = el("div", "md-embed" + (yt && !shorts ? " md-wide" : ""));
           var f = el("iframe");
           f.src = yt ? "https://www.youtube-nocookie.com/embed/" + yt : se;
           if (!yt) f.style.background = "#000";
