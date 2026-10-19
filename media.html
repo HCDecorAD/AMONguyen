@@ -67,6 +67,15 @@
       return m ? m[1] : "";
     }
 
+    /* Link Facebook (reel, video, watch) và TikTok nhúng được nếu video công khai */
+    function socialEmbed(url) {
+      var fb = /facebook\.com\/(?:[^\/]+\/)?(?:reel|videos|watch)|fb\.watch|facebook\.com\/watch/.test(url);
+      if (fb) return "https://www.facebook.com/plugins/video.php?href=" + encodeURIComponent(url) + "&show_text=false&width=560";
+      var tt = url.match(/tiktok\.com\/@[^\/]+\/video\/(\d+)/);
+      if (tt) return "https://www.tiktok.com/embed/v2/" + tt[1];
+      return "";
+    }
+
     function slidesEmbed(url) {
       var m = url.match(/docs\.google\.com\/presentation\/d\/([A-Za-z0-9_-]+)/);
       return m ? "https://docs.google.com/presentation/d/" + m[1] + "/embed" : "";
@@ -104,9 +113,11 @@
       (data.videos || []).forEach(function (it) {
         var url = safeUrl(it.url); if (!url) return;
         var yt = youtubeId(url);
-        if (yt) {
+        var se = yt ? "" : socialEmbed(url);
+        if (yt || se) {
           var box = el("div", "md-embed");
-          var f = el("iframe"); f.src = "https://www.youtube-nocookie.com/embed/" + yt;
+          var f = el("iframe"); f.src = yt ? "https://www.youtube-nocookie.com/embed/" + yt : se;
+          if (!yt) f.style.background = "#000";
           f.title = it.title || "Video"; f.allow = "accelerometer; encrypted-media; picture-in-picture"; f.loading = "lazy";
           box.appendChild(f); vids.appendChild(el("h3", "", it.title || "")); vids.appendChild(box);
         } else {
