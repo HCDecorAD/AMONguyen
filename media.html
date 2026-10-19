@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Media | AMO NGUYỄN - Giày Si Hiệu Nam</title>
-  <meta name="description" content="Ảnh, video và trình chiếu về giày si hiệu nam của AMO NGUYỄN.">
+  <meta name="description" content="Video giày si hiệu nam của AMO NGUYỄN.">
   <meta property="og:title" content="Media | AMO NGUYỄN">
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://amonguyen.com/media.html">
@@ -14,27 +14,20 @@
   <style>
     .md-wrap{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
     .md-kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--lw-gold-2);margin:0}
-    .md-title{font-size:30px;font-weight:600;margin:6px 0 18px;color:var(--lw-text)}
-    .md-tabs{display:flex;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--lw-line);margin-bottom:22px}
-    .md-tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--lw-mute);font-family:inherit;font-size:14px;font-weight:600;padding:12px 16px;cursor:pointer;letter-spacing:.04em}
-    .md-tab[aria-selected="true"]{color:var(--lw-gold-2);border-bottom-color:var(--lw-gold)}
-    .md-tab:focus-visible{outline:2px solid var(--lw-gold);outline-offset:2px}
-    .md-panel[hidden]{display:none}
-    .md-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-    .md-card{border:1px solid var(--lw-line);background:var(--lw-card);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
-    .md-card img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#222}
-    .md-card .md-cap{padding:10px 12px;font-size:13px;color:var(--lw-soft)}
-    .md-embed{position:relative;aspect-ratio:16/9;background:#000;border-radius:6px;overflow:hidden;border:1px solid var(--lw-line)}
+    .md-title{font-size:30px;font-weight:600;margin:6px 0 22px;color:var(--lw-text)}
+    .md-row{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+    .md-item{flex:0 0 300px;scroll-snap-align:start;min-width:0}
+    .md-item h3{font-size:15px;font-weight:600;line-height:1.4;margin:0 0 10px;color:var(--lw-text);min-height:42px}
+    .md-embed{position:relative;aspect-ratio:9/16;background:#000;border-radius:6px;overflow:hidden;border:1px solid var(--lw-line)}
+    .md-embed.md-wide{aspect-ratio:16/9}
     .md-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-    .md-embed.md-vertical{aspect-ratio:9/16;max-width:360px;margin:0 auto}
-    .md-open{display:block;text-align:center;margin:10px auto 0;max-width:360px;padding:11px 16px;border-radius:999px;border:1px solid var(--lw-gold);color:var(--lw-gold-2);text-decoration:none;font-size:14px;font-weight:600}
+    .md-open{display:block;text-align:center;margin:10px 0 0;padding:10px 14px;border-radius:999px;border:1px solid var(--lw-gold);color:var(--lw-gold-2);text-decoration:none;font-size:14px;font-weight:600}
     .md-open:hover,.md-open:focus-visible{background:var(--lw-gold);color:var(--lw-gold-ink)}
-    .md-vwrap{margin-bottom:28px}
-    .md-link{display:block;padding:14px 16px;border:1px solid var(--lw-line);background:var(--lw-card);border-radius:6px;color:var(--lw-text);text-decoration:none;margin-bottom:10px}
+    .md-link{display:block;padding:14px 16px;border:1px solid var(--lw-line);background:var(--lw-card);border-radius:6px;color:var(--lw-text);text-decoration:none}
     .md-link:hover,.md-link:focus-visible{border-color:var(--lw-gold)}
     .md-link small{display:block;color:var(--lw-mute);margin-top:4px;word-break:break-all}
     .md-empty{color:var(--lw-mute);padding:30px 0}
-    @media(max-width:600px){.md-title{font-size:24px}.md-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+    @media(max-width:600px){.md-title{font-size:24px}.md-item{flex-basis:78%}}
   </style>
 </head>
 <body>
@@ -42,22 +35,13 @@
 
   <main class="md-wrap">
     <p class="md-kicker">AMO NGUYỄN</p>
-    <h1 class="md-title">Media</h1>
-
-    <div class="md-tabs" role="tablist" aria-label="Loại media">
-      <button class="md-tab" role="tab" id="tab-images" aria-controls="panel-images" aria-selected="true" data-tab="images">Ảnh</button>
-      <button class="md-tab" role="tab" id="tab-videos" aria-controls="panel-videos" aria-selected="false" data-tab="videos">Video</button>
-      <button class="md-tab" role="tab" id="tab-slides" aria-controls="panel-slides" aria-selected="false" data-tab="slides">Trình chiếu</button>
-    </div>
-
-    <section class="md-panel" id="panel-images" role="tabpanel" aria-labelledby="tab-images"><div class="md-grid" id="list-images"></div></section>
-    <section class="md-panel" id="panel-videos" role="tabpanel" aria-labelledby="tab-videos" hidden><div id="list-videos"></div></section>
-    <section class="md-panel" id="panel-slides" role="tabpanel" aria-labelledby="tab-slides" hidden><div id="list-slides"></div></section>
+    <h1 class="md-title">Video</h1>
+    <div class="md-row" id="list-videos"></div>
   </main>
 
   <script>
   (function () {
-    var EMPTY = "Chưa có nội dung.";
+    var EMPTY = "Chưa có video.";
 
     function el(tag, cls, text) {
       var n = document.createElement(tag);
@@ -80,11 +64,6 @@
       return "";
     }
 
-    function slidesEmbed(url) {
-      var m = url.match(/docs\.google\.com\/presentation\/d\/([A-Za-z0-9_-]+)/);
-      return m ? "https://docs.google.com/presentation/d/" + m[1] + "/embed" : "";
-    }
-
     function safeUrl(u) {
       try {
         var x = new URL(u);
@@ -100,86 +79,41 @@
       return a;
     }
 
-    function render(data) {
-      var imgs = document.getElementById("list-images");
-      (data.images || []).forEach(function (it) {
-        var src = safeUrl(it.src || it.url); if (!src) return;
-        var card = el("figure", "md-card");
-        card.style.margin = "0";
-        var img = el("img"); img.src = src; img.alt = it.alt || it.title || ""; img.loading = "lazy";
-        card.appendChild(img);
-        if (it.caption || it.title) card.appendChild(el("figcaption", "md-cap", it.caption || it.title));
-        imgs.appendChild(card);
-      });
-      if (!imgs.children.length) imgs.appendChild(el("p", "md-empty", EMPTY));
-
-      var vids = document.getElementById("list-videos");
-      (data.videos || []).forEach(function (it) {
+    function render(items) {
+      var list = document.getElementById("list-videos");
+      items.forEach(function (it) {
         var url = safeUrl(it.url); if (!url) return;
         var yt = youtubeId(url);
         var se = yt ? "" : socialEmbed(url);
+        var item = el("div", "md-item");
         if (yt || se) {
-          var vertical = !yt;
-          var wrap = el("div", "md-vwrap");
-          var box = el("div", "md-embed" + (vertical ? " md-vertical" : ""));
-          var f = el("iframe"); f.src = yt ? "https://www.youtube-nocookie.com/embed/" + yt : se;
+          var box = el("div", "md-embed" + (yt ? " md-wide" : ""));
+          var f = el("iframe");
+          f.src = yt ? "https://www.youtube-nocookie.com/embed/" + yt : se;
           if (!yt) f.style.background = "#000";
-          f.title = it.title || "Video"; f.allow = "accelerometer; encrypted-media; picture-in-picture; autoplay"; f.loading = "lazy"; f.allowFullscreen = true;
+          f.title = it.title || "Video";
+          f.allow = "accelerometer; encrypted-media; picture-in-picture; autoplay";
+          f.loading = "lazy"; f.allowFullscreen = true;
           box.appendChild(f);
-          wrap.appendChild(el("h3", "", it.title || ""));
-          wrap.appendChild(box);
-          var open = el("a", "md-open", vertical ? "Xem full trên " + (/tiktok/.test(url) ? "TikTok" : "Facebook") : "Xem full trên YouTube");
+          item.appendChild(el("h3", "", it.title || ""));
+          item.appendChild(box);
+          var open = el("a", "md-open", yt ? "Xem full trên YouTube" : "Xem full trên " + (/tiktok/.test(url) ? "TikTok" : "Facebook"));
           open.href = url; open.target = "_blank"; open.rel = "noopener";
-          wrap.appendChild(open);
-          vids.appendChild(wrap);
+          item.appendChild(open);
         } else {
-          vids.appendChild(linkCard(it.title, url));
+          item.appendChild(linkCard(it.title, url));
         }
+        list.appendChild(item);
       });
-      if (!vids.children.length) vids.appendChild(el("p", "md-empty", EMPTY));
-
-      var slides = document.getElementById("list-slides");
-      (data.slides || []).forEach(function (it) {
-        var url = safeUrl(it.url); if (!url) return;
-        var emb = slidesEmbed(url);
-        if (emb) {
-          var box = el("div", "md-embed");
-          var f = el("iframe"); f.src = emb; f.title = it.title || "Trình chiếu"; f.loading = "lazy"; f.allowFullscreen = true;
-          box.appendChild(f); slides.appendChild(el("h3", "", it.title || "")); slides.appendChild(box);
-        } else {
-          slides.appendChild(linkCard(it.title, url));
-        }
-      });
-      if (!slides.children.length) slides.appendChild(el("p", "md-empty", EMPTY));
+      if (!list.children.length) list.appendChild(el("p", "md-empty", EMPTY));
     }
-
-    function show(name) {
-      document.querySelectorAll(".md-tab").forEach(function (t) {
-        t.setAttribute("aria-selected", t.dataset.tab === name ? "true" : "false");
-      });
-      ["images", "videos", "slides"].forEach(function (n) {
-        document.getElementById("panel-" + n).hidden = n !== name;
-      });
-      try { history.replaceState(null, "", "#" + name); } catch (e) {}
-    }
-
-    document.querySelectorAll(".md-tab").forEach(function (t) {
-      t.addEventListener("click", function () { show(t.dataset.tab); });
-    });
 
     var ENGINE = "https://hc-shop-engine.huycuongonline.workers.dev";
     fetch(ENGINE + "/api/public/media?store=store_amo", { cache: "no-cache" })
       .then(function (r) { return r.ok ? r.json() : { items: [] }; })
       .catch(function () { return { items: [] }; })
       .then(function (d) {
-        var items = d.items || [];
-        render({
-          images: items.filter(function (x) { return x.kind === "image"; }),
-          videos: items.filter(function (x) { return x.kind === "video"; }),
-          slides: items.filter(function (x) { return x.kind === "slide"; })
-        });
-        var h = (location.hash || "").replace("#", "");
-        if (h === "videos" || h === "slides") show(h);
+        render((d.items || []).filter(function (x) { return x.kind === "video"; }));
       });
   })();
   </script>
