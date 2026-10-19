@@ -1,8 +1,8 @@
 /* AMO: header + footer dùng chung, giỏ hàng, sáng/tối, VN/EN, dữ liệu sản phẩm */
 (function(){
 "use strict";
-var LS="hc-amo-lang",lang="vi";
-try{lang=localStorage.getItem(LS)==="en"?"en":"vi"}catch(e){}
+/* Chỉ dùng tiếng Việt: nút VN/EN đã ẩn, nên luôn giữ lang="vi" (kể cả khách đã chọn EN trước đây) */
+var lang="vi";
 var ROOT=(function(){var s=document.currentScript||document.querySelector('script[src*="amo-localwp.js"]');var u=s?s.getAttribute("src"):"js/amo-localwp.js";return u.replace(/js\/amo-localwp\.js.*$/,"")})();
 var NAV=[["index.html","Home","Home"],["shop.html","Sản phẩm","Products"],["journal/","Tạp Chí","Magazine"],["media.html","Media","Media"],["story.html","Giới thiệu","About"],["policy.html","Chính sách","Policy"],["contact.html","Liên hệ","Contact"]];
 var path=(location.pathname.split("/").pop()||"index.html");
@@ -23,13 +23,11 @@ function header(){
   var n=el("nav","lw-nav");n.setAttribute("aria-label","Menu chính");
   NAV.forEach(function(x){var a=el("a",null,lang==="en"?x[2]:x[1]);a.href=ROOT+x[0];a.dataset.vi=x[1];a.dataset.en=x[2];if(path===x[0]||(x[0]==="journal/"&&location.pathname.includes("/journal/"))||((path==="p.html"||path==="product.html")&&x[0]==="shop.html"))a.setAttribute("aria-current","page");n.appendChild(a)});
   var t=el("div","lw-tools");
-  langBtn=el("button",null,lang==="en"?"VN":"EN");langBtn.type="button";langBtn.setAttribute("aria-label","Đổi ngôn ngữ / Switch language");
-  langBtn.onclick=function(){lang=lang==="en"?"vi":"en";try{localStorage.setItem(LS,lang)}catch(e){}apply()};
   var th=el("button","lw-ico");th.type="button";th.setAttribute("data-theme-toggle","");th.title="Sáng / Tối";
   var ca=el("a","lw-ico");ca.href=ROOT+"cart.html";ca.setAttribute("aria-label","Giỏ hàng");
   var cs=svg("M3 4h2.2l2.1 10.2a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.5L20.5 8H6.1M10 20.2h.01M17 20.2h.01");ca.appendChild(cs);
   badge=el("span","lw-badge","0");badge.hidden=true;ca.appendChild(badge);
-  t.appendChild(langBtn);t.appendChild(th);t.appendChild(ca);
+  t.appendChild(th);t.appendChild(ca);
   w.appendChild(b);w.appendChild(n);w.appendChild(t);h.appendChild(w);
   document.querySelectorAll(".amo-new-top,.amo-new-header,.amo-header,.amo-mobile-nav").forEach(function(x){x.remove()});
   document.body.insertBefore(h,document.body.firstChild);
