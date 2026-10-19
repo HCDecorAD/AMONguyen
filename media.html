@@ -26,6 +26,10 @@
     .md-card .md-cap{padding:10px 12px;font-size:13px;color:var(--lw-soft)}
     .md-embed{position:relative;aspect-ratio:16/9;background:#000;border-radius:6px;overflow:hidden;border:1px solid var(--lw-line)}
     .md-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    .md-embed.md-vertical{aspect-ratio:9/16;max-width:360px;margin:0 auto}
+    .md-open{display:block;text-align:center;margin:10px auto 0;max-width:360px;padding:11px 16px;border-radius:999px;border:1px solid var(--lw-gold);color:var(--lw-gold-2);text-decoration:none;font-size:14px;font-weight:600}
+    .md-open:hover,.md-open:focus-visible{background:var(--lw-gold);color:var(--lw-gold-ink)}
+    .md-vwrap{margin-bottom:28px}
     .md-link{display:block;padding:14px 16px;border:1px solid var(--lw-line);background:var(--lw-card);border-radius:6px;color:var(--lw-text);text-decoration:none;margin-bottom:10px}
     .md-link:hover,.md-link:focus-visible{border-color:var(--lw-gold)}
     .md-link small{display:block;color:var(--lw-mute);margin-top:4px;word-break:break-all}
@@ -115,11 +119,19 @@
         var yt = youtubeId(url);
         var se = yt ? "" : socialEmbed(url);
         if (yt || se) {
-          var box = el("div", "md-embed");
+          var vertical = !yt;
+          var wrap = el("div", "md-vwrap");
+          var box = el("div", "md-embed" + (vertical ? " md-vertical" : ""));
           var f = el("iframe"); f.src = yt ? "https://www.youtube-nocookie.com/embed/" + yt : se;
           if (!yt) f.style.background = "#000";
-          f.title = it.title || "Video"; f.allow = "accelerometer; encrypted-media; picture-in-picture"; f.loading = "lazy";
-          box.appendChild(f); vids.appendChild(el("h3", "", it.title || "")); vids.appendChild(box);
+          f.title = it.title || "Video"; f.allow = "accelerometer; encrypted-media; picture-in-picture; autoplay"; f.loading = "lazy"; f.allowFullscreen = true;
+          box.appendChild(f);
+          wrap.appendChild(el("h3", "", it.title || ""));
+          wrap.appendChild(box);
+          var open = el("a", "md-open", vertical ? "Xem full trên " + (/tiktok/.test(url) ? "TikTok" : "Facebook") : "Xem full trên YouTube");
+          open.href = url; open.target = "_blank"; open.rel = "noopener";
+          wrap.appendChild(open);
+          vids.appendChild(wrap);
         } else {
           vids.appendChild(linkCard(it.title, url));
         }
