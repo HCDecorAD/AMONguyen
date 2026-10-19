@@ -87,17 +87,20 @@
     /* Chỉ một video phát tại một thời điểm: video khác bị dừng (đặt về trang trống), bấm ▶ để phát lại */
     var players = [];
     function setBlank(p) {
+      p.playing = false;
       if (p.f.getAttribute("src") !== "about:blank") { p.f.setAttribute("src", "about:blank"); p.ov.hidden = false; }
     }
     function playP(p) {
-      players.forEach(function (q) { if (q !== p) setBlank(q); });
+      players.forEach(function (q) { if (q !== p && q.playing) setBlank(q); });
       if (p.f.getAttribute("src") !== p.src) p.f.setAttribute("src", p.src);
+      p.playing = true;
       p.ov.hidden = true;
     }
     var io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         var p = players.filter(function (q) { return q.c === e.target; })[0];
-        if (p && !(e.isIntersecting && e.intersectionRatio >= 0.3)) setBlank(p);
+        /* Chỉ dừng video đang phát, không đụng video chưa bấm phát */
+        if (p && p.playing && !(e.isIntersecting && e.intersectionRatio >= 0.3)) setBlank(p);
       });
     }, { threshold: [0, 0.3] }) : null;
     function register(c, f) {
@@ -108,7 +111,7 @@
       var ov = el("button", "md-play", "\u25B6");
       ov.type = "button"; ov.setAttribute("aria-label", "Phát video"); ov.hidden = true;
       c.appendChild(ov);
-      var p = { c: c, f: f, src: src, ov: ov };
+      var p = { c: c, f: f, src: src, ov: ov, playing: false };
       ov.onclick = function () { playP(p); };
       players.push(p);
       if (io) io.observe(c);
