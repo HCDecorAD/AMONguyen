@@ -4,7 +4,7 @@ $fail=0
 $html=Get-ChildItem $rootPath -File -Filter *.html
 foreach($f in $html){
   $s=Get-Content $f.FullName -Raw
-  if($f.Name -notin @('404.html','account.html','shop-admin.html','editor.html','data-center.html','googledf810cea09a857e9.html') -and $s -notmatch '<title>'){ Write-Host ('BLOCKER title '+$f.Name); $fail=1 }
+  if($f.Name -notin @('404.html','shop-admin.html','editor.html','data-center.html','googledf810cea09a857e9.html') -and $s -notmatch '<title>'){ Write-Host ('BLOCKER title '+$f.Name); $fail=1 }
   $matches=[regex]::Matches($s,'href=["'']([^"''#?]+)')
   foreach($m in $matches){
     $h=$m.Groups[1].Value
