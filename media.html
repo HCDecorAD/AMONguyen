@@ -90,12 +90,12 @@
     function render(data) {
       var imgs = document.getElementById("list-images");
       (data.images || []).forEach(function (it) {
-        var src = safeUrl(it.src); if (!src) return;
+        var src = safeUrl(it.src || it.url); if (!src) return;
         var card = el("figure", "md-card");
         card.style.margin = "0";
-        var img = el("img"); img.src = src; img.alt = it.alt || ""; img.loading = "lazy";
+        var img = el("img"); img.src = src; img.alt = it.alt || it.title || ""; img.loading = "lazy";
         card.appendChild(img);
-        if (it.caption) card.appendChild(el("figcaption", "md-cap", it.caption));
+        if (it.caption || it.title) card.appendChild(el("figcaption", "md-cap", it.caption || it.title));
         imgs.appendChild(card);
       });
       if (!imgs.children.length) imgs.appendChild(el("p", "md-empty", EMPTY));
@@ -144,11 +144,17 @@
       t.addEventListener("click", function () { show(t.dataset.tab); });
     });
 
-    fetch("media/media.json", { cache: "no-cache" })
-      .then(function (r) { return r.ok ? r.json() : { images: [], videos: [], slides: [] }; })
-      .catch(function () { return { images: [], videos: [], slides: [] }; })
-      .then(function (data) {
-        render(data);
+    var ENGINE = "https://hc-shop-engine.huycuongonline.workers.dev";
+    fetch(ENGINE + "/api/public/media?store=store_amo", { cache: "no-cache" })
+      .then(function (r) { return r.ok ? r.json() : { items: [] }; })
+      .catch(function () { return { items: [] }; })
+      .then(function (d) {
+        var items = d.items || [];
+        render({
+          images: items.filter(function (x) { return x.kind === "image"; }),
+          videos: items.filter(function (x) { return x.kind === "video"; }),
+          slides: items.filter(function (x) { return x.kind === "slide"; })
+        });
         var h = (location.hash || "").replace("#", "");
         if (h === "videos" || h === "slides") show(h);
       });

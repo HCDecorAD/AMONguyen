@@ -8,9 +8,14 @@ const baseP = (p, v) => (v?.price ?? p.price ?? 0);
 
 export async function handleCatalog(req, env, store, H) {
   const u = new URL(req.url), path = u.pathname;
-  if (req.method !== "GET" || (path !== "/api/public/products" && path !== "/api/public/product")) return null;
+  if (req.method !== "GET" || (path !== "/api/public/products" && path !== "/api/public/product" && path !== "/api/public/media")) return null;
   const { json } = H, origin = u.origin;
   const pub = (data) => { const r = json(req, data); r.headers.set("cache-control", "public, max-age=30"); return r; };
+
+  if (path === "/api/public/media") {
+    const rows = (await env.DB.prepare("SELECT id,kind,title,url,sort_order FROM media_items WHERE store_id=? ORDER BY sort_order,created_at").bind(store.id).all()).results;
+    return pub({ items: rows.map((r) => ({ ...r, url: abs(origin, r.url) })) });
+  }
 
   if (path === "/api/public/products") {
     const prods = (await env.DB.prepare(
