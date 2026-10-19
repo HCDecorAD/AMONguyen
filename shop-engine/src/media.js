@@ -47,7 +47,7 @@ export async function handleMedia(req, env, store, H, auth) {
   }
   // Chuyển ảnh cũ từ D1 sang R2 (owner). Gọi lặp lại đến khi remaining = 0.
   if (path === "/api/v1/media/migrate" && req.method === "POST") {
-    if (lvl < 4) return deny();
+    if (lvl < 3) return deny();
     if (!env.MEDIA) return json(req, { ok: false, error: "Chưa gắn kho R2 (binding MEDIA)" }, 400);
     const rows = (await env.DB.prepare("SELECT id,mime,data FROM media WHERE store_id=? AND data<>'' LIMIT ?").bind(store.id, MIGRATE_BATCH).all()).results;
     for (const r of rows) {
