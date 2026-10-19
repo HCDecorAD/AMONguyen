@@ -16,7 +16,7 @@
     .md-kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--lw-gold-2);margin:0}
     .md-title{font-size:30px;font-weight:600;margin:6px 0 22px;color:var(--lw-text)}
     .md-row{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 18px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-    .md-item{flex:0 0 300px;scroll-snap-align:start;min-width:0}
+    .md-item{flex:0 0 325px;scroll-snap-align:start;min-width:0}
     .md-item h3{font-size:15px;font-weight:600;line-height:1.4;margin:0 0 10px;color:var(--lw-text);min-height:42px}
     .md-embed{position:relative;aspect-ratio:9/16;background:#000;border-radius:6px;overflow:hidden;border:1px solid var(--lw-line)}
     .md-embed.md-wide{aspect-ratio:16/9}
@@ -27,7 +27,7 @@
     .md-link:hover,.md-link:focus-visible{border-color:var(--lw-gold)}
     .md-link small{display:block;color:var(--lw-mute);margin-top:4px;word-break:break-all}
     .md-empty{color:var(--lw-mute);padding:30px 0}
-    @media(max-width:600px){.md-title{font-size:24px}.md-item{flex-basis:78%}}
+    @media(max-width:600px){.md-title{font-size:24px}.md-item{flex-basis:86%}}
   </style>
 </head>
 <body>
@@ -81,12 +81,26 @@
 
     function render(items) {
       var list = document.getElementById("list-videos");
+      var hasTikTok = false;
       items.forEach(function (it) {
         var url = safeUrl(it.url); if (!url) return;
         var yt = youtubeId(url);
-        var se = yt ? "" : socialEmbed(url);
+        var tt = yt ? null : url.match(/tiktok\.com\/@[^\/]+\/video\/(\d+)/);
+        var se = (yt || tt) ? "" : socialEmbed(url);
         var item = el("div", "md-item");
-        if (yt || se) {
+        if (tt) {
+          hasTikTok = true;
+          var bq = el("blockquote", "tiktok-embed");
+          bq.setAttribute("cite", url);
+          bq.setAttribute("data-video-id", tt[1]);
+          bq.style.maxWidth = "605px"; bq.style.minWidth = "325px";
+          bq.appendChild(el("section"));
+          item.appendChild(el("h3", "", it.title || ""));
+          item.appendChild(bq);
+          var ttOpen = el("a", "md-open", "Xem full trên TikTok");
+          ttOpen.href = url; ttOpen.target = "_blank"; ttOpen.rel = "noopener";
+          item.appendChild(ttOpen);
+        } else if (yt || se) {
           var box = el("div", "md-embed" + (yt ? " md-wide" : ""));
           var f = el("iframe");
           f.src = yt ? "https://www.youtube-nocookie.com/embed/" + yt : se;
@@ -106,6 +120,11 @@
         list.appendChild(item);
       });
       if (!list.children.length) list.appendChild(el("p", "md-empty", EMPTY));
+      if (hasTikTok) {
+        var s = document.createElement("script");
+        s.src = "https://www.tiktok.com/embed.js"; s.async = true;
+        document.body.appendChild(s);
+      }
     }
 
     var ENGINE = "https://hc-shop-engine.huycuongonline.workers.dev";
