@@ -15,8 +15,11 @@
     .md-wrap{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
     .md-kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--lw-gold-2);margin:0}
     .md-title{font-size:30px;font-weight:600;margin:6px 0 22px;color:var(--lw-text)}
-    .md-row{display:flex;flex-direction:column;align-items:center;gap:26px;height:calc(100vh - 190px);min-height:560px;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;padding:4px 0 24px;scrollbar-width:thin}
-    .md-item{flex:0 0 auto;width:100%;max-width:330px;scroll-snap-align:start}
+    .md-row{display:flex;flex-direction:column;align-items:center;gap:26px;padding:4px 0 24px}
+    .md-item{flex:0 0 auto;width:100%;max-width:330px}
+    .md-tt-ph{position:relative;aspect-ratio:9/16;width:100%;background:#000;border:1px solid var(--lw-line);border-radius:6px;display:flex;align-items:center;justify-content:center}
+    .md-tt-btn{padding:12px 18px;border-radius:999px;border:1px solid var(--lw-gold);background:transparent;color:var(--lw-gold-2);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+    .md-tt-btn:hover,.md-tt-btn:focus-visible{background:var(--lw-gold);color:var(--lw-gold-ink)}
     .md-item h3{font-size:15px;font-weight:600;line-height:1.4;margin:0 0 10px;color:var(--lw-text);min-height:42px}
     .md-embed{position:relative;width:100%;aspect-ratio:9/16;background:#000;border-radius:6px;overflow:hidden;border:1px solid var(--lw-line)}
     .md-embed.md-wide{aspect-ratio:16/9}
@@ -27,7 +30,7 @@
     .md-link:hover,.md-link:focus-visible{border-color:var(--lw-gold)}
     .md-link small{display:block;color:var(--lw-mute);margin-top:4px;word-break:break-all}
     .md-empty{color:var(--lw-mute);padding:30px 0}
-    @media(max-width:600px){.md-title{font-size:24px}.md-row{height:calc(100dvh - 170px)}}
+    @media(max-width:600px){.md-title{font-size:24px}}
     .md-play{position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:68px;height:68px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:26px;cursor:pointer;z-index:2}
     .md-play[hidden]{display:none}
   </style>
@@ -115,6 +118,19 @@
       var a = document.activeElement;
       players.forEach(function (p) { if (p.f === a) playP(p); });
     });
+    /* TikTok chỉ nạp khi người xem bấm, để tránh bị TikTok giới hạn khi nhiều embed cùng lúc */
+    function tiktokPlay(ph, url, id) {
+      var bq = el("blockquote", "tiktok-embed");
+      bq.setAttribute("cite", url);
+      bq.setAttribute("data-video-id", id);
+      bq.style.maxWidth = "605px"; bq.style.minWidth = "325px";
+      bq.appendChild(el("section"));
+      ph.parentNode.replaceChild(bq, ph);
+      var s = document.createElement("script");
+      s.src = "https://www.tiktok.com/embed.js"; s.async = true;
+      document.body.appendChild(s);
+      [2000, 5000].forEach(function (t) { setTimeout(scanTikTok, t); });
+    }
     function scanTikTok() {
       document.querySelectorAll("blockquote.tiktok-embed iframe").forEach(function (f) {
         var c = f.closest("blockquote"); if (c) register(c, f);
@@ -123,7 +139,6 @@
 
     function render(items) {
       var list = document.getElementById("list-videos");
-      var hasTikTok = false;
       items.forEach(function (it) {
         var url = safeUrl(it.url); if (!url) return;
         var yt = youtubeId(url);
@@ -131,14 +146,13 @@
         var se = (yt || tt) ? "" : socialEmbed(url);
         var item = el("div", "md-item");
         if (tt) {
-          hasTikTok = true;
-          var bq = el("blockquote", "tiktok-embed");
-          bq.setAttribute("cite", url);
-          bq.setAttribute("data-video-id", tt[1]);
-          bq.style.maxWidth = "605px"; bq.style.minWidth = "325px";
-          bq.appendChild(el("section"));
+          var ph = el("div", "md-tt-ph");
+          var ttBtn = el("button", "md-tt-btn", "\u25B6 Xem trong trang");
+          ttBtn.type = "button";
+          ttBtn.onclick = function () { tiktokPlay(ph, url, tt[1]); };
+          ph.appendChild(ttBtn);
           item.appendChild(el("h3", "", it.title || ""));
-          item.appendChild(bq);
+          item.appendChild(ph);
           var ttOpen = el("a", "md-open", "Xem full trên TikTok");
           ttOpen.href = url; ttOpen.target = "_blank"; ttOpen.rel = "noopener";
           item.appendChild(ttOpen);
@@ -164,12 +178,6 @@
         list.appendChild(item);
       });
       if (!list.children.length) list.appendChild(el("p", "md-empty", EMPTY));
-      if (hasTikTok) {
-        var s = document.createElement("script");
-        s.src = "https://www.tiktok.com/embed.js"; s.async = true;
-        document.body.appendChild(s);
-        [2000, 5000, 9000].forEach(function (t) { setTimeout(scanTikTok, t); });
-      }
     }
 
     var ENGINE = "https://hc-shop-engine.huycuongonline.workers.dev";
