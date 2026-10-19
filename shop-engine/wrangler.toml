@@ -8,6 +8,10 @@ database_name = "hcs"
 database_id = "7e03f01f-047f-46b0-81d2-08998669cd4f"
 migrations_dir = "migrations"
 
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "hc-shop-media"
+
 [vars]
 APP_NAME = "HC Shop Engine"
 GOOGLE_CLIENT_ID = "68822242851-fd2h2lj0uprcab0bdkeo9k9j4maaps15.apps.googleusercontent.com"
