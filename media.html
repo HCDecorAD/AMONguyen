@@ -28,6 +28,8 @@
     .md-link small{display:block;color:var(--lw-mute);margin-top:4px;word-break:break-all}
     .md-empty{color:var(--lw-mute);padding:30px 0}
     @media(max-width:600px){.md-title{font-size:24px}.md-row{height:calc(100dvh - 170px)}}
+    .md-play{position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;width:68px;height:68px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:26px;cursor:pointer;z-index:2}
+    .md-play[hidden]{display:none}
   </style>
 </head>
 <body>
@@ -79,6 +81,46 @@
       return a;
     }
 
+    /* Chỉ một video phát tại một thời điểm: video khác bị dừng (đặt về trang trống), bấm ▶ để phát lại */
+    var players = [];
+    function setBlank(p) {
+      if (p.f.getAttribute("src") !== "about:blank") { p.f.setAttribute("src", "about:blank"); p.ov.hidden = false; }
+    }
+    function playP(p) {
+      players.forEach(function (q) { if (q !== p) setBlank(q); });
+      if (p.f.getAttribute("src") !== p.src) p.f.setAttribute("src", p.src);
+      p.ov.hidden = true;
+    }
+    var io = ("IntersectionObserver" in window) ? new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var p = players.filter(function (q) { return q.c === e.target; })[0];
+        if (p && !(e.isIntersecting && e.intersectionRatio >= 0.3)) setBlank(p);
+      });
+    }, { threshold: [0, 0.3] }) : null;
+    function register(c, f) {
+      var src = f.getAttribute("src");
+      if (!src || f.__mdp) return;
+      f.__mdp = true;
+      if (getComputedStyle(c).position === "static") c.style.position = "relative";
+      var ov = el("button", "md-play", "\u25B6");
+      ov.type = "button"; ov.setAttribute("aria-label", "Phát video"); ov.hidden = true;
+      c.appendChild(ov);
+      var p = { c: c, f: f, src: src, ov: ov };
+      ov.onclick = function () { playP(p); };
+      players.push(p);
+      if (io) io.observe(c);
+    }
+    /* Khi người xem bấm vào khung video, khung đó được coi là đang phát */
+    window.addEventListener("blur", function () {
+      var a = document.activeElement;
+      players.forEach(function (p) { if (p.f === a) playP(p); });
+    });
+    function scanTikTok() {
+      document.querySelectorAll("blockquote.tiktok-embed iframe").forEach(function (f) {
+        var c = f.closest("blockquote"); if (c) register(c, f);
+      });
+    }
+
     function render(items) {
       var list = document.getElementById("list-videos");
       var hasTikTok = false;
@@ -110,6 +152,7 @@
           f.allow = "accelerometer; encrypted-media; picture-in-picture; autoplay";
           f.loading = "lazy"; f.allowFullscreen = true;
           box.appendChild(f);
+          register(box, f);
           item.appendChild(el("h3", "", it.title || ""));
           item.appendChild(box);
           var open = el("a", "md-open", yt ? "Xem full trên YouTube" : "Xem full trên " + (/tiktok/.test(url) ? "TikTok" : "Facebook"));
@@ -125,6 +168,7 @@
         var s = document.createElement("script");
         s.src = "https://www.tiktok.com/embed.js"; s.async = true;
         document.body.appendChild(s);
+        [2000, 5000, 9000].forEach(function (t) { setTimeout(scanTikTok, t); });
       }
     }
 
