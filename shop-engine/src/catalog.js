@@ -13,7 +13,7 @@ export async function handleCatalog(req, env, store, H) {
   const pub = (data) => { const r = json(req, data); r.headers.set("cache-control", "public, max-age=30"); return r; };
 
   if (path === "/api/public/media") {
-    const rows = (await env.DB.prepare("SELECT id,kind,title,url,sort_order FROM media_items WHERE store_id=? ORDER BY sort_order,created_at").bind(store.id).all()).results;
+    const rows = (await env.DB.prepare("SELECT id,kind,title,url,sort_order FROM media_items WHERE store_id=? ORDER BY sort_order,created_at DESC").bind(store.id).all()).results;
     return pub({ items: rows.map((r) => ({ ...r, url: abs(origin, r.url) })) });
   }
 
