@@ -475,3 +475,9 @@ body .wrap #checkout{display:block;text-align:center}
  body .wrap #checkout{width:100%;box-sizing:border-box;padding:14px 10px;letter-spacing:.04em}
 }
 @media(min-width:701px){body .wrap #checkout{display:inline-block}}
+
+/* Trang chủ: nút Xem tất cả nằm dưới lưới 20 sản phẩm */
+.lw-view-all-wrap{text-align:center;margin-top:28px}
+.lw-view-all{display:inline-block;min-width:min(100%,320px);box-sizing:border-box;padding:16px 44px;border-radius:4px;background:#c8102e;color:#fff;font-size:17px;font-weight:700;letter-spacing:.05em;text-decoration:none;text-align:center;box-shadow:0 8px 22px rgba(200,16,46,.28);transition:background .2s,transform .2s}
+.lw-view-all:hover,.lw-view-all:focus-visible{background:#a30d25;color:#fff;transform:translateY(-1px)}
+@media(max-width:600px){.lw-view-all{width:100%;padding:15px 20px;font-size:16px}}
