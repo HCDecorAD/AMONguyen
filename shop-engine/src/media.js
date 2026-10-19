@@ -35,7 +35,7 @@ export async function handleMedia(req, env, store, H, auth) {
     if (bin.length > MAX_BYTES) return json(req, { ok: false, error: "Ảnh quá lớn (tối đa 700KB)" }, 400);
     const mime = sniff(bin); if (!mime) return json(req, { ok: false, error: "Chỉ nhận ảnh JPG, PNG, WebP" }, 400);
     const n = (await env.DB.prepare("SELECT COUNT(*) c FROM media WHERE store_id=?").bind(store.id).first()).c;
-    if (n >= MAX_FILES) return json(req, { ok: false, error: "Thư viện ảnh đã đầy (" + MAX_FILES + "). Xoá bớt ảnh cũ." }, 400);
+    if (n >= MAX_FILES) return json(req, { ok: false, error: "Thư viện đã đủ " + MAX_FILES.toLocaleString("vi-VN") + " ảnh. Thêm nữa sẽ phát sinh phí lưu trữ (vượt 10GB miễn phí). Xoá bớt ảnh cũ hoặc báo chủ shop." }, 400);
     const mid = id("med");
     if (env.MEDIA) {
       await env.MEDIA.put(key(mid), bin, { httpMetadata: { contentType: mime } });
