@@ -1,7 +1,7 @@
 // Thư viện ảnh theo cửa hàng. Ảnh lưu trong R2 (binding MEDIA), metadata trong D1.
 // Ảnh cũ còn trong D1 (cột data) vẫn đọc được; owner chạy /api/v1/media/migrate để chuyển dần sang R2.
 // Phục vụ ảnh từ R2 không đọc dòng D1 nào, nên không tốn hạn mức đọc D1.
-const MAX_BYTES = 700 * 1024, MAX_FILES = 5000, MIGRATE_BATCH = 25;
+const MAX_BYTES = 700 * 1024, MAX_FILES = 20000, MIGRATE_BATCH = 25;
 const sniff = (b) => (b[0] === 0xff && b[1] === 0xd8 ? "image/jpeg" : b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47 ? "image/png" : b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 ? "image/webp" : "");
 const key = (id) => "media/" + id;
 const b64bytes = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
