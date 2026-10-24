@@ -16,11 +16,20 @@ function fail(){
   $("pDesc").textContent="Sản phẩm này không còn hoặc đường dẫn chưa đúng. Anh/chị xem các sản phẩm khác hoặc nhắn Zalo để shop tư vấn.";
   $("pPrice").textContent="";$("pAdd").disabled=true;$("pOpts").replaceChildren();
 }
-function gallery(imgs){
+function gallery(imgs,videoUrl){
   var m=$("gMain"),t=$("gThumbs");m.replaceChildren();t.replaceChildren();
-  if(!imgs.length){m.textContent="Hình ảnh đang cập nhật";return}
-  function show(i){var im=document.createElement("img");im.src=imgs[i];im.alt=product.name;m.replaceChildren(im);Array.prototype.forEach.call(t.children,function(b,j){b.setAttribute("aria-current",String(i===j))})}
-  imgs.forEach(function(u,i){if(imgs.length<2)return;var b=document.createElement("button");b.type="button";b.setAttribute("aria-label","Ảnh "+(i+1));var im=document.createElement("img");im.src=u;im.alt="";b.appendChild(im);b.onclick=function(){show(i)};t.appendChild(b)});
+  if(!imgs.length&&!videoUrl){m.textContent="Hình ảnh đang cập nhật";return}
+  var slides=(videoUrl?[{video:videoUrl}]:[]).concat(imgs.map(function(u){return{img:u}}));
+  function show(i){
+    var s=slides[i];
+    if(s.video){var v=document.createElement("video");v.src=s.video;v.controls=true;v.playsInline=true;v.setAttribute("preload","metadata");m.replaceChildren(v)}
+    else{var im=document.createElement("img");im.src=s.img;im.alt=product.name;m.replaceChildren(im)}
+    Array.prototype.forEach.call(t.children,function(b,j){b.setAttribute("aria-current",String(i===j))});
+  }
+  slides.forEach(function(s,i){if(slides.length<2)return;var b=document.createElement("button");b.type="button";
+    if(s.video){b.className="lw-thumb-video";b.setAttribute("aria-label","Video sản phẩm");var im=document.createElement("img");im.src=imgs[0]||"";im.alt="";b.appendChild(im);var pl=document.createElement("span");pl.className="play";pl.textContent="▶";b.appendChild(pl)}
+    else{b.setAttribute("aria-label","Ảnh "+(videoUrl?i:i+1));var im2=document.createElement("img");im2.src=s.img;im2.alt="";b.appendChild(im2)}
+    b.onclick=function(){show(i)};t.appendChild(b)});
   show(0);
 }
 function render(){
@@ -36,7 +45,7 @@ function render(){
     var ok=false;try{if(navigator.clipboard){navigator.clipboard.writeText(msg);ok=true}}catch(e){}if(!ok){try{var ta=document.createElement("textarea");ta.value=msg;ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove()}catch(e){}}
     toast("Đã sao chép link sản phẩm. Mở Zalo rồi Dán (Ctrl+V) và Gửi.");say("Đã sao chép link sản phẩm - dán vào Zalo để gửi shop.");
   };
-  gallery(product.images||[]);
+  gallery(product.images||[],product.video||"");
   var box=$("pOpts");box.replaceChildren();
   var cols=[];product.variants.forEach(function(v){if(v.color&&cols.indexOf(v.color)<0)cols.push(v.color)});
   var cbox=$("pColors");if(!cbox&&cols.length){cbox=document.createElement("div");cbox.id="pColors";cbox.className=box.className;var sl=box.previousElementSibling;if(cols.length&&sl){var cl=document.createElement("div");cl.className="lab";cl.textContent="Chọn màu";sl.parentNode.insertBefore(cl,sl);sl.parentNode.insertBefore(cbox,sl)}}
@@ -75,7 +84,7 @@ function fromDemo(d){
     variants:d.sizes.map(function(s){return{id:d.id+"-"+s,sku:d.id.toUpperCase()+"-"+s,size:s,available:d.available}})};
 }
 function fromEngine(w){
-  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),compare:Number(w.compare||0),material:w.material||"",origin:w.origin||"",badge:w.badge||"",images:(w.images||[]).map(function(i){return typeof i==="string"?i:i&&i.url}).filter(Boolean),demo:false,
+  return{id:w.id,name:w.name,cat:w.cat||"",price:Number(w.price||0),desc:String(w.description||"").trim(),compare:Number(w.compare||0),material:w.material||"",origin:w.origin||"",badge:w.badge||"",video:w.video_url||"",images:(w.images||[]).map(function(i){return typeof i==="string"?i:i&&i.url}).filter(Boolean),demo:false,
     variants:(w.variants||[]).map(function(v){return{id:v.id,sku:v.sku,size:v.size||v.color||"Free",color:v.color||"",base:Number(v.base_price||0),price:Number(v.price||0),available:Number(v.available||0)}})};
 }
 function start(){

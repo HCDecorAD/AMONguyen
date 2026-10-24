@@ -98,11 +98,12 @@ body .bar{background:var(--lw-line)}body .bar i{background:var(--lw-gold)}
 .lw-pd .back{display:inline-block;margin-bottom:16px;color:var(--lw-soft);text-decoration:none;font-size:13px}
 .lw-gal{display:grid;gap:10px}
 .lw-gal .main{background:var(--lw-img);aspect-ratio:1/1;overflow:hidden;border:1px solid var(--lw-line)}
-.lw-gal .main img{width:100%;height:100%;object-fit:cover;display:block}
+.lw-gal .main img,.lw-gal .main video{width:100%;height:100%;object-fit:cover;display:block}
 .lw-thumbs{display:flex;gap:8px;flex-wrap:wrap}
-.lw-thumbs button{width:64px;height:64px;padding:0;border:1px solid var(--lw-line);background:var(--lw-img);cursor:pointer;overflow:hidden}
+.lw-thumbs button{position:relative;width:64px;height:64px;padding:0;border:1px solid var(--lw-line);background:var(--lw-img);cursor:pointer;overflow:hidden}
 .lw-thumbs button[aria-current=true]{border-color:var(--lw-gold);outline:1px solid var(--lw-gold)}
 .lw-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.lw-thumbs .lw-thumb-video .play{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.45);color:#fff;font-size:16px}
 .lw-info .cat{font-size:12px;letter-spacing:.12em;color:var(--lw-gold-2);text-transform:uppercase}
 .lw-info h1{font-size:clamp(22px,3vw,30px);line-height:1.25;margin:8px 0 12px;font-weight:600}
 .lw-info .price{font-size:22px;font-weight:700;color:var(--lw-gold-2);margin:0 0 14px}
