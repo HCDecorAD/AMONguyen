@@ -106,8 +106,10 @@ body .bar{background:var(--lw-line)}body .bar i{background:var(--lw-gold)}
 .lw-info .cat{font-size:12px;letter-spacing:.12em;color:var(--lw-gold-2);text-transform:uppercase}
 .lw-info h1{font-size:clamp(22px,3vw,30px);line-height:1.25;margin:8px 0 12px;font-weight:600}
 .lw-info .price{font-size:22px;font-weight:700;color:var(--lw-gold-2);margin:0 0 14px}
-.lw-info .desc{color:var(--lw-soft);line-height:1.75;font-size:15px;margin:0 0 18px}
 .lw-info .lab{font-size:13px;font-weight:600;margin:16px 0 8px;color:var(--lw-text)}
+.lw-desc-full{grid-column:1/-1;margin-top:28px;padding-top:28px;border-top:1px solid var(--lw-line)}
+.lw-desc-full h2{font-size:18px;font-weight:600;margin:0 0 12px;color:var(--lw-text)}
+.lw-desc-full .desc{color:var(--lw-soft);line-height:1.8;font-size:15px;margin:0;white-space:pre-line;max-width:70ch}
 .lw-opts{display:flex;flex-wrap:wrap;gap:8px}
 .lw-opts button{min-width:52px;padding:9px 12px;border:1px solid var(--lw-line);background:var(--lw-card);color:var(--lw-text);cursor:pointer;font-size:13px;font-family:inherit}
 .lw-opts button:hover{border-color:var(--lw-gold)}
