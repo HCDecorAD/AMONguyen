@@ -17,6 +17,39 @@ export async function serveProductVideo(req, env) {
   } });
 }
 
+const GH_REPO = "HCDecorAD/AMONguyen";
+const GH_WORKFLOW = "product-video.yml";
+
+// Bam "Tao video" trong Shop Manager goi thang vao day, Worker tu kich hoat GitHub Actions
+// ho (khong can anh mo GitHub nua). Can 1 secret rieng tren Worker: GH_DISPATCH_TOKEN
+// (GitHub fine-grained PAT, quyen "Actions: Read and write" tren repo AMONguyen).
+export async function startProductVideo(req, env, store, H, auth) {
+  const { json, input } = H, u = new URL(req.url);
+  if (u.pathname !== "/api/v1/product-video/start" || req.method !== "POST") return null;
+  if (auth.lvl < 2) return json(req, { error: "unauthorized" }, 401);
+  const d = await input(req), key = String(d.product_id || "").trim();
+  if (!key) return json(req, { ok: false, error: "product_id required" }, 400);
+  const prod = await env.DB.prepare("SELECT id FROM products WHERE (id=? OR slug=?) AND store_id=?").bind(key, key, store.id).first();
+  if (!prod) return json(req, { ok: false, error: "Không tìm thấy sản phẩm" }, 404);
+  const tok = env?.GH_DISPATCH_TOKEN?.value ?? env?.GH_DISPATCH_TOKEN;
+  if (!tok) return json(req, { ok: false, error: "Chưa cấu hình GH_DISPATCH_TOKEN trên Worker" }, 500);
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/actions/workflows/${GH_WORKFLOW}/dispatches`, {
+    method: "POST",
+    headers: {
+      authorization: "Bearer " + tok,
+      accept: "application/vnd.github+json",
+      "content-type": "application/json",
+      "user-agent": "hc-shop-engine",
+    },
+    body: JSON.stringify({ ref: "main", inputs: { product_id: prod.id } }),
+  });
+  if (!r.ok) {
+    const t = await r.text().catch(() => "");
+    return json(req, { ok: false, error: "GitHub từ chối yêu cầu (" + r.status + ")", detail: t.slice(0, 300) }, 502);
+  }
+  return json(req, { ok: true, message: "Đang dựng video, khoảng 1-2 phút" });
+}
+
 export async function handleProductVideo(req, env, store, H, auth) {
   const { json, id, input } = H, u = new URL(req.url), path = u.pathname;
   if (path !== "/api/v1/product-video" || req.method !== "POST") return null;
