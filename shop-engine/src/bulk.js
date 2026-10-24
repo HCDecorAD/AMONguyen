@@ -28,6 +28,8 @@ export async function handleBulk(req, env, store, H, A) {
     if (!Number.isFinite(price) || price <= 0) return e("Giá bán phải là số lớn hơn 0");
     const sp = clean(x.sale_price) ? Number(String(x.sale_price).replace(/[^\d]/g, "")) : null;
     if (sp != null && (!Number.isFinite(sp) || sp < 0 || sp > price)) return e("Giá khuyến mãi phải nhỏ hơn hoặc bằng giá bán");
+    const cost = clean(x.cost) ? Number(String(x.cost).replace(/[^\d]/g, "")) : null;
+    if (cost != null && (!Number.isFinite(cost) || cost < 0)) return e("Giá vốn phải là số không âm");
     let sizes = list(x.sizes), colors = list(x.colors);
     if (!sizes.length) sizes = [""];
     if (!colors.length) colors = [""];
@@ -48,7 +50,7 @@ export async function handleBulk(req, env, store, H, A) {
       skuTaken.add(sku);
       vars.push({ sku, size: sz, color: c });
     }
-    plan.push({ row, name, slug: s, price, sp, stock, vars, brand: clean(x.brand), cat: clean(x.category),
+    plan.push({ row, name, slug: s, price, sp, cost, stock, vars, brand: clean(x.brand), cat: clean(x.category),
       desc: clean(x.description), material: clean(x.material), origin: clean(x.origin), badge, tags: list(x.tags).join(", "),
       status: clean(x.status) === "draft" ? "draft" : "active", images: list(String(x.images ?? "").replace(/\s+/g, "\n")).filter((u) => /^https?:\/\//.test(u) || u.startsWith("/")).slice(0, 8) });
   });
@@ -78,7 +80,7 @@ export async function handleBulk(req, env, store, H, A) {
       .bind(pid, store.id, bid, cid, p.name, p.slug, p.desc, p.status, p.price, p.sp, p.material || null, p.origin || null, p.badge || null, p.tags || null));
     for (const v of p.vars) {
       const vid = id("var");
-      b.push(env.DB.prepare("INSERT INTO variants(id,store_id,product_id,sku,size,color,price,sale_price,status,attributes_json) VALUES(?,?,?,?,?,?,?,?,'active','{}')").bind(vid, store.id, pid, v.sku, v.size || null, v.color || null, p.price, p.sp),
+      b.push(env.DB.prepare("INSERT INTO variants(id,store_id,product_id,sku,size,color,price,sale_price,cost,status,attributes_json) VALUES(?,?,?,?,?,?,?,?,?,'active','{}')").bind(vid, store.id, pid, v.sku, v.size || null, v.color || null, p.price, p.sp, p.cost),
         env.DB.prepare("INSERT INTO inventory_levels(store_id,location_id,variant_id,on_hand,reserved,incoming) VALUES(?,?,?,?,0,0)").bind(store.id, loc, vid, p.stock));
     }
     p.images.forEach((u, k) => b.push(env.DB.prepare("INSERT INTO product_images(id,store_id,product_id,url,alt,sort_order) VALUES(?,?,?,?,?,?)").bind(id("img"), store.id, pid, u, p.name, k)));
