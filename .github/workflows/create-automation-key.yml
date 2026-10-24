@@ -1,0 +1,40 @@
+name: Tao key tu dong cho video san pham (chay 1 lan)
+
+# Chay tay: Actions -> "Tao key tu dong cho video san pham" -> Run workflow -> go TAO.
+# Tao 1 tai khoan "member" rieng (quyen staff), dung de GitHub Actions goi API tao video,
+# khong dung mat khau hay "ma truy cap" ca nhan cua ai. Key moi in ra trong log cua run nay,
+# chi hien 1 lan - mo log, copy, dan vao repo secret SHOP_ADMIN_TOKEN.
+# Can 2 secret san co trong repo: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID (giong workflow deploy).
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Go TAO de xac nhan tao key moi (ghi vao production DB)'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: create-automation-key
+  cancel-in-progress: false
+
+jobs:
+  create:
+    if: ${{ github.event.inputs.confirm == 'TAO' && github.actor == github.repository_owner }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: shop-engine
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      STORE: store_amo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tao key
+        run: node scripts/create-automation-key.mjs
