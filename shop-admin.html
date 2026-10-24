@@ -183,12 +183,34 @@ function stockForm(id){const sku=IM[id]||"";openBox('<h3>Điều chỉnh kho · 
 function saveStock(){act(async()=>{await api("/api/inventory/adjust",{method:"POST",body:JSON.stringify({variant_id:vid.value,qty:+qty.value,note:note.value})});closeBox();view("inventory")})}
 function archive(id){if(confirm("Ẩn sản phẩm này?"))act(async()=>{await api("/api/products/"+id,{method:"PATCH",body:JSON.stringify({status:"archived"})});view("products")})}
 function videoHelp(id,name){
-  openBox('<h3>Tạo video cho “'+esc(name)+'”</h3><p class="muted sm">Video được dựng tự động từ các ảnh có sẵn của sản phẩm (mờ chuyển + zoom nhẹ), chạy miễn phí qua GitHub Actions, mất khoảng 1-2 phút.</p>'
-    +'<label>Mã sản phẩm (dán vào ô "Mã sản phẩm" khi chạy workflow)</label><input id="vhId" readonly value="'+esc(id)+'" onclick="this.select()">'
-    +'<p class="muted sm">1. Bấm "Sao chép mã" bên dưới.<br>2. Bấm "Mở trang chạy", đăng nhập GitHub nếu cần.<br>3. Bấm <b>Run workflow</b>, dán mã sản phẩm vào ô, bấm <b>Run workflow</b> lần nữa.<br>4. Chờ 1-2 phút, tải lại trang này — cột Video sẽ hiện ✔.</p>'
-    +'<button onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+esc(id)+'\');this.textContent=\'Đã sao chép ✔\'">Sao chép mã</button> '
-    +'<a class="btn" href="https://github.com/HCDecorAD/AMONguyen/actions/workflows/product-video.yml" target="_blank" rel="noopener">Mở trang chạy</a> '
-    +'<button onclick="closeBox()">Đóng</button>');
+  openBox('<h3>Tạo video cho "'+esc(name)+'"</h3><p class="muted sm">Video được dựng tự động từ các ảnh có sẵn của sản phẩm (mờ chuyển + zoom nhẹ), chạy miễn phí, mất khoảng 1-2 phút. Chỉ cần bấm 1 nút, không cần mở trang nào khác.</p>'
+    +'<p id="vhMsg" class="sm muted">Sẵn sàng.</p>'
+    +'<button class="primary" id="vhBtn" onclick="videoStart(\''+esc(id)+'\')">Bắt đầu tạo video</button> '
+    +'<button onclick="closeBox()">Đóng</button>'
+    +'<p class="muted sm" style="margin-top:10px">Nếu quá lâu không xong, có thể chạy tay tại <a href="https://github.com/HCDecorAD/AMONguyen/actions/workflows/product-video.yml" target="_blank" rel="noopener">trang GitHub Actions</a> (mã sản phẩm: '+esc(id)+').</p>');
+}
+async function videoStart(id){
+  const btn=document.getElementById("vhBtn"),msg=document.getElementById("vhMsg");
+  if(!btn||!msg)return;
+  btn.disabled=true;msg.textContent="Đang gửi yêu cầu...";
+  try{
+    await api("/api/v1/product-video/start",{method:"POST",body:JSON.stringify({product_id:id})});
+    msg.textContent="Đang dựng video (khoảng 1-2 phút)... trang này sẽ tự kiểm tra, đừng đóng hộp thoại.";
+    videoPoll(id,0);
+  }catch(e){msg.textContent="Lỗi: "+e.message;btn.disabled=false}
+}
+async function videoPoll(id,n){
+  const msg=document.getElementById("vhMsg");
+  if(!msg)return;
+  if(n>=18){msg.textContent="Chưa thấy video sau vài phút. Thử lại, hoặc chạy tay ở link bên dưới.";const b=document.getElementById("vhBtn");if(b)b.disabled=false;return}
+  await new Promise(r=>setTimeout(r,10000));
+  if(!document.getElementById("vhMsg"))return;
+  try{
+    const d=await api("/api/products");
+    const p=(d.items||[]).find(x=>x.id===id);
+    if(p&&p.video_url){msg.textContent="Xong! Video đã gắn vào sản phẩm.";setTimeout(()=>{closeBox();view("products")},1200);return}
+  }catch(e){}
+  videoPoll(id,n+1);
 }
 async function orderDetail(id){act(async()=>{const d=await api("/api/orders/"+id);openBox('<h3>Đơn '+esc(d.order_no)+'</h3><p><b>'+esc(d.customer_name)+'</b> · '+esc(d.customer_phone)+'</p><p>'+esc(d.shipping_address)+'</p><p>'+d.items.map(x=>esc(x.name)+' · '+esc(x.sku)+' × '+x.qty+' = '+money(x.line_total)).join("<br>")+'</p><dl style="margin:10px 0"><div style="display:flex;justify-content:space-between"><dt>Tạm tính</dt><dd>'+money(d.subtotal)+'</dd></div><div style="display:flex;justify-content:space-between"><dt>Giảm giá'+(d.discount_label?' ('+esc(d.discount_label)+')':'')+'</dt><dd>- '+money(d.discount||0)+'</dd></div><div style="display:flex;justify-content:space-between"><dt>Phí vận chuyển</dt><dd>'+money(d.shipping_fee||0)+'</dd></div><div style="display:flex;justify-content:space-between"><dt><b>Tổng</b></dt><dd><b>'+money(d.total)+'</b></dd></div><div style="display:flex;justify-content:space-between"><dt>Đã thanh toán trước</dt><dd>'+money(d.deposit_paid||0)+'</dd></div><div style="display:flex;justify-content:space-between"><dt><b>Còn phải thu</b></dt><dd><b>'+money(d.total-(d.deposit_paid||0))+'</b></dd></div></dl><p class="muted sm">Hình thức: '+esc({bank:"Chuyển khoản / QR",deposit:"Chuyển khoản / QR",card:"Thẻ Visa/Mastercard (shop gửi link)",cod:"Thanh toán khi nhận hàng"}[d.payment_method]||"Thanh toán khi nhận hàng")+(d.note?' · Ghi chú: '+esc(d.note):'')+'</p><p><label>Đã thanh toán trước (đ)<input id="depIn" type="number" min="0" max="'+d.total+'" value="'+(d.deposit_paid||0)+'"></label> <button onclick="saveDeposit(\''+id+'\')">Lưu tiền cọc</button></p><button onclick="closeBox()">Đóng</button>')})}
 async function saveDeposit(id){act(async()=>{const v=Number(document.getElementById("depIn").value||0);await api("/api/orders/"+id+"/payment",{method:"POST",body:JSON.stringify({deposit_paid:v})});closeBox();orderDetail(id)})}

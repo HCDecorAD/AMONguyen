@@ -2,7 +2,7 @@ import {verifyHubToken} from "./hubtoken.mjs";
 import {signHubAdminToken,HUB_STAFF_URL} from "./hubadmin.mjs";
 import {handleContent} from "./content.js";
 import {handleMedia,serveMedia} from "./media.js";
-import {handleProductVideo,serveProductVideo} from "./product-video.js";
+import {handleProductVideo,serveProductVideo,startProductVideo} from "./product-video.js";
 import {handleCatalog} from "./catalog.js";
 import {handleBulk} from "./bulk.js";
 import {handleCustomers,customerFromReq,orderDiscount,lineAutoPercent,activePromos} from "./customers.js";
@@ -33,6 +33,7 @@ export default {async fetch(req,env){
   {const r=await handleCustomers(req,env,store,{json,clean,id,input},{lvl,sup,own});if(r)return r}
   {const r=await handleMedia(req,env,store,{json,clean,id,input},{lvl,who:sup?"super":(own?own.email:null)});if(r)return r}
   {const r=await handleProductVideo(req,env,store,{json,clean,id,input},{lvl});if(r)return r}
+  {const r=await startProductVideo(req,env,store,{json,clean,id,input},{lvl});if(r)return r}
   {const r=await handleContent(req,env,store,{json,clean,id,input},{lvl,sup,own,who:sup?"super":(own?own.email:null)});if(r)return r}
   {const r=await handleBulk(req,env,store,{json,clean,id,input,slug},{lvl});if(r)return r}
   {const r=await handleCatalog(req,env,store,{json});if(r)return r}
