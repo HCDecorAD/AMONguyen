@@ -46,7 +46,7 @@ export async function handleCatalog(req, env, store, H) {
   const key = String(u.searchParams.get("slug") || "").trim();
   if (!key) return json(req, { error: "slug required" }, 400);
   const p = await env.DB.prepare(
-    "SELECT p.id,p.slug,p.name,p.description,p.price,p.sale_price,p.material,p.origin,p.badge,p.tags,c.name cat,b.name brand FROM products p " +
+    "SELECT p.id,p.slug,p.name,p.description,p.price,p.sale_price,p.material,p.origin,p.badge,p.tags,p.video_url,c.name cat,b.name brand FROM products p " +
     "LEFT JOIN categories c ON c.id=p.category_id LEFT JOIN brands b ON b.id=p.brand_id WHERE p.store_id=? AND p.status='active' AND (p.slug=? OR p.id=?)").bind(store.id, key, key).first();
   if (!p) return json(req, { error: "not found" }, 404);
   const images = (await env.DB.prepare("SELECT url,alt FROM product_images WHERE product_id=? AND store_id=? ORDER BY sort_order").bind(p.id, store.id).all()).results.map((i) => ({ url: abs(origin, i.url), alt: i.alt || "" }));
@@ -55,5 +55,5 @@ export async function handleCatalog(req, env, store, H) {
     "COALESCE((SELECT SUM(l.on_hand-l.reserved) FROM inventory_levels l WHERE l.store_id=v.store_id AND l.variant_id=v.id),0) avail " +
     "FROM variants v WHERE v.store_id=? AND v.product_id=? AND v.status='active' ORDER BY v.size,v.sku").bind(store.id, p.id).all()).results
     .map((v) => ({ id: v.id, sku: v.sku, size: v.size || "", color: v.color || "", price: eff(p, v), base_price: v.price ?? p.price, available: Math.max(0, Math.min(CAP, v.avail)) }));
-  return pub({ id: p.id, slug: p.slug, name: p.name, description: p.description || "", cat: p.cat || "", brand: p.brand || "", material: p.material || "", origin: p.origin || "", badge: p.badge || "", tags: p.tags || "", price: eff(p, null), compare: (p.price || 0) > eff(p, null) ? p.price : 0, images, variants });
+  return pub({ id: p.id, slug: p.slug, name: p.name, description: p.description || "", cat: p.cat || "", brand: p.brand || "", material: p.material || "", origin: p.origin || "", badge: p.badge || "", tags: p.tags || "", video_url: abs(origin, p.video_url || ""), price: eff(p, null), compare: (p.price || 0) > eff(p, null) ? p.price : 0, images, variants });
 }

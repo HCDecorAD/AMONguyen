@@ -2,6 +2,7 @@ import {verifyHubToken} from "./hubtoken.mjs";
 import {signHubAdminToken,HUB_STAFF_URL} from "./hubadmin.mjs";
 import {handleContent} from "./content.js";
 import {handleMedia,serveMedia} from "./media.js";
+import {handleProductVideo,serveProductVideo} from "./product-video.js";
 import {handleCatalog} from "./catalog.js";
 import {handleBulk} from "./bulk.js";
 import {handleCustomers,customerFromReq,orderDiscount,lineAutoPercent,activePromos} from "./customers.js";
@@ -23,7 +24,7 @@ async function memberAuth(req,env){const t=(req.headers.get("authorization")||""
 async function productDetail(env,store,key){const p=await env.DB.prepare("SELECT * FROM products WHERE store_id=? AND (id=? OR slug=?) AND status='active'").bind(store.id,key,key).first();if(!p)return null;const variants=(await env.DB.prepare("SELECT v.*,COALESCE(SUM(l.on_hand-l.reserved),0) available FROM variants v LEFT JOIN inventory_levels l ON l.variant_id=v.id AND l.store_id=v.store_id WHERE v.store_id=? AND v.product_id=? AND v.status='active' GROUP BY v.id ORDER BY v.size,v.color,v.sku").bind(store.id,p.id).all()).results;const images=(await env.DB.prepare("SELECT id,url,alt,sort_order FROM product_images WHERE store_id=? AND product_id=? ORDER BY sort_order,id").bind(store.id,p.id).all()).results;return {...p,variants,images}}
 export default {async fetch(req,env){
  const u=new URL(req.url),path=u.pathname;if(req.method==="OPTIONS")return new Response(null,{headers:cors(req)});
- try{{const mr=await serveMedia(req,env);if(mr)return mr}const store=await resolveStore(req,env);if(!store&&path!=="/api/health")return json(req,{error:"store not found"},404);
+ try{{const mr=await serveMedia(req,env);if(mr)return mr}{const vr=await serveProductVideo(req,env);if(vr)return vr}const store=await resolveStore(req,env);if(!store&&path!=="/api/health")return json(req,{error:"store not found"},404);
   if(path==="/api/health")return json(req,{ok:true,app:"HC Shop Engine",version:3});
   // Owner/manager quản lý ID/Pass nhân viên cửa hàng AMO: chuyển tiếp sang HUB bằng token quản trị ký phía server.
   const sup=await isAdmin(req,env),mem=sup?null:await memberAuth(req,env),own=mem&&mem.store_id===store.id?mem:null,lvl=sup?9:(own?ROLES[own.role]||0:0);
@@ -31,6 +32,7 @@ export default {async fetch(req,env){
   if(path==="/api/v1/store-users"&&(req.method==="GET"||req.method==="POST")){if(!await needMgr(req,env)||!own)return json(req,{error:"unauthorized"},401);const secret=env.HUB_SHOP_SECRET?.value??env.HUB_SHOP_SECRET;if(!secret)return json(req,{error:"unavailable"},503);const tok=await signHubAdminToken({sub:"member:"+own.id,role:own.role},secret);const init={method:req.method,headers:{authorization:"Bearer "+tok,"content-type":"application/json"}};if(req.method!=="GET")init.body=await req.text();const r=await fetch(HUB_STAFF_URL,init);return json(req,await r.json().catch(()=>({error:"upstream"})),r.status)}
   {const r=await handleCustomers(req,env,store,{json,clean,id,input},{lvl,sup,own});if(r)return r}
   {const r=await handleMedia(req,env,store,{json,clean,id,input},{lvl,who:sup?"super":(own?own.email:null)});if(r)return r}
+  {const r=await handleProductVideo(req,env,store,{json,clean,id,input},{lvl});if(r)return r}
   {const r=await handleContent(req,env,store,{json,clean,id,input},{lvl,sup,own,who:sup?"super":(own?own.email:null)});if(r)return r}
   {const r=await handleBulk(req,env,store,{json,clean,id,input,slug},{lvl});if(r)return r}
   {const r=await handleCatalog(req,env,store,{json});if(r)return r}

@@ -1,0 +1,41 @@
+name: Tạo video sản phẩm
+
+# Chạy tay: Actions -> Tạo video sản phẩm -> Run workflow -> nhập mã sản phẩm (ID hoặc slug).
+# Dựng slideshow từ các ảnh có sẵn của sản phẩm (ffmpeg: mờ chuyển + zoom nhẹ, ~2s/ảnh), rồi gắn video vào sản phẩm.
+# Cần 1 secret trong repo: SHOP_ADMIN_TOKEN (giống giá trị ADMIN_TOKEN của Worker shop-engine).
+on:
+  workflow_dispatch:
+    inputs:
+      product_id:
+        description: 'Mã sản phẩm (ID hoặc slug), ví dụ A120 hoặc id-san-pham'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: product-video-${{ github.event.inputs.product_id }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: ${{ github.actor == github.repository_owner }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      API: https://hc-shop-engine.huycuongonline.workers.dev
+      STORE: store_amo
+      PRODUCT_KEY: ${{ github.event.inputs.product_id }}
+      SHOP_ADMIN_TOKEN: ${{ secrets.SHOP_ADMIN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Kiểm tra ffmpeg
+        run: command -v ffmpeg || (sudo apt-get update -y && sudo apt-get install -y ffmpeg)
+      - name: Kiểm tra secret
+        run: |
+          if [ -z "$SHOP_ADMIN_TOKEN" ]; then
+            echo "Thiếu secret SHOP_ADMIN_TOKEN trong repo. Settings -> Secrets and variables -> Actions -> New repository secret, dán đúng giá trị ADMIN_TOKEN của shop-engine."
+            exit 1
+          fi
+      - name: Dựng và gắn video
+        run: bash shop-engine/scripts/build-and-upload.sh
