@@ -15,6 +15,12 @@
   }
   if (valid(incoming)) {
     try { localStorage.setItem(KEY, JSON.stringify({ ref: incoming, ts: Date.now(), site: 'SITE-001' })); } catch (e) {}
+    try {
+      fetch('https://hc-shop-engine.huycuongonline.workers.dev/api/affiliate/click?store=store_amo', {
+        method: 'POST', headers: {'content-type': 'application/json', 'x-store-id': 'store_amo'}, keepalive: true,
+        body: JSON.stringify({site_id: 'SITE-001', referral_code: incoming, landing_url: location.href, referrer_url: document.referrer})
+      }).catch(function () {});
+    } catch (e) {}
   }
   window.HCAffiliate = Object.freeze({
     site: 'SITE-001',

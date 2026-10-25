@@ -22,7 +22,7 @@
 <p class="hint" id="paidHint">Khoản “đã thanh toán trước” sẽ được shop cập nhật sau khi nhận được tiền cọc của anh/chị.</p>
 <button class="go" id="place" type="submit" form="coForm">Đặt hàng</button><p id="msg" class="msg" role="alert"></p></aside>
 </main>
-<script src="js/hc-affiliate.js"></script>\n<script src="js/amo-pay.js"></script>
+<script src="js/hc-affiliate.js"></script><script src="js/amo-pay.js"></script>
 <script>
 (function(){
 var ENGINE="https://hc-shop-engine.huycuongonline.workers.dev",STORE="store_amo";
@@ -68,7 +68,7 @@ $("coForm").addEventListener("submit",function(ev){ev.preventDefault();
  var pay=(document.querySelector('input[name=pay]:checked')||{}).value||"bank";
  busy=true;$("place").disabled=true;$("msg").textContent="Đang gửi đơn hàng...";$("msg").className="msg";
  var body={items:c.map(function(x){return{variant_id:x.variant_id,qty:Math.trunc(Number(x.qty))}}),customer:{name:name,phone:phone,email:$("email").value.trim(),address:address},note:$("note").value.trim(),payment_method:pay};
- if(code)body.coupon=code;\n var attribution=window.HCAffiliate&&window.HCAffiliate.getAttribution();\n if(attribution)body.affiliate=attribution;
+ if(code)body.coupon=code;var attribution=window.HCAffiliate&&window.HCAffiliate.getAttribution();if(attribution)body.affiliate=attribution;
  fetch(ENGINE+"/api/orders?store="+STORE,{method:"POST",headers:{"content-type":"application/json","x-store-id":STORE},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(d){return{ok:r.ok,d:d}})}).then(function(o){
   if(!o.ok||!o.d.ok)throw new Error((o.d&&o.d.error)||"Không tạo được đơn");
   try{localStorage.removeItem("AMO_CART")}catch(e){}
