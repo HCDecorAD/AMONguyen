@@ -1,6 +1,8 @@
 /* AMO: header + footer dùng chung, giỏ hàng, sáng/tối, VN/EN, dữ liệu sản phẩm */
 (function(){
 "use strict";
+/* Load once from an absolute path so referral capture also works on product, brand and journal landing pages. */
+if(!window.HCAffiliate&&!document.querySelector('script[src*="hc-affiliate.js"]')){var aff=document.createElement("script");aff.src="/js/hc-affiliate.js";document.head.appendChild(aff)}
 /* Chỉ dùng tiếng Việt: nút VN/EN đã ẩn, nên luôn giữ lang="vi" (kể cả khách đã chọn EN trước đây) */
 var lang="vi";
 var ROOT=(function(){var s=document.currentScript||document.querySelector('script[src*="amo-localwp.js"]');var u=s?s.getAttribute("src"):"js/amo-localwp.js";return u.replace(/js\/amo-localwp\.js.*$/,"")})();
