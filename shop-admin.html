@@ -363,7 +363,7 @@ async function newProductView(){
   +card('Size, màu và giá',
     '<div class="np-field"><label>Size</label><div class="np-sizes">'+SIZE_OPTS.map(x=>'<label class="np-chip"><input type="checkbox" class="np_sz" value="'+x+'"><span>'+x+'</span></label>').join("")+'</div></div>'
     +'<div class="np-row np-row4"><div class="np-field"><label for="np_color">Màu</label><input id="np_color" placeholder="Đen, Nâu"></div><div class="np-field"><label for="np_stock">Tồn kho / size, màu</label><input id="np_stock" type="number" min="0" value="1"></div></div>'
-    +'<div class="np-row np-row4"><div class="np-field"><label for="np_cost">Giá vốn</label><input id="np_cost" type="number" min="0"></div><div class="np-field"><label for="np_price">Giá bán *</label><input id="np_price" type="number" min="1"></div><div class="np-field"><label for="np_sale">Giá sale</label><input id="np_sale" type="number" min="0"></div></div>')
+    +'<div class="np-row np-row3"><div class="np-field"><label for="np_cost">Giá vốn</label><input id="np_cost" type="number" min="0"></div><div class="np-field"><label for="np_price">Giá bán *</label><input id="np_price" type="number" min="1"></div><div class="np-field"><label for="np_sale">Giá sale</label><input id="np_sale" type="number" min="0"></div></div>')
   +card('Mô tả',
     '<div class="np-field"><textarea id="np_desc" rows="5" aria-label="Mô tả sản phẩm"></textarea></div>','np-c-desc')
   +'<div hidden><label>Chất liệu</label><input id="np_material"></div><div hidden><label>Xuất xứ</label><input id="np_origin"></div>'
