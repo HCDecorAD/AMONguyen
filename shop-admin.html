@@ -119,9 +119,9 @@ async function revLoad(){const f=document.getElementById("rFrom").value,t=docume
 let COST_ORIG={};
 async function costView(){const [v,p]=await Promise.all([api("/api/variants"),api("/api/products")]);const PM2=Object.fromEntries((p.items||[]).map(x=>[x.id,x]));const rows=(v.items||[]).filter(r=>r.status!=="archived");COST_ORIG=Object.fromEntries(rows.map(r=>[r.id,r.cost==null?"":String(r.cost)]));content.innerHTML='<div class="panel"><div class="actions"><h3>Giá vốn từng mẫu</h3><span class="w"><button class="primary" onclick="costSave()">Lưu giá vốn</button></span></div><p class="muted sm">Nhập giá vốn cho từng SKU (VND). Dùng phím Tab để chuyển ô. Đơn đã bán giữ giá vốn lúc bán, nên đổi ở đây không làm thay đổi lợi nhuận của đơn cũ.</p>'+table(rows,[["SKU",r=>r.sku],["Sản phẩm",r=>(PM2[r.product_id]||{}).name||"—"],["Size",r=>r.size||"—"],["Màu",r=>r.color||"—"],["Giá bán",r=>money(r.sale_price??r.price??(PM2[r.product_id]||{}).sale_price??(PM2[r.product_id]||{}).price??0)],["Giá vốn",r=>'<input type="number" min="0" step="1000" inputmode="numeric" data-cid="'+esc(r.id)+'" value="'+esc(COST_ORIG[r.id])+'" style="width:140px">',"html"]])+'</div>'}
 function costSave(){act(async()=>{const items=[...document.querySelectorAll("input[data-cid]")].filter(i=>i.value!==COST_ORIG[i.dataset.cid]).map(i=>({id:i.dataset.cid,cost:i.value===""?null:Number(i.value)}));if(!items.length)return alert("Chưa có thay đổi nào");await api("/api/variants/costs",{method:"POST",body:JSON.stringify({items})});view("costs")})}
-async function view(v){menuClose();document.body.classList.remove("side-off");try{
+async function view(v){window.CURV=v;menuClose();document.body.classList.remove("side-off");try{
  if(v==="dashboard"){setnav(v,"Tổng quan");const d=await api("/api/dashboard");content.innerHTML='<div class="cards">'+[["Tổng tồn",d.total_stock],["Sắp hết",d.low_stock],["Hết hàng",d.out_stock],["Đơn mới",d.new_orders],["Tổng đơn",d.orders],["Doanh thu",money(d.revenue)]].map(x=>'<div class="card"><span class="muted">'+x[0]+'</span><b>'+x[1]+'</b></div>').join("")+'</div><div class="panel"><b class="ok">● Hệ thống đang hoạt động</b><p>Sản phẩm → Hình ảnh → SKU → Kho → Đơn hàng → Khách hàng → Báo cáo</p><p class="muted">Mẹo: dùng <b>Nhập / Xuất CSV</b> để thêm nhiều sản phẩm cùng lúc, <b>Sửa hàng loạt</b> để đổi giá và tồn kho nhanh.</p></div>'}
- if(v==="products"){setnav(v,"Sản phẩm & Media");const d=await api("/api/products"+(window.PVALL?"?archived=1":""));PM=Object.fromEntries((d.items||[]).map(x=>[x.id,x.name]));PIMG=Object.fromEntries((d.items||[]).map(x=>[x.id,x.image||""]));content.innerHTML='<div class="panel"><div class="actions"><h3>Sản phẩm ('+(d.items||[]).length+')</h3><label style="margin:0" class="sm"><input type="checkbox" style="width:auto" '+(window.PVALL?"checked":"")+' onchange="window.PVALL=this.checked;view(\'products\')"> Xem cả SP đã ẩn</label><span class="w"><button onclick="view(\'csv\')">Nhập CSV</button> <button class="primary" onclick="view(\'newproduct\')">+ Sản phẩm</button></span></div>'+(canW()?'<div class="actions w" style="margin:8px 0"><label style="margin:0"><input type="checkbox" id="pkall" style="width:auto" onchange="document.querySelectorAll(\'.pk\').forEach(x=>x.checked=this.checked)"> Chọn tất cả</label><span><button onclick="prodBulk(\'active\')">Hiện đã chọn</button> <button class="danger" onclick="prodBulk(\'archived\')">Ẩn đã chọn</button> <button class="danger" onclick="prodDelete()">Xóa đã chọn</button> <button onclick="prodClear()">Bỏ chọn tất cả</button></span></div>':"")+table(d.items||[],[["Ảnh",r=>r.image?'<img src="'+esc(r.image)+'" alt="" title="Bấm để căn ảnh" onclick="posEdit(PIMG[\''+r.id+'\'],\''+r.id+'\')" style="width:56px;height:56px;object-fit:cover;border-radius:6px;cursor:pointer;display:block">':"—",'html'],["Tên",r=>r.name],["Trạng thái",r=>r.status],["Giá",r=>money(r.price)],["Sale",r=>r.sale_price?money(r.sale_price):"—"],["Video",r=>r.video_url?"✔":"—"]],r=>'<span class="w"><input type="checkbox" class="pk" style="width:auto" data-id="'+esc(r.id)+'"> <button onclick="editForm(\''+r.id+'\')">Sửa</button> <button onclick="variantForm(\''+r.id+'\')">+ SKU</button> <button onclick="mediaForm(\''+r.id+'\')">+ Media</button> <button onclick="videoHelp(\''+esc(r.id)+'\',\''+esc((r.name||"").replace(/\x27/g,""))+'\')">Tạo video</button> <button class="danger" onclick="archive(\''+r.id+'\')">Ẩn</button></span>')+'</div>'}
+ if(v==="products"){setnav(v,"Sản phẩm & Media");const d=await api("/api/products"+(window.PVALL?"?archived=1":""));PM=Object.fromEntries((d.items||[]).map(x=>[x.id,x.name]));PIMG=Object.fromEntries((d.items||[]).map(x=>[x.id,x.image||""]));content.innerHTML='<div class="panel"><div class="actions"><h3>Sản phẩm ('+(d.items||[]).length+')</h3><label style="margin:0" class="sm"><input type="checkbox" style="width:auto" '+(window.PVALL?"checked":"")+' onchange="window.PVALL=this.checked;view(\'products\')"> Xem cả SP đã ẩn</label><span class="w"><button onclick="view(\'csv\')">Nhập CSV</button> <button class="primary" onclick="view(\'newproduct\')">+ Sản phẩm</button></span></div>'+(canW()?'<div class="actions w" style="margin:8px 0"><label style="margin:0"><input type="checkbox" id="pkall" style="width:auto" onchange="document.querySelectorAll(\'.pk\').forEach(x=>x.checked=this.checked)"> Chọn tất cả</label><span><button onclick="prodBulk(\'active\')">Hiện đã chọn</button> <button class="danger" onclick="prodBulk(\'archived\')">Ẩn đã chọn</button> <button class="danger" onclick="prodDelete()">Xóa đã chọn</button> <button onclick="prodClear()">Bỏ chọn tất cả</button></span></div>':"")+table(d.items||[],[["Ảnh",r=>r.image?'<img src="'+esc(r.image)+'" alt="" title="Bấm để căn ảnh" onclick="posEdit(PIMG[\''+r.id+'\'],\''+r.id+'\')" style="width:56px;height:56px;object-fit:cover;border-radius:6px;cursor:pointer;display:block">':"—",'html'],["Tên",r=>r.name],["Trạng thái",r=>r.status],["Giá vốn",r=>r.cost_min==null?"—":(r.cost_n>1?"từ "+money(r.cost_min):money(r.cost_min))],["Giá",r=>money(r.price)],["Sale",r=>r.sale_price?money(r.sale_price):"—"],["Video",r=>videoCellHtml(r.id,r.video_url),'html']],r=>'<span class="w"><input type="checkbox" class="pk" style="width:auto" data-id="'+esc(r.id)+'"> <button onclick="editForm(\''+r.id+'\')">Sửa</button> <button onclick="variantForm(\''+r.id+'\')">+ SKU</button> <button onclick="mediaForm(\''+r.id+'\')">+ Media</button> '+videoBtnHtml(r.id,r.name)+' <button class="danger" onclick="archive(\''+r.id+'\')">Ẩn</button></span>')+'</div>'}
  if(v==="inventory"){setnav(v,"Kho hàng");const d=await api("/api/inventory");IM=Object.fromEntries((d.items||[]).map(x=>[x.variant_id,x.sku]));content.innerHTML='<div class="panel"><div class="actions"><h3>Kho hàng</h3><span class="w"><button onclick="view(\'bulk\')">Sửa hàng loạt</button></span></div>'+table(d.items||[],[["SKU",r=>r.sku],["Sản phẩm",r=>r.name],["Size",r=>r.size],["Màu",r=>r.color],["Tồn",r=>r.on_hand],["Giữ",r=>r.reserved],["Có thể bán",r=>r.available]],r=>'<span class="w"><button onclick="stockForm(\''+r.variant_id+'\')">Điều chỉnh</button></span>')+'</div>'}
  if(v==="newproduct")return newProductView();
  if(v==="csv")return csvView();
@@ -182,13 +182,62 @@ function saveMedia(){act(async()=>{const urls=murl.value.split(/\n+/).map(x=>x.t
 function stockForm(id){const sku=IM[id]||"";openBox('<h3>Điều chỉnh kho · '+esc(sku)+'</h3><input id="vid" type="hidden" value="'+id+'"><label>Số lượng (+ nhập / - xuất)</label><input id="qty" type="number"><label>Ghi chú</label><input id="note"><button onclick="closeBox()">Hủy</button> <button class="primary" onclick="saveStock()">Cập nhật</button>')}
 function saveStock(){act(async()=>{await api("/api/inventory/adjust",{method:"POST",body:JSON.stringify({variant_id:vid.value,qty:+qty.value,note:note.value})});closeBox();view("inventory")})}
 function archive(id){if(confirm("Ẩn sản phẩm này?"))act(async()=>{await api("/api/products/"+id,{method:"PATCH",body:JSON.stringify({status:"archived"})});view("products")})}
-function videoHelp(id,name){
-  openBox('<h3>Tạo video cho “'+esc(name)+'”</h3><p class="muted sm">Video được dựng tự động từ các ảnh có sẵn của sản phẩm (mờ chuyển + zoom nhẹ), chạy miễn phí qua GitHub Actions, mất khoảng 1-2 phút.</p>'
-    +'<label>Mã sản phẩm (dán vào ô "Mã sản phẩm" khi chạy workflow)</label><input id="vhId" readonly value="'+esc(id)+'" onclick="this.select()">'
-    +'<p class="muted sm">1. Bấm "Sao chép mã" bên dưới.<br>2. Bấm "Mở trang chạy", đăng nhập GitHub nếu cần.<br>3. Bấm <b>Run workflow</b>, dán mã sản phẩm vào ô, bấm <b>Run workflow</b> lần nữa.<br>4. Chờ 1-2 phút, tải lại trang này — cột Video sẽ hiện ✔.</p>'
-    +'<button onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+esc(id)+'\');this.textContent=\'Đã sao chép ✔\'">Sao chép mã</button> '
-    +'<a class="btn" href="https://github.com/HCDecorAD/AMONguyen/actions/workflows/product-video.yml" target="_blank" rel="noopener">Mở trang chạy</a> '
-    +'<button onclick="closeBox()">Đóng</button>');
+window.VIDEO_JOBS=window.VIDEO_JOBS||{};
+const VIDEO_EXPECT_MS=100000;
+function videoCellHtml(id,video_url){
+  const j=VIDEO_JOBS[id];
+  if(j&&!j.done){const pct=Math.min(95,Math.round((Date.now()-j.startedAt)/VIDEO_EXPECT_MS*100));return '<span id="vidcell-'+id+'" class="sm">'+pct+'%</span>'}
+  if(j&&j.done&&j.timeout)return '<span id="vidcell-'+id+'" class="sm" style="color:#ffd479" title="Chưa thấy video sau vài phút, thử lại">!</span>';
+  return video_url?'<span id="vidcell-'+id+'" style="color:#f5c842;font-weight:700" title="Đã có video">✔</span>':'<span id="vidcell-'+id+'">—</span>';
+}
+function videoBtnHtml(id,name){
+  const j=VIDEO_JOBS[id];
+  return (j&&!j.done)
+    ? '<button id="vidbtn-'+id+'" disabled>Đang tạo…</button>'
+    : '<button id="vidbtn-'+id+'" onclick="videoStart(\''+esc(id)+'\',\''+esc((name||"").replace(/\x27/g,""))+'\')">Tạo video</button>';
+}
+async function videoStart(id,name){
+  if(VIDEO_JOBS[id]&&!VIDEO_JOBS[id].done)return;
+  VIDEO_JOBS[id]={startedAt:Date.now(),done:false};
+  videoRefreshRow(id);
+  try{
+    await api("/api/v1/product-video/start",{method:"POST",body:JSON.stringify({product_id:id})});
+  }catch(e){
+    delete VIDEO_JOBS[id];
+    if(window.CURV==="products")view("products");
+    alert("Lỗi tạo video: "+e.message);
+    return;
+  }
+  videoTickVisual(id);
+  videoCheck(id,0);
+}
+function videoRefreshRow(id){
+  if(window.CURV!=="products")return;
+  const c=document.getElementById("vidcell-"+id);
+  if(c)c.outerHTML=videoCellHtml(id,"");
+  const b=document.getElementById("vidbtn-"+id);
+  if(b)b.outerHTML=videoBtnHtml(id,PM&&PM[id]);
+}
+function videoTickVisual(id){
+  const j=VIDEO_JOBS[id];
+  if(!j||j.done)return;
+  const el=document.getElementById("vidcell-"+id);
+  if(el)el.textContent=Math.min(95,Math.round((Date.now()-j.startedAt)/VIDEO_EXPECT_MS*100))+"%";
+  setTimeout(()=>videoTickVisual(id),1000);
+}
+async function videoCheck(id,n){
+  const j=VIDEO_JOBS[id];
+  if(!j||j.done)return;
+  if(n>=18){j.done=true;j.timeout=true;videoRefreshRow(id);return}
+  await new Promise(r=>setTimeout(r,10000));
+  const cur=VIDEO_JOBS[id];
+  if(!cur||cur.done)return;
+  try{
+    const d=await api("/api/products");
+    const p=(d.items||[]).find(x=>x.id===id);
+    if(p&&p.video_url){cur.done=true;if(window.CURV==="products")view("products");return}
+  }catch(e){}
+  videoCheck(id,n+1);
 }
 async function orderDetail(id){act(async()=>{const d=await api("/api/orders/"+id);openBox('<h3>Đơn '+esc(d.order_no)+'</h3><p><b>'+esc(d.customer_name)+'</b> · '+esc(d.customer_phone)+'</p><p>'+esc(d.shipping_address)+'</p><p>'+d.items.map(x=>esc(x.name)+' · '+esc(x.sku)+' × '+x.qty+' = '+money(x.line_total)).join("<br>")+'</p><dl style="margin:10px 0"><div style="display:flex;justify-content:space-between"><dt>Tạm tính</dt><dd>'+money(d.subtotal)+'</dd></div><div style="display:flex;justify-content:space-between"><dt>Giảm giá'+(d.discount_label?' ('+esc(d.discount_label)+')':'')+'</dt><dd>- '+money(d.discount||0)+'</dd></div><div style="display:flex;justify-content:space-between"><dt>Phí vận chuyển</dt><dd>'+money(d.shipping_fee||0)+'</dd></div><div style="display:flex;justify-content:space-between"><dt><b>Tổng</b></dt><dd><b>'+money(d.total)+'</b></dd></div><div style="display:flex;justify-content:space-between"><dt>Đã thanh toán trước</dt><dd>'+money(d.deposit_paid||0)+'</dd></div><div style="display:flex;justify-content:space-between"><dt><b>Còn phải thu</b></dt><dd><b>'+money(d.total-(d.deposit_paid||0))+'</b></dd></div></dl><p class="muted sm">Hình thức: '+esc({bank:"Chuyển khoản / QR",deposit:"Chuyển khoản / QR",card:"Thẻ Visa/Mastercard (shop gửi link)",cod:"Thanh toán khi nhận hàng"}[d.payment_method]||"Thanh toán khi nhận hàng")+(d.note?' · Ghi chú: '+esc(d.note):'')+'</p><p><label>Đã thanh toán trước (đ)<input id="depIn" type="number" min="0" max="'+d.total+'" value="'+(d.deposit_paid||0)+'"></label> <button onclick="saveDeposit(\''+id+'\')">Lưu tiền cọc</button></p><button onclick="closeBox()">Đóng</button>')})}
 async function saveDeposit(id){act(async()=>{const v=Number(document.getElementById("depIn").value||0);await api("/api/orders/"+id+"/payment",{method:"POST",body:JSON.stringify({deposit_paid:v})});closeBox();orderDetail(id)})}
