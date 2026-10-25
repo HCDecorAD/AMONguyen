@@ -83,8 +83,21 @@ body.menu-open .side{display:block!important;position:fixed;inset:0;z-index:35;o
 .ptab td:last-child .w{display:flex;flex-wrap:wrap;align-items:center;gap:6px;width:100%}
 .ptab td:last-child button{min-height:36px;padding:7px 11px;font-size:13px}
 .ptab td:last-child input.pk{width:20px!important;height:20px}
-.panel .actions.w{gap:6px}
-.panel .actions.w button{flex:1 1 auto;min-height:40px}
+.ptab td:nth-child(3)::before{content:"Trạng thái: ";color:#7d8794}
+.ptab td:nth-child(4)::before{content:"Giá vốn: ";color:#7d8794}
+.ptab td:nth-child(5)::before{content:"Giá bán: ";color:#7d8794;font-weight:600;color:#f1f5f9}
+.ptab td:nth-child(6)::before{content:"Sale: ";color:#7d8794}
+.ptab td:nth-child(7)::before{content:"Video: ";color:#7d8794}
+.ptab td:nth-child(3){color:#6ee7a0}
+.ptab td:nth-child(3):not(:empty){text-transform:capitalize}
+.ptab tr{position:relative}
+.ptab td:last-child .w input.pk{position:absolute;top:12px;right:0;margin:0;width:22px!important;height:22px}
+.ptab td:last-child .w{padding-right:30px}
+.ptab td:last-child button:first-of-type{background:#246bfe;color:#fff}
+.panel .actions.w{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none}
+.panel .actions.w::-webkit-scrollbar{display:none}
+.panel .actions.w button{flex:0 0 auto;min-height:40px;white-space:nowrap}
+.panel .actions.w label{flex:0 0 auto;white-space:nowrap}
 }
 </style></head><body><div id="root"></div><div class="modal" id="modal"><div class="box" id="box"></div></div><script>var __v=Date.now();["js/hc-blocks.js","js/site-editor.js"].forEach(function(u){document.write("<scr"+"ipt src=\""+u+"?v="+__v+"\"></scr"+"ipt>")})</script><script>
 const API="https://hc-shop-engine.huycuongonline.workers.dev";
