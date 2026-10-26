@@ -3,10 +3,11 @@ const admin={"content-type":"application/json","x-store-id":"store_amo",authoriz
 const publicHeaders={"content-type":"application/json","x-store-id":"store_amo"};
 async function q(path,method="GET",body,isPublic=false){const r=await fetch(base+path,{method,headers:isPublic?publicHeaders:admin,body:body?JSON.stringify(body):undefined}),x=await r.json();if(!r.ok)throw Error(path+" "+r.status+" "+JSON.stringify(x));return x}
 const tag=Date.now(),code="E2E-AFF-"+tag,sku="E2E-AFF-SKU-"+tag;
-await q("/api/affiliate/partners","POST",{name:"E2E Affiliate",referral_code:code});
+const partnerAccess=await q("/api/affiliate/partners","POST",{name:"E2E Affiliate",referral_code:code});
+if(!partnerAccess.key||!partnerAccess.portal_url)throw Error("partner access key missing");
 const click=await q("/api/affiliate/click?store=store_amo","POST",{site_id:"SITE-001",referral_code:code,landing_url:"https://amonguyen.com/?ref="+code},true);
 if(!click.tracked||!click.click_id)throw Error("click not tracked");
-const draft=await q("/api/v1/product-drafts","POST",{name:"E2E Affiliate Fixture",sku,selling_price:100000,on_hand:2});
+const draft=await q("/api/v1/product-drafts","POST",{name:"E2E Affiliate Fixture "+tag,sku,selling_price:100000,on_hand:2});
 await q("/api/v1/product-drafts/"+draft.id+"/state","POST",{to:"review"});
 const product=await q("/api/v1/product-drafts/"+draft.id+"/promote","POST",{}),channel=(await q("/api/v1/channels")).items.find(x=>x.active);
 const listing=await q("/api/v1/listings","POST",{product_id:product.product_id,channel_id:channel.id});
@@ -16,4 +17,10 @@ if(!order.affiliate_attributed)throw Error("order attribution missing");
 for(const to of ["confirmed","packing","shipping","completed"])await q("/api/v1/orders/"+order.id+"/state","POST",{to});
 const dashboard=await q("/api/affiliate/dashboard"),partner=dashboard.partners.find(x=>x.referral_code===code);
 if(!partner||partner.clicks!==1||partner.conversions!==1||partner.commission!==10000)throw Error("commission mismatch "+JSON.stringify(partner));
-console.log(JSON.stringify({ok:true,flow:["referral","click","checkout","order","conversion","commission"],order_id:order.id,click_id:click.click_id,commission:partner.commission},null,2));
+const portalHeaders={"x-store-id":"store_amo",authorization:"Bearer "+partnerAccess.key};
+const portalResponse=await fetch(base+"/api/affiliate/portal?store=store_amo",{headers:portalHeaders}),portal=await portalResponse.json();
+if(!portalResponse.ok||portal.partner.referral_code!==code||portal.summary.clicks!==1||portal.summary.conversions!==1||portal.summary.commission_total!==10000||portal.conversions.length!==1)throw Error("CTV portal mismatch "+JSON.stringify(portal));
+const rotated=await q("/api/affiliate/partners/"+partner.id+"/rotate","POST",{});
+if(!rotated.key||rotated.key===partnerAccess.key)throw Error("partner key rotation failed");
+if((await fetch(base+"/api/affiliate/me?store=store_amo",{headers:portalHeaders})).status!==401)throw Error("old partner key still active");
+console.log(JSON.stringify({ok:true,flow:["referral","click","checkout","order","conversion","commission","ctv_portal","key_rotation"],order_id:order.id,click_id:click.click_id,commission:partner.commission},null,2));
