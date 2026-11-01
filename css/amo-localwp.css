@@ -61,7 +61,7 @@ body .bar{background:var(--lw-line)}body .bar i{background:var(--lw-gold)}
 .lw-sizes{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--lw-soft)}
 .lw-sizes a{border:1px solid var(--lw-gold);padding:6px 10px;font-size:12px;text-decoration:underline;color:var(--lw-text)}
 .lw-sizes a:hover{background:rgba(var(--lw-gr),.15)}
-.lw-cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.lw-cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .lw-cat-grid a{border:1px solid var(--lw-line);min-height:82px;display:grid;place-items:center;text-align:center;padding:8px;font-size:13px;font-weight:600;text-decoration:underline;background:var(--lw-card);color:var(--lw-text)}
 .lw-cat-grid a:hover{border-color:var(--lw-gold)}
 .lw-more{display:inline-block;margin-top:16px;color:var(--lw-gold-2);font-size:13px;font-weight:700;text-decoration:underline}
@@ -266,7 +266,7 @@ main.amo-container{max-width:var(--lw-w);margin-left:auto;margin-right:auto}
 .lw-sizes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
 .lw-sizes a{border:1px solid rgba(var(--lw-gr),.35);border-radius:999px;padding:6px 13px;text-decoration:none;font-size:12px;letter-spacing:.02em;color:var(--lw-soft);background:rgba(var(--lw-gr),.05);transition:all .2s}
 .lw-sizes a:hover{background:rgba(var(--lw-gr),.16);color:var(--lw-text);border-color:var(--lw-gold)}
-.lw-cat-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.lw-cat-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .lw-cat-grid a{min-height:58px;border:1px solid rgba(var(--lw-gr),.2);border-radius:14px;padding:8px 10px;font-size:12.5px;font-weight:500;letter-spacing:.03em;line-height:1.35;text-decoration:none;background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(255,255,255,.01));color:var(--lw-soft);transition:all .22s;box-shadow:0 1px 0 rgba(255,255,255,.03) inset}
 .lw-cat-grid a:hover{color:var(--lw-gold-2);border-color:rgba(var(--lw-gr),.55);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.28)}
 .lw-more{text-decoration:none;font-weight:500;letter-spacing:.04em;color:var(--lw-gold-2);opacity:.9}
