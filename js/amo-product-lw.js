@@ -68,6 +68,19 @@ function render(){
   if(!product.variants.length){$("pAdd").disabled=true;say("Vui lòng liên hệ AMO để biết tình trạng hàng.")}
   if(/[?&]buy=1/.test(location.search)){var ob=$("pOpts");if(ob&&ob.scrollIntoView)ob.scrollIntoView({block:"center"});if(!selected)say("Chọn size rồi bấm Mua ngay.")}
   lw().apply();
+  renderWish();
+}
+
+function readWishlist(){try{var a=JSON.parse(localStorage.getItem("AMO_WISHLIST")||"[]");return Array.isArray(a)?a:[]}catch(e){return[]}}
+function sameWish(x){return String(typeof x==="string"?x:(x&&(x.slug||x.id))||"")===String(key)}
+function renderWish(){var b=$("pWish");if(!b||!product)return;var saved=readWishlist().some(sameWish);b.setAttribute("aria-pressed",String(saved));b.textContent=saved?"♥ Đã lưu yêu thích":"♡ Lưu yêu thích"}
+function toggleWish(){
+ if(!product)return;
+ var list=readWishlist(),saved=list.some(sameWish);
+ if(saved)list=list.filter(function(x){return !sameWish(x)});
+ else list.push({slug:key,name:product.name});
+ try{localStorage.setItem("AMO_WISHLIST",JSON.stringify(list))}catch(e){say("Không thể lưu yêu thích trên thiết bị này.");return}
+ renderWish();say(saved?"Đã bỏ sản phẩm khỏi danh sách yêu thích.":"Đã lưu sản phẩm yêu thích trên thiết bị.");
 }
 function add(go){
   if(!selected)return say("Vui lòng chọn size.");
@@ -89,7 +102,7 @@ function fromEngine(w){
 }
 function start(){
   if(!window.AMO_LW){setTimeout(start,40);return}
-  $("pAdd").onclick=function(){add()};$("pBuy").onclick=function(){add(true)};
+  $("pAdd").onclick=function(){add()};$("pBuy").onclick=function(){add(true)};$("pWish").onclick=toggleWish;
   if(!key)return fail();
   var d=lw().demo.filter(function(x){return x.slug===key})[0];
   if(d){product=fromDemo(d);return render()}
