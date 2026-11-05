@@ -36,7 +36,7 @@ function render(d){
   const tb=t.createTBody();d.orders.forEach(o=>{const r=tb.insertRow();[o.order_no,STATUS[o.status]||o.status,o.discount?"-"+money(o.discount)+(o.discount_label?" ("+o.discount_label+")":""):"—",money(o.total)].forEach(x=>{r.insertCell().textContent=x})});box.appendChild(t);
 }
 $("fLogin").onsubmit=async e=>{e.preventDefault();$("gErr").textContent="";try{HCC.setRemember($("lRem").checked);try{if($("lRem").checked)localStorage.AMO_LOGIN_ID=$("lId").value;else localStorage.removeItem("AMO_LOGIN_ID")}catch(e){}await HCC.login($("lId").value,$("lPw").value);enter()}catch(x){$("gErr").textContent=x.message}};
-$("fReg").onsubmit=async e=>{e.preventDefault();$("gErr").textContent="";try{await HCC.setRemember(true);HCC.register({name:$("rName").value,email:$("rMail").value,phone:$("rPhone").value,password:$("rPw").value,consent:$("rOk").checked});enter()}catch(x){$("gErr").textContent=x.message}};
+$("fReg").onsubmit=async e=>{e.preventDefault();$("gErr").textContent="";try{await HCC.setRemember(true);await HCC.register({name:$("rName").value,email:$("rMail").value,phone:$("rPhone").value,password:$("rPw").value,consent:$("rOk").checked});enter()}catch(x){$("gErr").textContent=x.message}};
 $("out").onclick=async()=>{await HCC.logout();enter()};
 $("pSave").onclick=async()=>{try{await HCC.update({name:$("pName").value,phone:$("pPhone").value,address:$("pAddr").value});flash($("pMsg"),"Đã lưu.");enter()}catch(x){flash($("pMsg"),x.message,true)}};
 $("cSave").onclick=async()=>{try{await HCC.update({password:$("cOld").value,new_password:$("cNew").value});$("cOld").value=$("cNew").value="";flash($("cMsg"),"Đã đổi mật khẩu.")}catch(x){flash($("cMsg"),x.message,true)}};
