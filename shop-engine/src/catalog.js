@@ -22,7 +22,7 @@ export async function handleCatalog(req, env, store, H) {
       "SELECT p.id,p.slug,p.name,p.price,p.sale_price,p.badge,c.name cat,c.slug cat_slug,b.name brand,b.slug brand_slug," +
       "(SELECT url FROM product_images i WHERE i.store_id=p.store_id AND i.product_id=p.id ORDER BY sort_order LIMIT 1) image " +
       "FROM products p LEFT JOIN categories c ON c.id=p.category_id LEFT JOIN brands b ON b.id=p.brand_id " +
-      "WHERE p.store_id=? AND p.status='active' ORDER BY p.created_at DESC LIMIT 300").bind(store.id).all()).results;
+      "WHERE p.store_id=? AND p.status='active' ORDER BY p.created_at DESC LIMIT 1000").bind(store.id).all()).results;
     const vars = (await env.DB.prepare(
       "SELECT v.product_id,v.size,v.color,v.price,v.sale_price," +
       "COALESCE((SELECT SUM(l.on_hand-l.reserved) FROM inventory_levels l WHERE l.store_id=v.store_id AND l.variant_id=v.id),0) avail " +
