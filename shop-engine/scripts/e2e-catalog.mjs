@@ -36,9 +36,10 @@ const bn='Bulk Giay '+u;
 const bd=await call('/api/products/bulk',{method:'POST',body:{dry:true,items:[{name:bn,price:2000000}]}});eq(bd.status,200,'bulk dry-run');
 eq((await call('/api/products/bulk',{method:'POST',body:{items:[{name:'',price:1}]}})).status,422,'bulk rejects empty name');
 eq((await call('/api/products/bulk',{method:'POST',body:{items:[{name:'x',price:100,sale_price:200}]}})).status,422,'bulk rejects sale>price');
-const bk=await call('/api/products/bulk',{method:'POST',body:{items:[{name:bn,brand:'Bally',category:'Giày Loafer',price:'2.500.000',sale_price:2200000,sizes:'39,40,41',colors:'Đen|Nâu',stock:3,material:'Da bò',origin:'VN',badge:'Hot',tags:'da, nam',images:'https://x.test/a.jpg',status:'active'}]}});
+eq((await call('/api/products/bulk',{method:'POST',body:{dry:true,items:[{name:'Invalid category '+u,category:'Giày Loafer',price:2000000}]}})).status,422,'legacy category rejected');
+const bk=await call('/api/products/bulk',{method:'POST',body:{items:[{name:bn,brand:'Bally',category:'Giày công sở',price:'2.500.000',sale_price:2200000,sizes:'39,40,41',colors:'Đen|Nâu',stock:3,material:'Da bò',origin:'VN',badge:'Hot',tags:'da, nam',images:'https://x.test/a.jpg',status:'active'}]}});
 eq(bk.status,201,'bulk create');eq(bk.data.summary.variants,6,'3 sizes x 2 colors');
-const BD=await pub('/api/public/product?store=store_amo&slug='+bk.data.created[0].slug);eq(BD.data.variants.length,6,'bulk variants public');eq(BD.data.material,'Da bò','material');eq(BD.data.badge,'Hot','badge');eq(BD.data.brand,'Bally','brand set');eq(BD.data.cat,'Giày Loafer','category set');
+const BD=await pub('/api/public/product?store=store_amo&slug='+bk.data.created[0].slug);eq(BD.data.variants.length,6,'bulk variants public');eq(BD.data.material,'Da bò','material');eq(BD.data.badge,'Hot','badge');eq(BD.data.brand,'Bally','brand set');eq(BD.data.cat,'Giày công sở','category set');
 eq(BD.data.variants.every(v=>v.color&&v.available===3),true,'colors + stock');
 
 // quen mat khau (khong email): khach gui yeu cau -> shop tao link -> khach dat lai
